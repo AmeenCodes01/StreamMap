@@ -12,10 +12,9 @@ const sessionSchema = new mongoose.Schema(
     rating: {type: String, required: true},
     room: {type: String, required: true},
     sessionNumber: {type: String, required: true},
+    createdAt: { type: Date, default: new Date() }
   },
-  {
-    timestamps: true,
-  }
+  
 );
 const Session = mongoose.model("Session", sessionSchema);
 

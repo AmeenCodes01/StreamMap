@@ -1,0 +1,33 @@
+/* CoffeeAnimation.css */
+
+.coffee-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .coffee-cup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    fill: brown; /* Color of the coffee cup */
+  }
+  
+  .coffee-pouring-animation {
+    position: absolute;
+    top: 50px; /* Adjust the position */
+    left: 50px; /* Adjust the position */
+    width: 20px; /* Adjust the size */
+    height: 20px; /* Adjust the size */
+    background-color: brown; /* Color of the coffee */
+    border-radius: 50%; /* Make it round */
+    animation: pour-coffee 2s infinite alternate; /* Define animation */
+  }
+  
+  @keyframes pour-coffee {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(20px); }
+  }
+  

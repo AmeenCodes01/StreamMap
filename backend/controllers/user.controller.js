@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 //need to have a session ID.
+import {refreshToken} from "../utils/generateToken.js";
 
 // export const getSessions = (req, res) => {};
 export const getUsers = async (req, res) => {

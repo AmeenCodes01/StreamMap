@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import generateTokenAndSetCookie from "../utils/generateToken.js";
+import {generateTokenAndSetCookie} from "../utils/generateToken.js";
 
 export const signup = async (req, res) => {
   try {
@@ -41,15 +41,17 @@ export const signup = async (req, res) => {
   }
 };
 
+
+
 export const login = async (req, res) => {
   try {
     const {email} = req.body;
     const user = await User.findOne({email});
     console.log(email);
     if (user) {
-      generateTokenAndSetCookie(user._id, res);
-
-      return res.status(201).json(user);
+  const token =  generateTokenAndSetCookie(user._id, res);
+      console.log(token)
+      return res.status(201).json({user, token});
       //send data through sessions. if user, then use userId here ? , else add him up.
     } else {
       return res.status(400).json({error: "User does not exist"});

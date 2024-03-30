@@ -52,7 +52,7 @@ function Rooms() {
           </div>
         </Link>
         {/* //Khatira */}
-        <Link to="/room/Khatira">
+        <Link to="/Khatira">
           <div
             onClick={() => {
               // socket.emit("join", {room: "3243", username});

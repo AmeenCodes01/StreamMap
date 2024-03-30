@@ -15,6 +15,8 @@
     "classnames": "^2.5.1",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
+    "react-circular-progressbar": "^2.1.0",
+    "react-countdown": "^2.3.5",
     "react-daisyui": "^5.0.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
@@ -25,7 +27,8 @@
     "react-select": "^5.8.0",
     "react-simple-maps": "^3.0.0",
     "socket.io-client": "^4.7.4",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.8",
+    "universal-cookie": "^7.1.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",

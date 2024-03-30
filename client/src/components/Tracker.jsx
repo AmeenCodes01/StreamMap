@@ -2,66 +2,11 @@ import React, {useState, useEffect} from "react";
 import {styles} from "../styles";
 import {Dots} from "./TrackerEl";
 import {io} from "socket.io-client";
-import {TiTick} from "react-icons/ti";
 import {useParams} from "react-router-dom";
 
 // currentSesh, completedSesh, no of minutes in current Sesh
 
-export const SessionTable = ({arr, table}) => {
-  return (
-    <div className="flex flex-col w-[100%]  ">
-      <div className="flex flex-row">
-        <div className="border-[3px]  border-white pr-[10px] w-[20px] sm:w-[40px] h-[100%] flex pl-[2px] py-[4px]">
-          #
-        </div>
-        <div className="border-[3px]  border-white pr-[10px] w-[60px] sm:w-[80px] h-[100%] flex pl-[2px] py-[4px]">
-          User
-        </div>
-        <div
-          className="border-[3px] px-[10px] border-white w-[600px] sm:w-[700px] flex py-[4px]
-        
-        ">
-          goal
-        </div>
-        <div className="border-[3px] py-[4px] px-[10px] border-white min-w-[60px] sm:w-[80px] flex w-[40px] ">
-          rating
-        </div>
-      </div>
-      {arr
-        ? arr.map((e) => {
-            return (
-              <div className="flex flex-row w-[100%] ">
-                <div className="border-[3px]  border-white pr-[10px] sm:w-[40px] w-[20px] h-[auto] flex pl-[2px] ">
-                  {e[0].sessNumber}
-                </div>
-                <div className="border-[3px]  border-white pr-[10px] w-[60px] sm:w-[80px] h-[100%] flex pl-[2px] py-[4px]">
-                  User
-                </div>
-                <div className="border-[3px] px-[10px] border-white w-[600px] flex sm:w-[700px] ">
-                  {e[0].goal}
-                </div>
-                <div className="border-[3px] sm:w-[80px]  border-white min-w-[60px] flex relative  ">
-                  <div
-                    style={{
-                      transition: "width 2s",
 
-                      width: `${e[0].rating}%`,
-                      height: "100%",
-                      backgroundColor: "white",
-                    }}>
-                    <p className="text-[14px] left-[4px] bottom-[2px] absolute w-[40px] sm:w-[80px]">
-                      {e[0].rating} %
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        : null}
-      {/* A list of sessions of the current day, their goals and if done or not. All will be visible to Shams.   */}
-    </div>
-  );
-};
 
 function Tracker({socket}) {
   const [nextFive, setFive] = useState(0);
@@ -293,7 +238,7 @@ MY PROGRESS
       ALL SESSIONS HISTORY TABLE
        */}
       <div className="w-[100%] my-[10px] ">
-        <SessionTable arr={seshInfo} />
+        {/* <SessionTable arr={seshInfo} /> */}
       </div>
 
       {/* <div className="w-[100%] my-[10px] mt-[15px] ">
