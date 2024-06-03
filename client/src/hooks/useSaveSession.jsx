@@ -1,11 +1,47 @@
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { useSocketContext } from "../context/SocketContext";
+import { useAuthContext } from "../context/AuthContext";
 
 const useSaveSession =  ()=> {
     const [loading, setLoading] = useState(false);
+    const [sessionID,setSessionID] = useState(localStorage.getItem("sessionID"))
+    const {socket} = useSocketContext()
+  const {authUser} = useAuthContext()
 
+  const startSession =  async (session)=> {
+  setLoading(true)
+  try {
+      const res = await fetch("/api/sessions/start", { 
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(session),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+       console.log(data)
+      setSessionID(data._id)
+      localStorage.setItem("sessionID", data._id)
+      console.log(sessionID)
+      session["sessionID"] = sessionID;
+      session["goal"] = session.goal;
+      session["userId"] = authUser._id
+      socket?.emit("start-session",session )
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+    
+  };
+  
 const saveSession = async (session)=> {
-    console.log(session)
+  const sessionID = localStorage.getItem("sessionID");
+  session["sessionID"] = sessionID;
+
     setLoading(true)
     try {
         const res = await fetch("/api/sessions/save", {
@@ -18,7 +54,7 @@ const saveSession = async (session)=> {
         if (data.error) {
           throw new Error(data.error);
         }
-  
+  console.log(data)
         
       } catch (error) {
         toast.error(error.message);
@@ -27,10 +63,20 @@ const saveSession = async (session)=> {
       }
     };
   
-    return {saveSession, loading};
+    return {startSession, saveSession, loading, sessionID};
 }
 
         
 
 
 export default useSaveSession
+
+
+// For live, 
+// I want to store only ongoing sessions with total score + duration carried on since live starts. 
+// lmao we are already receiving them in useSaveSession. only need totalDuration,totalScore. And how is a new user going to get since live ones. keep track of totalScore, totalDuration,room,userId on server. 
+// ongoing session status as well. { room: [{sessionID: status}] }
+// we get all prev sessions from getLiveRankings(). get status and add to the state. when newSession comes, add score and duration, while replacing older session.
+// so we dont need start and stop session lol. 
+
+//add session ID and status to sessions object. on end, delete. 

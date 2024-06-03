@@ -5,7 +5,6 @@ import { useSocketContext } from "../context/SocketContext";
 import useGetUsers from "../hooks/useGetUsers"
 
 
-
 const UserTimes = memo((c) => {
   console.log(c);
   return (
@@ -31,36 +30,53 @@ function TimeTable({  toggleVisible }) {
     let interval = null;
     interval = setInterval(() => {
       setRender(!render);
-    }, 1000 * 3);
+    }, 1000 * 55);
 
     return () => {
       clearInterval(interval);
     };
   }, [render]);
-
   //Add all joined room as array to users.
-  function getTime(offSet) {
-    const d = new Date();
-    const localTime = d.getTime();
-    const localOffset = d.getTimezoneOffset() * 60000;
-    const utc = localTime + localOffset;
-    const offset = offSet; // UTC of USA Eastern Time Zone is -05.00
-    const time = utc + 3600000 * offset;
-    const timeNow = new Date(time);
-    const hrs =
-      timeNow.getHours() < 10 ? `0${timeNow.getHours()}` : timeNow.getHours();
-    const min =
-      timeNow.getMinutes() < 10
-        ? `0${timeNow.getMinutes()}`
-        : timeNow.getMinutes();
 
-    return `${hrs} : ${min}`;
-  }
+  function getCurrentTimeInTimeZone(timeZone) {
+    // Create a new Date object with the current time
+    const currentTime = new Date();
+  
+    // Format the current time for the specified time zone
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false // Use 24-hour format to avoid AM/PM confusion
+    });
+  
+    // Use formatToParts to get the individual parts of the formatted time
+    const parts = formatter.formatToParts(currentTime);
+  
+    // Extract hours and minutes from the parts
+    let hours, minutes;
+    for (const part of parts) {
+      if (part.type === 'hour') {
+        hours = part.value;
+      } else if (part.type === 'minute') {
+        minutes = part.value;
+      }
+    }
+  
+    // Return the formatted time as HH:MM
+    return `${hours}:${minutes}`;
+}
 
+// Example usage
+
+
+
+  
+  
   const { authUser } = useAuthContext();
   const { onlineUsers } = useSocketContext();
   const { users, loading } = useGetUsers();
-
+console.log(users)
 
   // positive negative, negative negative, positive positive
   // -7 , 5  , 5.5
@@ -95,10 +111,10 @@ if (online[0] !== undefined){
   
   const sameUsers = singleCountries.map((c) => {
     let users = [];
-    let offset;
+    let timeZone;
     online.map((x) => {
       if (x.country === c) {
-        offset = x.offset;
+        timeZone = x.timeZone;
         users.push({
           name: x.name,
           picture: x.profilePic,
@@ -106,7 +122,7 @@ if (online[0] !== undefined){
         });
       }
     });
-    return { users: users, country: c, offset: offset };
+    return { users: users, country: c, timeZone: timeZone };
   });
   setSameUsers(sameUsers);
 }}
@@ -115,8 +131,7 @@ if (online[0] !== undefined){
 if (loading){
   return;
 }
-
-
+console.log(sameUsers)
 
   return (
     <div className="max-h-[75vh] overflow-auto pt-[20px] ">
@@ -159,11 +174,11 @@ if (loading){
 
                 <p className=" flex flex-row     ">
                   <p className="badge  badge-md badge-primary rounded-[0.2px]">
-                    {getTime(c.offset)}
+                    {getCurrentTimeInTimeZone(c.timeZone)}
                   </p>
-                  <span className="ml-[auto] badge  rounded-[2px] badge-md ">
-                    {timeDiff(authUser.offset, c.offset)}
-                  </span>
+                  {/* <span className="ml-[auto] badge  rounded-[2px] badge-md ">
+                {timeDiff(authUser.offset, c.offset)}
+                  </span> */}
                 </p>
                 <div>
                   {c.users.length > 0

@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Stopwatch from "./StopWatch";
 import Countdown from "./CountDown";
-import { PiClockCountdownThin } from "react-icons/pi";
-import { IoMdStopwatch } from "react-icons/io";
-
 function InSeshTimer() {
-  const [mode, setMode] = useState(true);
-  console.log(mode)
+  const [mode, setMode] = useState(localStorage.getItem("InSeshmode") ? JSON.parse(localStorage.getItem("InSeshmode")) : false  );
+
+ 
+  useEffect(() => {
+    localStorage.setItem('InSeshmode', JSON.stringify(mode));
+  }, [mode]);
   return (
-    <div className="  flex flex-col ">
-        <div className="  flex flex-row gap-[10px]">
+    <div className="flex flex-col bg-base-300 rounded-[10px] p-[5px] ">
+      <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px]">
+        <span className="text-xs self-center text-cente font-semibold">Countdown</span>
+        <input
+          type="checkbox"
+          className="toggle  toggle-xs"
+          checked={mode}
+          onChange={() => setMode(!mode)}
+          />
+        <span className="text-xs self-center text-center font-semibold">StopWatch</span>
+      </div>
+      {mode ? <Stopwatch /> : <Countdown />}
+      <span className="text-xs italic text-warning">
+      these timers will auto terminate when session ends. 
 
-<span className="text-xs self-center text-center ">Timer</span>
-<input type="checkbox"  className="toggle bg-secondary toggle-xs  " onChange={()=> setMode(!mode)} />
-        <span className="text-xs self-center text-center ">Countdown</span>
-        </div>
-     { mode ? <Stopwatch />:
-      <Countdown />}
-
-    </div>
+        </span>       </div>
   );
 }
 
 export default InSeshTimer;
+//when the big timer stops, the small will terminate and be saved. transfer timer to context, hence making Session independent, then 
+//
+//

@@ -3,7 +3,8 @@ import {generateTokenAndSetCookie} from "../utils/generateToken.js";
 
 export const signup = async (req, res) => {
   try {
-    const {name, email, offset, country, color, profilePic} = req.body;
+    const {name, email, timeZone, country, color, profilePic} = req.body;
+    console.log(timeZone)
     const user = await User.findOne({email});
     if (user) {
       return res.status(400).json({error: "User already exists"});
@@ -12,7 +13,7 @@ export const signup = async (req, res) => {
       const newUser = new User({
         name,
         email,
-        offset,
+        timeZone,
         country,
         color,
         profilePic,
@@ -26,7 +27,7 @@ export const signup = async (req, res) => {
           _id: newUser._id,
           name: newUser.name,
           email: newUser.email,
-          offset: newUser.offset,
+          timeZone: newUser.timeZone,
           country: newUser.country,
           color: newUser.color,
           profilePic: newUser.profilePic,

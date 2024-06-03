@@ -5,8 +5,8 @@ const userSchema = new mongoose.Schema(
     email: {type: String, required: true},
     country: {type: String, required: true},
 
-    offset: {
-      type: Number,
+    timeZone: {
+      type: String,
     },
     color: {type: String, required: true},
     profilePic: {type: String, required: true},
@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    scores : [{score:Number, room: String}],
+
     //name,country,pfp, timezone offset, country color
   },
   {timestamps: true}

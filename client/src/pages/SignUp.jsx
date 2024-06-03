@@ -20,7 +20,7 @@ function SignUp() {
         profilePic: profile.picture,
         email: profile.email,
         country: myCountry,
-        offset: new Date().getTimezoneOffset() / 60,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         color: primColor,
       };
       signup(userInfo);

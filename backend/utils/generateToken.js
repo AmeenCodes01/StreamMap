@@ -14,11 +14,13 @@ export const generateTokenAndSetCookie = (userId, res) => {
   return token
 };
 
+
+
 export const refreshToken = (req, res) => {
   // Check if the token is present in the request headers, cookies, or any other mechanism
   const token = req.cookies.jwt;
+    console.log(req)
 
-console.log("refresh", token)
   if (!token) {
     return res.status(401).json({ message: 'Token not provided' });
   }
@@ -26,6 +28,7 @@ console.log("refresh", token)
   try {
     // Verify the token and extract user ID
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("decode Token". decodedToken, process.env.JWT_SECRET)
     const userId = decodedToken.userId;
 
     // Check if the token has expired
@@ -52,15 +55,8 @@ console.log("refresh", token)
       
     }
 console.log(decodedToken, currentTimeInSeconds ,"time")
-    // Generate a new token and update the existing token in the cookie
-   //const newToken = generateTokenAndSetCookie(userId, res);
-  //  res.cookie("jwt", newToken, {
-  //   maxAge: 15 * 24 * 60 * 60 * 1000, // MS
-  //   //httpOnly: true,
-  // sameSite: "strict",
-  //   // secure: process.env.NODE_ENV !== "development",
-  // });
-   return res.status(200).json({ message: 'Token refreshed successfully' });
+ 
+   return res.status(200).json({ message: 'Token still valid' });
   } catch (error) {
     console.error('Error refreshing token:', error);
     return res.status(401).json({ message: 'Invalid or expired token' });

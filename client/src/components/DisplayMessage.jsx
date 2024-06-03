@@ -46,7 +46,7 @@ function DisplayMessage() {
 
 
   return (
-    <div>DisplayMessage</div>
+    <div className=' ml-auto flex mr-auto text-md italic'>Streamer's Message</div>
   )
 }
 

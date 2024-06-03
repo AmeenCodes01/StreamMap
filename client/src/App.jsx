@@ -6,9 +6,12 @@ import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login";
 import {useAuthContext} from "./context/AuthContext";
 import {Toaster} from "react-hot-toast";
-import axios from 'axios';
+import User from "./pages/User.jsx";
+import LeaderBoard from "./pages/LeaderBoards/LeaderBoard.jsx";
+import AllUsers from "./pages/AllUsers.jsx";
 
 function App() {
+  
   const {authUser} = useAuthContext();
 //   const [token, setToken] = useState(document.cookie.split('; ').find(row => row.startsWith('jwt='))?.split('=')[1]);
 // console.log(token)
@@ -31,71 +34,35 @@ function App() {
 
 //   checkTokenExpiry();
 // }, [token]);
-useEffect( ()=>{
-  const refresh =async ()=>{
-  if (authUser){
 
-  try {
-    const res = await fetch("/api/refreshToken", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({userId: authUser._id}),
-    });
-    const data = await res.json();
-    console.log(data)
-    if (data.error) {
-      throw new Error(data.error);
-    }
-  } catch (error) {
-    console.log("error", error)
-    // toast.error(error.message);
-  } 
-  
-}
-}
-refresh()
-  
-}, [authUser]);
 
-const decodeToken = (token) => {
-  return JSON.parse(atob(token.split('.')[1]));
-};
-
-const refreshToken = async () => {
-  try {
-    const response = await axios.post('/api/refreshToken', { token });
-    const newToken = response.data.token;
-    return newToken;
-  } catch (error) {
-    throw new Error('Token refresh failed');
-  }
-};
 
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={authUser ? <Rooms /> : <Navigate to="/login" />} exact
-        />
-        <Route
-          path="/signup"
-          element={authUser ? <Navigate to="/" /> : <SignUp />}
-        />
-        <Route
-          path="/login"
-          element={ <Login />}
-        />
-        {/* authUser ? <Navigate to="/" /> : */}
-        {/* <Route path="/signup" element={<SignUp />} />
-        // <Route path="/login" element={<Login />} /> */}
+    <Routes>
+      <Route
+        path="/"
+        element={authUser ? <Rooms /> : <Navigate to="/login" />}
+        exact
+      />
+      <Route
+        path="/signup"
+        element={authUser ? <Navigate to="/" /> : <SignUp />}
+      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/:id" element={authUser ? <MyMap /> : <Login />} >
+  {/* Wrap only User and LeaderBoard components with LeaderBoardContextProvider */}
+  <Route path="user" element={<User />} />
+  <Route path="leaderboard" element={<LeaderBoard />} />
+  {/* AllUsers component is not wrapped with LeaderBoardContextProvider */}
+  <Route path="allUsers" element={<AllUsers />} />
+</Route>
 
-        {/* <Route path="/" element={<Rooms />} exact /> */}
-        <Route path="/:id" element={ authUser ? <MyMap /> : <Login/>} />
-      </Routes>
-      <Toaster />
-    </BrowserRouter>
+    </Routes>
+    <Toaster />
+  </BrowserRouter>
+  
   );
 }
 

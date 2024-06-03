@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 //need to have a session ID.
-import {refreshToken} from "../utils/generateToken.js";
+
 
 // export const getSessions = (req, res) => {};
 export const getUsers = async (req, res) => {
@@ -11,6 +11,7 @@ export const getUsers = async (req, res) => {
   } catch (e) {
     console.log(e.message);
     console.error("Error in getUsers: ", e.message);
-    res.status(500).json({error: "Internal  error"});
+    res.status(500).json({ error: "Internal  error" });
   }
 };
+//why are we calling this in the first place ? no use in getting all users, is there 

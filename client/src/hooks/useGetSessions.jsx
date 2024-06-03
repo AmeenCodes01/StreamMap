@@ -1,11 +1,13 @@
-import {useEffect, useState} from "react";
-import { useSocketContext } from "../context/SocketContext";
-// import toast from "react-hot-toast";
+import {useEffect, useState} from "react"
+import { useAuthContext } from "../context/AuthContext";
 
 const useGetSessions = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [userSessions,setUserSessions] = useState([])
+
+  const { authUser } = useAuthContext();
+
   // const {onlineUsers} = useSocketContext()
   const getSessions = async (room) => {
     //for specific rooms, this means I ll only query when user joins room. 
@@ -17,7 +19,7 @@ const useGetSessions = () => {
       const res = await fetch("/api/sessions", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room}),
+        body: JSON.stringify({id: authUser._id}),
       });
       const data = await res.json();
       if (data.error) {
@@ -41,7 +43,11 @@ const useGetSessions = () => {
     const getUserSessions = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/sessions/id");
+        const res = await fetch("/api/sessions/id", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room, livestreamID: id}),
+        });
         const data = await res.json();
         
         if (data.error) {

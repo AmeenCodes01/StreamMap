@@ -3,23 +3,34 @@ import mongoose from "mongoose";
 const sessionSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    goal: {type: String, required: true},
-    duration: {type: Number, required: true},
-    rating: {type: String, required: true},
-    room: {type: String, required: true},
-    sessionNumber: {type: String, required: true},
-    createdAt: { type: Date, default: new Date() }
-  },
-  
+    goal: { type: String, required: false },
+    mood: { type: String, required: false },
+    duration: { type: Number, required: false },
+    score: { type: Number, required: false },
+    room: { type: String, required: true },
+    sessionNumber: { type: String, required: false },
+    rating: { type: Number, required: false },
+    createdAt: { type: Date, default: Date.now },
+    endedAt: { type: Date },
+    timers: {
+      type: [{
+        time: {
+          type: Number,
+          required: false, // Set required to false for optional field
+        },
+        desc: {
+          type: String,
+          required: false, // Set required to false for optional field
+        },
+      }],
+      default: undefined, // Set default value to undefined for optional field
+    },
+  }
 );
 const Session = mongoose.model("Session", sessionSchema);
 
 export default Session;
-
-//identify through id, save sessions by time.date.goal. or save an array to user of session, with dateTime as key and goal as object + done or not ?
-
-//how will I identify Shams and show her the session start + everyone's goal table ? lol I ll give her a secret number at end but now show it in her username.

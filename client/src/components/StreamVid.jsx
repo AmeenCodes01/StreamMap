@@ -3,6 +3,7 @@ import { IoCheckmarkDone } from "react-icons/io5";
 import { useSocketContext } from "../context/SocketContext";
 import { toast, Toaster } from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import DisplayMessage from "./DisplayMessage";
 function StreamVid() {
   const [link, setLink] = useState();
   const [visible, setVisible] = useState(false);
@@ -12,9 +13,11 @@ function StreamVid() {
   const [hours, setHours] = useState();
   const [minutes, setMinutes] = useState();
   const [title, setTitle] = useState();
-  const { socket } = useSocketContext();
-  const { id: room } = useParams();
 
+  const { socket, setLive, live, liveID, setLiveID} = useSocketContext();
+  const { id: room } = useParams();
+  console.log("Live", live, localStorage.getItem("live")
+)
   const onClick = () => {
     //save to localstorage
     setVisible(true);
@@ -22,6 +25,18 @@ function StreamVid() {
   const onChange = () => {
     setVisible(false);
   };
+
+  const onLive = ()=>{
+    setLive(prevLive => {
+      const newLive = !prevLive;
+      localStorage.setItem("live", newLive);
+      if (socket === null) return;
+      socket.emit("live", ({live:newLive, room , liveID}))
+      return newLive;
+    });
+    
+  }
+
 
   const onSend = () => {
     if (mode) {
@@ -35,7 +50,6 @@ function StreamVid() {
           //- new Date().getTimezoneOffset()/60
         });
       } else {
-        console.log("rerer");
         toast.error("cannot display a blank message");
       }
     } else {
@@ -47,9 +61,22 @@ function StreamVid() {
     }
   };
 
-  
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
+      <div className="flex flex-row gap-[10px] mb-[15px] ">
+
+      <p>Live  </p>
+      <input 
+  type="checkbox" 
+  checked={live} 
+  className="toggle toggle-sm self-center" 
+  onChange={()=> {
+    onLive()
+  }} 
+/>
+
+      </div>
+
       {!visible ? (
         <>
           {" "}
@@ -72,6 +99,7 @@ function StreamVid() {
           </p>{" "}
         </>
       ) : null}
+      
       {visible && (
         <>
           <iframe
@@ -80,7 +108,7 @@ function StreamVid() {
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
+            allowFullScreen
           ></iframe>
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
             <p className="text-xs self-center  text-warning">
@@ -157,12 +185,13 @@ function StreamVid() {
           </button>
         </div>
       ) : null}
-      <span
-        className="text-xs italic cursor-pointer text-info hover:mouse-click "
+      <button
+        className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
         onClick={() => setShowMessage(!showMessage)}
       >
-        {!showMessage ? "display message/time to all clients ?" : "hide"}{" "}
-      </span>
+        {!showMessage ? "display message/time to all clients " : "hide"}{" "}
+      </button>
+
       {
         <div className="w-full h-full z-[100000000]">
           <Toaster />

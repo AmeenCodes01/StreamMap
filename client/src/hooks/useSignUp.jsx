@@ -6,11 +6,11 @@ const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const {setAuthUser} = useAuthContext();
 
-  const signup = async ({name, email, offset, country, color, profilePic}) => {
+  const signup = async ({name, email, timeZone, country, color, profilePic}) => {
     const success = handleInputErrors({
       name,
       email,
-      offset,
+      timeZone,
       country,
       color,
       profilePic,
@@ -22,7 +22,7 @@ const useSignup = () => {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name, email, offset, country, color, profilePic}),
+        body: JSON.stringify({name, email, timeZone, country, color, profilePic}),
       });
 
       const data = await res.json();
@@ -44,7 +44,7 @@ const useSignup = () => {
 };
 export default useSignup;
 
-function handleInputErrors({name, email, offset, country, color, profilePic}) {
+function handleInputErrors({name, email, timeZone, country, color, profilePic}) {
   if (!country) {
     toast.error("Please fill in all fields");
     return false;

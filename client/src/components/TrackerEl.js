@@ -7,6 +7,7 @@ export const GoalInput = styled.input`
 export const Dots = styled.div`
   animation: blink ${(props) => `${props.duration}s` || `${0}s`} infinite
     alternate;
+    background-color: #6dc1e8;
   transform: rotate(45deg);
   border-width: 1.5px;
   /* background-color: #6dc1e8;  */

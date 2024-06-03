@@ -4,7 +4,6 @@ import protectRoute from "../middleware/protectRoute.js";
 
 const router = express.Router();
 
-router.get("/", protectRoute, getUsers);
+router.get("/",  getUsers);
 //we could just get the userID from the client or decode cookie using jwt
-// router.post("/save/:id", protectRoute, saveSession);
 export default router;

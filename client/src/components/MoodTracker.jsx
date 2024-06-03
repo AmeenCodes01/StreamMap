@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { SiCoffeescript } from "react-icons/si";
 import BeanIcons from './BeanIcons';
+import { useHealthContext } from '../context/HealthContext';
 function MoodTracker() {
 
 
@@ -12,10 +13,19 @@ function MoodTracker() {
     { text: 'stressed', color: '#492233' }
   ];
 
-  const [mood, setMood] = useState("");
-  const [moodColor, setMoodColor] = useState("")
+  const {mood, setMood} = useHealthContext();
+  const [moodColor, setMoodColor] = useState(
+    localStorage.getItem("mood")
+      ? moodDictionary.find((moodObj) => moodObj.text === localStorage.getItem("mood")).color                                                                                                              
+      : ""
+  );
+  
   console.log(moodColor)
   
+  useEffect(()=>{
+    localStorage.setItem("mood", mood)
+  },[mood, moodColor])
+
   return (
     <div>
 

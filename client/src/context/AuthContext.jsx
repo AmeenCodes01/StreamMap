@@ -15,6 +15,7 @@ export const AuthContextProvider = ({children}) => {
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("auth-user")) || null
     );
+    const [room, setRoom] = useState()
     
     // useEffect(async() => {
     //   // Check if the user is authenticated
@@ -58,7 +59,7 @@ export const AuthContextProvider = ({children}) => {
   
   
   return (
-    <AuthContext.Provider value={{authUser, setAuthUser}}>
+    <AuthContext.Provider value={{authUser, setAuthUser, room, setRoom}}>
       {children}
     </AuthContext.Provider>
   );

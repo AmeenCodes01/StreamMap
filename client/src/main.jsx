@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId="521506792065-ifgqo0ji7f4j26qcpf0ajomqnhtf0h1e.apps.googleusercontent.com">
     {/* <React.StrictMode> */}
       <AuthContextProvider>
-        <Theme dataTheme="autumn">
+        <Theme dataTheme="forest">
       <SocketContextProvider>
           <App />
 
