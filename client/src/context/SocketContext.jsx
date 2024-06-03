@@ -14,7 +14,8 @@ export const SocketContextProvider = ({ children }) => {
 	const [socket, setSocket] = useState(null);
 	const [onlineUsers, setOnlineUsers] = useState([]);
 	const { authUser,room } = useAuthContext( );
-	const [live, setLive] = useState(localStorage.getItem("live")==="true");
+	const [live, setLive] = useState();
+	//local storage not required since socket will send every refresh anyways"
 	const [liveID, setLiveID] = useState(localStorage.getItem("liveID") || null
 	)
 	localStorage
