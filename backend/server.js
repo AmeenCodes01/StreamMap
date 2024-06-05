@@ -13,17 +13,8 @@ import sessionRoutes from "./routes/sessionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import sleepRoutes from "./routes/sleepRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js"
-import { generateTokenAndSetCookie,refreshToken } from "./utils/generateToken.js";
-// const http = require("http");
+import livestreamRoutes from "./routes/livestreamRoutes.js"
 
-// const socketIo = require("socket.io");
-// const cors = require("cors");
-// const needle = require("needle");
-//  const app = express();
-// const mongoose = require("mongoose");
-// const dotenv = require("dotenv");
-// const authRoutes = require("./routes/authRoutes.js");
-// const __dirname = path.resolve();
 dotenv.config();
 app.use(cors());
 app.use(express.json());
@@ -89,7 +80,7 @@ app.use("/api/sessions", sessionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/sleep", sleepRoutes);
 app.use("/api/score", scoreRoutes);
-
+app.use("/api/live", livestreamRoutes)
 app.post('/api/refreshToken', (req, res) => {
   try {
     
