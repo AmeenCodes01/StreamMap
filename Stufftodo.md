@@ -22,5 +22,11 @@ F I X E S:
 removed tokens & protected route, sending userId where required.
 
 
+PROBLEMS:
+- Socket io doesn't connect user to room // doesn't show up new users, only on refresh.
+- live status not real time // working accurately
+- 
+
+
 User Stories: 
 I want to see the live rankings & timers of other users when there's a live. 
