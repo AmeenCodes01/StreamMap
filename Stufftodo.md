@@ -20,3 +20,7 @@ profile & shop first (new comps)
 
 F I X E S: 
 removed tokens & protected route, sending userId where required.
+
+
+User Stories: 
+I want to see the live rankings & timers of other users when there's a live. 
