@@ -30,3 +30,9 @@ PROBLEMS:
 
 User Stories: 
 I want to see the live rankings & timers of other users when there's a live. 
+
+
+-----
+Just give workMinutes to timer to calculate diamonds. 
+-------
+
