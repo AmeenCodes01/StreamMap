@@ -52,3 +52,19 @@ export const getUsers = async (req, res) => {
   }
 };
 //why are we calling this in the first place ? no use in getting all users, is there 
+
+};
+export const changeCountry = async (req, res) => {
+  try {
+   const {newCountry, id} = req.body
+   const user = await User.findById(userId);
+     if (!user) {
+      throw new Error("User not found");
+    }
+    user.country = newCountry 
+    await user.save()
+  } catch (e) {
+ console.error("Error in changeCountry: ", e.message);
+    res.status(500).json({ error: "Internal Country Change  error" });
+  }
+};

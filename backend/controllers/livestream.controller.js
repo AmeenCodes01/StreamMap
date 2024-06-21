@@ -7,6 +7,7 @@ async function startNewStream(room) {
   console.log(newStream, "Started newStream");
   io.to(room).emit("live-status", { status: true, newStream });
 }
+<<<<<<< HEAD
    
 export const startLive = async (req, res) => {
   const { room } = req.body;
@@ -66,3 +67,15 @@ export const endLive = async (req, res) => {
     res.status(500).json({ message: "Error in ending Live" });
   }
 };
+=======
+}
+export const endLive = async (req, res)=>{
+    try{
+
+}catch(e){
+    console.log(e)
+    res.status(500).json({message:"Error"})
+}
+}
+// not always start. when ends, just end. 
+>>>>>>> 4881f169b34ebefabd6a9c5b8a0837801725b0f0

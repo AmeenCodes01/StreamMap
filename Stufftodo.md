@@ -2,12 +2,19 @@ What is the use of user.controller ? Apparantly it get all users
 
 Sleep tracker not sending data to database, set up API 
 
-in rankings, when timer ends, remove session/user. 
 
 save goal of session input in localStorage. 
 
 --- get rating of a session. If not given, what to do then ? a popup to ask for it, mandatory ? entering goal is not mandatory
 
+R A N K I N G S 
+in rankings, when timer ends, remove session/user. 
+
+
+
+ 
+ 
+profile & shop first (new comps)
 
 
 --so from online users,
@@ -46,6 +53,7 @@ S P R I N T S
 F I X E S: 
 removed tokens & protected route, sending userId where required.
 
+<<<<<<< HEAD
 ----make a button for SepTimer and on clicking, setOpen of SepWindow to true. will fix the problem. 
 
    <p className=" flex flex-row     ">
@@ -79,3 +87,20 @@ removed tokens & protected route, sending userId where required.
                       ))
                     : null}
                 </div>
+=======
+
+PROBLEMS:
+- Socket io doesn't connect user to room // doesn't show up new users, only on refresh.
+- live status not real time // working accurately
+- 
+
+
+User Stories: 
+I want to see the live rankings & timers of other users when there's a live. 
+
+
+-----
+Just give workMinutes to timer to calculate diamonds. 
+-------
+
+>>>>>>> 4881f169b34ebefabd6a9c5b8a0837801725b0f0
