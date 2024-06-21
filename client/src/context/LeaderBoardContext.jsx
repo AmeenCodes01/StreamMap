@@ -38,36 +38,16 @@ export const LeaderBoardContextProvider = ({ children }) => {
     };
 
     if (live && liveID) {
-      console.log("live");
       getLiveRanking();
     }
-    console.log(liveRanking)
   }, [live,liveID,room]); 
-  // Added live, room, and liveID to dependency array
-//   useEffect(() => {
-//     const handler = (sesh) => {
-//       console.log(sesh, "uus");
-//       setLiveRanking((prevLiveRanking) => {
-//         const updatedRanking = [...prevLiveRanking, sesh];
-//         return updatedRanking;
-//       });
-//     };
-// console.log(liveRanking)
-//     if (socket) {
-//       socket.on("start-session", handler);
-//       return () => {
-//         socket.off("start-session", handler);
-//       };
-//     }
-//   }, [socket]); // Added socket to dependency array
+ 
 
   useEffect(() => {
     const handler = (sesh) => {
-      console.log(sesh, "uus");
       setLiveRanking((prevLiveRanking) => {
         // Check if the session already exists in the state
         const existingSessionIndex = prevLiveRanking.findIndex(session => session.userId === sesh.userId);
-        console.log(existingSessionIndex)  
         // If it exists, update the existing session
         if (existingSessionIndex !== -1) {
           const updatedRanking = [...prevLiveRanking];
@@ -80,7 +60,6 @@ export const LeaderBoardContextProvider = ({ children }) => {
         }
       });
     };
-console.log(liveRanking)    
     if (socket) {
       socket.on("start-sessions", handler);
       return () => {
@@ -120,7 +99,6 @@ console.log(liveRanking)
     }
   }, [socket]);// Added socket to dependency array
 
-  console.log(liveRanking) 
 
 //on pause, send session id to socket, which will emit it to all clients, the client will take it and add pause to status , also update sessions obj.
 
@@ -129,11 +107,9 @@ console.log(liveRanking)
 
 useEffect(() => {
   const handler = (sesh) => {
-    console.log(sesh, "end");
     setLiveRanking((prevLiveRanking) => {
       const updatedRanking = prevLiveRanking.map((session) => {
         if (session.userId === sesh.userId) {
-          console.log("inside")
           return {
             ...session,
             totalScore: (session.totalScore || 0) + sesh.score,
@@ -150,7 +126,6 @@ useEffect(() => {
       return updatedRanking;
     });
   };
-  console.log(liveRanking)
   if (socket) {
     socket.on("end-sessions", handler);
     return () => {

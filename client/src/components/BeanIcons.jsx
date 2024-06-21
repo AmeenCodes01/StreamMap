@@ -15,7 +15,6 @@ const BeanIcons = ({ color, text,setMood, setMoodColor }) => {
       setIsHovered(false);
     };
   const handleSelect = ()=> {
-    console.log(text,color)
     setMood(text)
     setMoodColor(`${color}`)
   }

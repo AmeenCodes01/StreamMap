@@ -16,7 +16,6 @@ export const HealthContextProvider = ({children}) => {
 
 
 
-    console.log(mood)
 
     
   

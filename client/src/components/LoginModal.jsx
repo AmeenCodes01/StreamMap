@@ -31,12 +31,10 @@ function LoginModal({
           body: JSON.stringify({email: userInfo.data.email}),
         });
         const data = await res.json();
-        console.log(data.exist);
         // if (data.error) {
         //   throw new Error(data.error);
         // }
         if (data.exist) {
-          console.log("hi");
           setAuthUser(data.user);
           localStorage.setItem("auth-user", JSON.stringify(data.user));
 

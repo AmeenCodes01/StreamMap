@@ -1,13 +1,50 @@
 import User from "../models/User.js";
 //need to have a session ID.
-
+import Countries from "../models/Countries.model.js"
 
 // export const getSessions = (req, res) => {};
 export const getUsers = async (req, res) => {
-  try {
-    const loggedInUserId = req.body.userId;
-    const allUsers = await User.find();
-    res.status(200).json(allUsers);
+  
+  
+  try {   
+    const {ids} = req.body
+
+    console.log(ids,"ids ")
+    const users = await User.find({ _id: { $in: ids } }).select("name _id country profilePic, timeZone").exec();
+    console.log(users,"users")
+    // Step 2: Group users by country
+    const groupedUsers = users.reduce((acc, user) => {
+      const country = user.country;
+      if (!acc[country]) {
+        acc[country] = [];
+      }
+      acc[country].push(user);
+      return acc;
+    }, {});
+    
+    // Step 3: Join color information for each country
+    for (const country in groupedUsers) {
+      const colorInfo = await Countries.findOne({ country }).exec();
+      console.log(colorInfo, "countrycOLOR      ")
+      groupedUsers[country].forEach((user) => {
+        
+        user.color = colorInfo.color;
+      }); 
+    }
+
+    for (const country in groupedUsers) {
+      const usersByTimeZone = groupedUsers[country].reduce((acc, user) => {
+        const timeZone = user.timeZone;
+        if (!acc[timeZone]) {
+          acc[timeZone] = [];
+        }
+        acc[timeZone].push(user);
+        return acc;
+      }, {});
+      groupedUsers[country] = Object.values(usersByTimeZone);
+    }
+      console.log("groupedUsers", groupedUsers)
+    res.status(200).json(groupedUsers);
   } catch (e) {
     console.log(e.message);
     console.error("Error in getUsers: ", e.message);

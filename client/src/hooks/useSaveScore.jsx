@@ -6,7 +6,6 @@ const useSaveScore =  ()=> {
 
 const saveScore = async (score,room, id)=> {
     setLoading(true)
-    console.log(score,room, "hiii")
     try {
         const res = await fetch("/api/score/saveScore", {
           method: "POST",
@@ -15,7 +14,6 @@ const saveScore = async (score,room, id)=> {
         });
   
         const data = await res.json();
-        console.log(data, "data")
         if (data.error) {
           console.log(data.error)
           throw new Error(data.error);

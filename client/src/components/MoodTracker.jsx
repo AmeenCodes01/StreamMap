@@ -20,7 +20,6 @@ function MoodTracker() {
       : ""
   );
   
-  console.log(moodColor)
   
   useEffect(()=>{
     localStorage.setItem("mood", mood)

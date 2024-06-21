@@ -4,6 +4,7 @@ import { useSocketContext } from "../context/SocketContext";
 import { toast, Toaster } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import DisplayMessage from "./DisplayMessage";
+import { useLiveStream } from "../hooks/useLiveStream";  
 function StreamVid() {
   const [link, setLink] = useState();
   const [visible, setVisible] = useState(false);
@@ -16,8 +17,8 @@ function StreamVid() {
 
   const { socket, setLive, live, liveID, setLiveID} = useSocketContext();
   const { id: room } = useParams();
-  console.log("Live", live, localStorage.getItem("live")
-)
+  const {startLive, endLive} = useLiveStream()
+
   const onClick = () => {
     //save to localstorage
     setVisible(true);
@@ -29,17 +30,17 @@ function StreamVid() {
   const onLive = ()=>{
     setLive(prevLive => {
       const newLive = !prevLive;
-      localStorage.setItem("live", newLive);
+//on every refresh, it can just check if live or not through API.
+       newLive === true ? startLive() : endLive()
       if (socket === null) return;
-      socket.emit("live", ({live:newLive, room , liveID}))
+      socket.emit("live", ({live:newLive, room }))
       return newLive;
     });
-    
   }
 
 
   const onSend = () => {
-    if (mode) {
+    if (mode) {  
       if (title && (hours || minutes)) {
         socket?.emit("display-message", {
           label: "time",
@@ -56,7 +57,7 @@ function StreamVid() {
       if (title && message) {
         socket?.emit("display-message", { label: "message", message });
       } else {
-        console.log("rerer");                                                                                                       
+        console.log("title & message not provided. ");                                                                                                       
       }
     }
   };
@@ -172,7 +173,7 @@ function StreamVid() {
           ) : (
             <textarea
               className="textarea textarea-secondary bg-secondary placeholder:text-xs"
-              placeholder="message"
+              placeholder="message"  
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             ></textarea>

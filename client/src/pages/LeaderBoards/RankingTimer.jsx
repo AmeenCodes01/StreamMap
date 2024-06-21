@@ -9,7 +9,6 @@ const RankingTimer = ({ duration, id: sessionID, createdAt }) => {
     
     // Calculate the remaining time
     const remainingTime = duration - elapsedTime;
-    console.log(remainingTime,"remainingTime")
     const savedIsActive = JSON.parse(localStorage.getItem(`${timerKey}_isActive`));
     // Initialize state with the remaining time
     const [isActive, setIsActive] = useState(savedIsActive !== null ? savedIsActive : true);  
@@ -20,8 +19,7 @@ const RankingTimer = ({ duration, id: sessionID, createdAt }) => {
     }, [isActive, timerKey]);
     
     const { socket } = useSocketContext();
-    console.log(remainingTime,"reain")
-    console.log(timeLeft,"timeLeft")
+  
     useEffect(() => {
       let interval;
   

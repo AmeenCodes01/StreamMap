@@ -22,10 +22,8 @@ const useSaveSession =  ()=> {
       if (data.error) {
         throw new Error(data.error);
       }
-       console.log(data)
       setSessionID(data._id)
       localStorage.setItem("sessionID", data._id)
-      console.log(sessionID)
       session["sessionID"] = sessionID;
       session["goal"] = session.goal;
       session["userId"] = authUser._id
@@ -54,7 +52,6 @@ const saveSession = async (session)=> {
         if (data.error) {
           throw new Error(data.error);
         }
-  console.log(data)
         
       } catch (error) {
         toast.error(error.message);

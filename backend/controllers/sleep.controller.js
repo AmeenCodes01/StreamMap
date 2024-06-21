@@ -1,5 +1,5 @@
 import Sleep from "../models/Sleep.model.js";
-import { io } from "../socket/socket.js";
+import { io } from "../socket/socket.js";      
 
 export const saveSleep = async (req, res)=>{
     try {
@@ -10,7 +10,7 @@ export const saveSleep = async (req, res)=>{
         // const newSleep = new Sleep({
         //   userId,
         //  hours
-        // });
+        // });   
         // await newSleep.save();
         //io.to(room).emit("newSleep", newSleep )
 
@@ -24,7 +24,6 @@ export const saveSleep = async (req, res)=>{
             timestamp: { $gte: yesterday }
         });
         
-        console.log(existingEntries)
         if (existingEntries.length > 0) {
             // Update the existing entry
             const existingEntry = existingEntries[0];
@@ -33,7 +32,7 @@ export const saveSleep = async (req, res)=>{
             console.log('Existing entry modified:', existingEntry);
             res.status(200).json(existingEntry); // Respond with the modified entry
         } else {
-            // Create a new entry
+            // Create a new entry  
             const newSleep = new Sleep({
                 userId,
                 hours

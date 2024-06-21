@@ -21,7 +21,6 @@ export const getSessions = async (req, res) => {
 export const getSessionByID = async (req, res) => {
   try {
     const {id} = req.body;
-    console.log(id, "I got the user id")
     const userSessions = await Session.find({
       userId: id,
       //  "createdAt": { "$gt": new Date(Date.now - 24 * 60 * 60 * 1000)}
@@ -39,7 +38,6 @@ export const startSession = async (req, res) => {
   try {
     const { room, duration, goal } = req.body;
     const {id:userId} = req.body;
-    console.log(userId,"my user id")
     const newSession = new Session({
       userId,
       room,
@@ -47,7 +45,6 @@ export const startSession = async (req, res) => {
       goal,
     });
     await newSession.save();
-    console.log(newSession, "hello")
     
     if (!sessions[room]) {
       sessions[room] = [];
@@ -61,7 +58,6 @@ export const startSession = async (req, res) => {
     res.status(201).json(newSession);
 
     //66182212db13bbac067774cd
-    console.log(sessions, "ses");
   } catch (error) {
     console.log("Error in saveSession controller: ", error.message);
     res.status(500).json({ error: "Internal server error" });
@@ -105,7 +101,6 @@ export const saveSession = async (req, res) => {
 
     // Find the existing session in the sessions object
     const userSeshIndex = sessions[room].findIndex(s => s._id.toString() === sessionID);
-    console.log(userSeshIndex)
     if (userSeshIndex !== -1) {
       sessions[room] = sessions[room].filter((s, index) => index !== userSeshIndex);
     }

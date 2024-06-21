@@ -14,10 +14,8 @@ function Rankings() {
   
   const SessionTableRow = ({ session }) => {
     const {users, loading} = useGetUsers()
-    console.log(users)
     const { userId, goal, duration, totalDuration, totalScore, rating, _id, createdAt } =
       session;
-      console.log(session._id)
 
       if(loading){
         return; 

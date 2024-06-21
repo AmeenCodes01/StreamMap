@@ -5,7 +5,6 @@ import { sessions } from "../socket/socket.js";
 export const updateScore = async (req, res) => {
   
   const { score: newScore, room, id:userId } = req.body;
-  console.log(newScore, room);
 
   try {
     // Find the user document by userId
@@ -18,10 +17,8 @@ export const updateScore = async (req, res) => {
 
     // Find the score with the given room or create a new one if it doesn't exist
     const scoreIndex = user.scores.findIndex((score) => score.room === room);
-    console.log(scoreIndex);
     if (scoreIndex !== -1) {
       // Update the existing score
-      console.log(user.scores[scoreIndex].score, "inside");
 
       user.scores[scoreIndex].score += newScore;
       s = user.scores[scoreIndex].score += newScore;
@@ -85,7 +82,6 @@ export const getRanking = async (req, res) => {
       .filter((entry) => entry !== null); // Remove null entries from the array
 
     res.status(200).json(combinedArray);
-    //console.log(topUsers, totalDuration);
     return topUsers;
   } catch (error) {
     console.error("Error getting top users:", error);
@@ -99,17 +95,14 @@ export const getRanking = async (req, res) => {
 
 
 export const getLiveRanking = async (req, res) => {
-  console.log("LIVE");
-  let { livestreamID, room } = req.body;
-  console.log(livestreamID)
-  const live = await Livestream.findById(livestreamID); // Ensure to await the result
+  let { room } = req.body;
+  
+  const live = await Livestream.findOne({ room: room }).sort({ createdAt: -1 }); // Ensure to await the result
   if (!live) {
     throw new Error("no livestream");
   }
 
-  console.log(room, livestreamID);
   const livestreamStartTime = live.createdAt;   
-  console.log(livestreamStartTime, "liveTime");
   try {
     // Aggregate pipeline to filter sessions since livestream start time
     const pipeline = [
@@ -144,10 +137,8 @@ export const getLiveRanking = async (req, res) => {
     if(sessions[room]){
 
       for (let sesh of sessions[room]) {
-        console.log(sesh,"seshinloop")
         // Check if the session already exists in userSessions
         let existingSessionIndex = userSessions.findIndex(session => session.userId.toString() === sesh.userId.toString());
-    console.log(existingSessionIndex)
         // If it exists, update the existing session
         if (existingSessionIndex !== -1) {
           userSessions[existingSessionIndex] = { ...userSessions[existingSessionIndex], ...sesh };
@@ -180,7 +171,6 @@ export const getLiveRanking = async (req, res) => {
     // Sort the liveRanking array by score in descending order
     userSessions.sort((a, b) => (b.score || 0) - (a.score || 0));
     //return userSessions;
-    console.log(userSessions,"updatedSes")
 
   } catch (error) {
     console.error("Error getting sessions since livestream start:", error);

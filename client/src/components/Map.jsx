@@ -16,7 +16,7 @@ function SetViewOnClick({coords, zoomed}) {
 function Map() {
   const [center, setCenter] = useState([40, 0]);
   const [key, setKey] = useState(1);
-  // saves country, color + offset
+  // saves country, color + offset+*
   // selectedMap saves geoJSON of selected country.
   const [zoomed, setZoom] = useState(false);
 
@@ -30,20 +30,35 @@ function Map() {
 if (loading){
   return;
 }
+console.log("usersMao", users)
+
   const onEachCountry = (country, layer) => {
     let countryName = country.properties.ADMIN;
     let color = "#e6dfdf";
 
-    for (let i = 0; i < users.length; i++) {
-      if (countryName === users[i].country) {
-        color = users[i].color;
+    for (const key in users) {
+      if (countryName === key) {
+        console.log(users[key][0]["color"])
+        color = users[key][0]["color"];
       }
     }
     layer.setStyle({
       fillColor: color,
     });
     layer.bindPopup(countryName);
-  };
+    }
+    
+  //   for (let i = 0; i < users.length; i++) {
+  //     console.log(countryName, users[i].color , "colorU")
+  //     if (countryName === users[i]) {
+  //       color = users[i].color;
+  //     }
+  //   }
+  //   layer.setStyle({
+  //     fillColor: color,
+  //   });
+  //   layer.bindPopup(countryName);
+  // };
   return (
       <MapContainer
         style={{

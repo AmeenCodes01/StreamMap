@@ -6,7 +6,6 @@ import useGetUsers from "../hooks/useGetUsers"
 
 
 const UserTimes = memo((c) => {
-  console.log(c);
   return (
     <>
       <h2
@@ -25,113 +24,109 @@ function TimeTable({  toggleVisible }) {
   const [render, setRender] = useState(false);
   const [sameUsers, setSameUsers] = useState([]);
 
-  
-  useEffect(() => {
-    let interval = null;
-    interval = setInterval(() => {
-      setRender(!render);
-    }, 1000 * 55);
+//   console.log("sameUsers",sameUsers)
+//   useEffect(() => {
+//     let interval = null;
+//     interval = setInterval(() => {
+//       setRender(!render);
+//     }, 1000 * 55);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [render]);
-  //Add all joined room as array to users.
+//     return () => {
+//       clearInterval(interval);
+//     };
+//   }, [render]);
+//   //Add all joined room as array to users.
 
-  function getCurrentTimeInTimeZone(timeZone) {
-    // Create a new Date object with the current time
-    const currentTime = new Date();
+//   function getCurrentTimeInTimeZone(timeZone) {
+//     // Create a new Date object with the current time
+//     const currentTime = new Date();
   
-    // Format the current time for the specified time zone
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone,
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: false // Use 24-hour format to avoid AM/PM confusion
-    });
+//     // Format the current time for the specified time zone
+//     const formatter = new Intl.DateTimeFormat('en-US', {
+//       timeZone,
+//       hour: 'numeric',
+//       minute: 'numeric',
+//       hour12: false // Use 24-hour format to avoid AM/PM confusion
+//     });
   
-    // Use formatToParts to get the individual parts of the formatted time
-    const parts = formatter.formatToParts(currentTime);
+//     // Use formatToParts to get the individual parts of the formatted time
+//     const parts = formatter.formatToParts(currentTime);
   
-    // Extract hours and minutes from the parts
-    let hours, minutes;
-    for (const part of parts) {
-      if (part.type === 'hour') {
-        hours = part.value;
-      } else if (part.type === 'minute') {
-        minutes = part.value;
-      }
-    }
+//     // Extract hours and minutes from the parts
+//     let hours, minutes;
+//     for (const part of parts) {
+//       if (part.type === 'hour') {
+//         hours = part.value;
+//       } else if (part.type === 'minute') {
+//         minutes = part.value;
+//       }
+//     }
   
-    // Return the formatted time as HH:MM
-    return `${hours}:${minutes}`;
-}
+//     // Return the formatted time as HH:MM
+//     return `${hours}:${minutes}`;
+// }
 
-// Example usage
+// // Example usage
 
 
 
   
-  
-  const { authUser } = useAuthContext();
-  const { onlineUsers } = useSocketContext();
+//   const { authUser } = useAuthContext();
+//   const { onlineUsers } = useSocketContext();
   const { users, loading } = useGetUsers();
-console.log(users)
+  console.log("Users", users)
+//   // positive negative, negative negative, positive positive
+//   // -7 , 5  , 5.5
+//   const timeDiff = (authOffset, offset) => {
+//     //both negative
+//     let diff = parseFloat(authOffset) - parseFloat(offset);
+//     diff = diff < 0 ? diff * -1 : diff;
+//     return `${parseInt(diff)}h ${(diff - parseInt(diff)) * 60}min`;
+//   };
 
-  // positive negative, negative negative, positive positive
-  // -7 , 5  , 5.5
-  const timeDiff = (authOffset, offset) => {
-    //both negative
-    let diff = parseFloat(authOffset) - parseFloat(offset);
-    diff = diff < 0 ? diff * -1 : diff;
-    return `${parseInt(diff)}h ${(diff - parseInt(diff)) * 60}min`;
-  };
+//   //SHOW OFFSET FROM USER CXOUNTRY. SHAMS AT TOP. SHOW NAME, STYLE IMAGES.
+//   useEffect(() => {
+//     if (onlineUsers[0] !== undefined && users.length !== 0){
 
-  //SHOW OFFSET FROM USER CXOUNTRY. SHAMS AT TOP. SHOW NAME, STYLE IMAGES.
-  useEffect(() => {
-    if (onlineUsers[0] !== undefined && users.length !== 0){
-
+//     console.log("onlineUsers", onlineUsers)
+//     const online = onlineUsers.map((ou) => {
+//       let onlineuser;
+//       users.map((u) => {
+//         if (ou === u._id) {
+//           onlineuser = u;
+//         }
+//       });
+//       return onlineuser;
+//     });
     
-    const online = onlineUsers.map((ou) => {
-      let onlineuser;
-      users.map((u) => {
-        if (ou === u._id) {
-          onlineuser = u;
-        }
-      });
-      return onlineuser;
-    });
-    console.log(online);
-    console.log(onlineUsers);
-    console.log(users);
-if (online[0] !== undefined){
+// if (online[0] !== undefined){
 
-  let singleCountries = online?.map((x) => x.country);
-  singleCountries = [...new Set(singleCountries)];
+//   let singleCountries = online?.map((x) => x.country);
+//   singleCountries = [...new Set(singleCountries)];
   
-  const sameUsers = singleCountries.map((c) => {
-    let users = [];
-    let timeZone;
-    online.map((x) => {
-      if (x.country === c) {
-        timeZone = x.timeZone;
-        users.push({
-          name: x.name,
-          picture: x.profilePic,
-          color: x.color,
-        });
-      }
-    });
-    return { users: users, country: c, timeZone: timeZone };
-  });
-  setSameUsers(sameUsers);
-}}
-}, [onlineUsers, users]);
+//   const sameUsers = singleCountries.map((c) => {
+//     let users = [];
+//     let timeZone;
+//     online.map((x) => {
+//       if (x.country === c) {
+//         timeZone = x.timeZone;
+//         users.push({
+//           name: x.name,
+//           picture: x.profilePic,
+//         });
+//       }
+//     });
+//     return { users: users,  timeZone: timeZone };
+//   });
+  
+//   setSameUsers(sameUsers);
+// }}
+// console.log(sameUsers)
+// }, [onlineUsers, users]);
 
 if (loading){
   return;
 }
-console.log(sameUsers)
 
   return (
     <div className="max-h-[75vh] overflow-auto pt-[20px] ">
@@ -143,45 +138,48 @@ console.log(sameUsers)
         version="1.1"
         viewBox="0 0 512 512"
         width="30px"
-        xml:space="preserve"
+        xmlSpace="preserve"
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
       >
         <polygon points="160,128.4 192.3,96 352,256 352,256 352,256 192.3,416 160,383.6 287.3,256 " />
       </svg>
 
-      {sameUsers.length > 0
-        ? sameUsers.map((c) => {
-            return (
+
+      { Object.keys(users).map((country) => {
+        
+        return (
               <div className=" mb-10 bg-base-200">
                 <div
                   className="flex flex-row w-[100%]  border-2 border-white "
                   style={{
-                    backgroundColor: c?.users[0].color,
+                     backgroundColor: users[country][0].color,
                   }}
                 >
                   <h6
                     className="text-md bg-white ml-[10px]  px-2 text-start    "
                     style={
                       {
-                                         backgroundColor: c?.users[0].color,
+                                    color: users[country][0].color,
                       }
                     }
                   >
-                    {c.country}
+                    {country}
                   </h6>
                 </div>
+{/* what if same */}
 
                 <p className=" flex flex-row     ">
                   <p className="badge  badge-md badge-primary rounded-[0.2px]">
-                    {getCurrentTimeInTimeZone(c.timeZone)}
+                    {/* {getCurrentTimeInTimeZone(c.timeZone)} */}
                   </p>
                   {/* <span className="ml-[auto] badge  rounded-[2px] badge-md ">
                 {timeDiff(authUser.offset, c.offset)}
                   </span> */}
+
                 </p>
                 <div>
-                  {c.users.length > 0
+                  {
                     ? c?.users?.map((x) => (
                         <li className="flex flex-col gap-[12px] ">
                           <ul className="  flex flex-row px-[10px] py-[15px]">
@@ -201,16 +199,16 @@ console.log(sameUsers)
                          
                         </li>
                       ))
-                    : null}
-                </div>
-              </div>
+                    }
+                </div>              </div>
             );
 
             {
               /* </div> */
             }
           })
-        : null}
+        }
+     
     </div>
   );
 }

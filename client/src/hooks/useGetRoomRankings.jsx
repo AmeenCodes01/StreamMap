@@ -19,7 +19,6 @@ const useGetRoomRankings = () => {
         throw new Error(data.error);
       }
       // setSessions(data);
-      console.log(data)
       return data 
     } catch (error) {
         console.log(error)

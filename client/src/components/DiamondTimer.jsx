@@ -1,51 +1,8 @@
-// import React, {useState, useEffect} from "react";
-
-// function DiamondTimer({time}) {
-//     const [nextFive, setFive] = useState(0);
-//     const [min, setMin] = useState(time||60);
-//     const [seshStart, setStartSesh] = useState(false);
-
-//     useEffect(() => {
-//         let interval = null;
-
-//         if (seshStart === true && nextFive < min / 5) {
-//           interval = setInterval(() => {
-//             setFive(nextFive + 1);
-//             // setStartSesh(false);
-//           }, 1000 * 5);
-//         } else {
-//           clearInterval(interval);
-//           setStartSesh(false);
-//           nextFive > 0 ? setShowSeshRate(true) : null;
-//           setFive(0);
-//         }
-//         return () => {
-//           clearInterval(interval);
-//         };
-//       }, [nextFive,seshStart]);
-//   return (
-//     <div>
-//          <div className="grid-col-3  flex  flex-wrap  ">
-//               {Array(min/5)
-//                 .fill(true)
-//                 .map((_, i) => {
-//                   return (
-//                     <div className="m-[10px]" key={i}>
-//                       <Dots
-//                         className=" h-[15px] w-[15px] sm:h-[19px] sm:w-[19px]"
-//                         duration={i === nextFive && seshStart ? 3 : 0}></Dots>
-//                     </div>
-//                   );
-//                 })}
-//             </div>
-//     </div>
-//   )
-// }
-
-// export default DiamondTimer
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useTimeContext } from "../context/TimeContext";
+import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 
 const GoalInput = styled.input`
   transition: width 1s;
@@ -77,83 +34,188 @@ const Dots = styled.div`
   }
 `;
 
-function DiamondTimer({ time }) {
-  const [nextFive, setFive] = useState(0);
-  const [min, setMin] = useState(time || 60);
-  const [seshStart, setStartSesh] = useState(false);
+function DiamondTimer({setIsOpen}) {
+
+
+  const { isPaused, setIsPaused, setIsRunning, secondsLeft: time , workMinutes} = useTimeContext();
+
+
+    let diamDiv;
+    if (workMinutes <26 ){
+    diamDiv =  5
+    } else if ( workMinutes < 61){
+       diamDiv = 10
+    } else if (workMinutes < 91){
+      diamDiv = 15
+    }else {
+      diamDiv = 20
+    }
+    
+    
+
+  const diam = parseInt(workMinutes) % diamDiv !== 0 ? Math.floor(workMinutes / diamDiv) + 1
+      : workMinutes / diamDiv;
+
+  const diamDone = Math.floor((workMinutes*60 - time ) / 300)
+  // console.log("diamDone",diamDone, diamDiv)
+  const [nextFive, setFive] = useState(diamDone);
+  //const [min, setMin] = useState(time || 60);
+  // const [!isPaused, setStartSesh] = useState(true);
+  const [duration, setDuration] = useState(300);
+ // const [timeLeft, setTimeLeft] = useState(700);
+  // const [diamonds, setDiamonds] = useState(diam);
+
 
   useEffect(() => {
-    let interval = null;
+    // let interval = null;
+    // if (!isPaused && timeLeft > 0) {
+    //   interval = setInterval(() => {
+    //     setTimeLeft((prevTimeLeft) => {
+    //       const newTimeLeft = prevTimeLeft - 1;
+    //       if (newTimeLeft <= 0) {
+    //         clearInterval(interval);
+    //         return 0;
+    //       }
+    //       if (prevTimeLeft % 300 === 0 && prevTimeLeft < time) {
+    //         console.log("changing nextFive", prevTimeLeft, prevTimeLeft % 300);
+    //         setFive((prevFive) => prevFive + 1);
+    //         setDuration(300);
+    //       }
+    //       return newTimeLeft;
+    //     });
+    //   }, 1000);
+    // } else {
+    //   clearInterval(interval);
+    //   console.log("10 min completed");
+    //   // setStartSesh(false);
+    //   // nextFive > 0 ? setShowSeshRate(true) : null;
+    //   setFive(0);
+    // }
+    // return () => {
+    //   clearInterval(interval);
+    // };
+if ( time === workMinutes*60){
+    setIsOpen(false)
+      
+}
 
-    if (seshStart === true && nextFive < min / 5) {
-      interval = setInterval(() => {
-        setFive(nextFive + 1);
-      }, 1000 * 5);
-    } else {
-      clearInterval(interval);
-      setStartSesh(false);
-      nextFive > 0 ? setShowSeshRate(true) : null;
-      setFive(0);
+    if (time === 0){
+      setIsOpen(false)
     }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [nextFive, seshStart]);
+    if (time %( diamDiv*60 )=== 0 && time < workMinutes*60) {
+        console.log("changing nextFive", time, time % (diamDiv*60));
+              setFive((prevFive) => prevFive + 1);
+              setDuration(300);
+          }
+  }, [ isPaused, time]);
 
-  // useEffect(() => {
-  //   if (seshStart) {
-  //     // Open a new window when session starts
-  //     const newWindow = window.open("", "_blank");
-  //     newWindow.document.body.innerHTML = `
-  //       <div style="padding: 20px;">
-  //         <DiamondTimerStyled time={time} />
-  //       </div>
-  //     `;
-  //   }
-  // }, [seshStart, time]);
+  // so start button will only appear if sesh starts so I dont need !isPaused.
+  // but when pause and resume, I will need timer. If tab closed, I want timer to auto close.
+
+  // console.log(timeLeft,"timeLeft")
+  // console.log(nextFive,"nextFive")
+  
+
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+
+
 
   return (
     <div
       style={{
-        backgroundColor: "#1F305E",
+        backgroundColor: "black",
         height: "100%",
         padding: "10px",
+        display:"flex",
+        paddingTop:"10px", 
+        flex :"row",
+        gap: "20px", 
+        alignItems:"flex-start"
       }}
+  
     >
-      <button onClick={() => setStartSesh(!seshStart)}>w</button>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        {Array(min / 5)
+      <div className="flex flex-col p-[10px] my-[20px]">
+        {isPaused ? (
+          <div className="flex flex-row gap-[10px]">
+            <button
+              className=" items-center justify-center " style={{
+                backgroundColor:"white", 
+                borderWidth:"0px", 
+                height:"30px", 
+                width:"30px"
+              }}
+              onClick={() => {
+                setIsPaused(false);
+                setIsRunning(true);
+                localStorage.setItem("isRunning", "true");
+                localStorage.setItem("startTime", Date.now());
+              
+              }}
+            >
+              <FaPlayCircle size={15} /> 
+            </button>
+          </div>
+        ) : ( 
+          <button
+          style={{
+            backgroundColor:"white", 
+            borderWidth:"0px", 
+            height:"30px", 
+            width:"30px"
+          }}
+            onClick={() => {
+              setIsPaused(true);
+              setIsRunning(false);
+              localStorage.setItem("PausedTime", time);
+             
+            }}
+            className="btn btn-warning items-center justify-center"
+          >
+            <FaPauseCircle size={15} /> 
+          </button>
+        )}
+      </div>
+{/*  60<min<90, 10 min, 15 min */}
+      <div style={{ display: "flex", flexDirection: "row", alignSelf:"flex-start", justifyContent:"flex-start", marginTop:"10px" }}>
+        {Array(diam)
           .fill(true)
           .map((_, i) => {
             return (
-              <div className="m-[10px]" key={i}>
+              <div className="m-[12px] " key={i}>
                 <div
-                  className={`h-[15px] w-[15px] sm:h-[19px] sm:w-[19px] ${
-                    i === nextFive && seshStart ? "blink" : ""
-                  }`}
-                  User
+                  className={`h-[25px] w-[25px] sm:h-[25px] sm:w-[25px]  
+                     ${i === nextFive && !isPaused ? "blink" : ""}`}
                   style={{
                     backgroundColor:
-                      (i === nextFive && seshStart) ||
-                      (i <= nextFive && seshStart)
+                      (i === nextFive && !isPaused) ||
+                      (i <= nextFive )
                         ? "#fff"
                         : "#6dc1e8", // Lighter shade if animated, darker shade otherwise
                     borderColor:
-                      i === nextFive && seshStart ? "#6dc1e8" : "#fff", // Darker shade if animated, lighter shade otherwise
+                      i === nextFive && !isPaused ? "#6dc1e8" : "#5442f5", // Darker shade if animated, lighter shade otherwise
                     boxShadow:
-                      i === nextFive && seshStart
-                        ? "inset 0px 0px 10px 10px #e4f0f7, 0px 0px 5px 2px #6dc1e8"
-                        : "inset 5px 5px 10px 2px #89cff0, 0px 0px 15px 2px #89cff0", // Darker shadow if animated, lighter shadow otherwise
-                    height: "15px",
-                    width: "15px",
-                    marginRight: "15px",
+                      i === nextFive && !isPaused
+                        ? "inset 5px 5px 5px 5px #e4f0f7, 0px 0px 3px 3px #6dc1e8" 
+                        : "inset 2px 2px 2px 0px #89cff0, 0px 0px 2px 0px #89cff0", // Darker shadow if animated, lighter shadow otherwise
+                    height: "10px",
+                    width: "10px",
+                    marginRight: "12px",
                     transform: " rotate(45deg)",
                   }}
                 ></div>
               </div>
             );
-          })}
+            })}
       </div>
+            <p className="text-white white" style={{ color:"white", textAlign:"center", marginBottom:"auto", border:"12px", 
+              borderColor:"red", 
+              alignSelf:"center"}}>
+
+              {`${minutes < 10 ? "0" : ""}${minutes}:${
+            seconds < 10 ? "0" : ""
+          }${seconds}`}
+            </p>
     </div>
   );
 }
@@ -161,3 +223,8 @@ function DiamondTimer({ time }) {
 export const DiamondTimerStyled = styled(DiamondTimer)``;
 
 export default DiamondTimer;
+
+// time passed will be Work Minutes. But if paused or something, will diamonds act accordingly ? What if it is closed mid session and re opened.
+// A normal timer (use RankingTimer) and a hook that watches for the next 5 using time of the timer.
+
+// so

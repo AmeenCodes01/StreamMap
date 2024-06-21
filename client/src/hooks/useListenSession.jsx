@@ -17,8 +17,6 @@ const useListenSessions = () => {
         
 			setAllSessions([...allSessions, newSession]) 
 			if(newSession.userId == authUser._id){
-				console.log("same")
-				console.log(seshInfo)
 			setSeshInfo([...seshInfo,newSession])
 			}
 		});

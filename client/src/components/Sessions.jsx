@@ -33,8 +33,7 @@ const {saveScore} = useSaveScore()
             
 
       if(newSession.userId == authUser._id){
-        console.log("same")
-        console.log(seshInfo)
+       
       setSeshInfo([...seshInfo,newSession])
       }
     });
@@ -120,7 +119,6 @@ const score =calculateSessionScore(workMinutes, seshRating)
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
-  console.log(localStorage.getItem("sessionID"))
 
   return (
     <div className="flex w-[100%] items-end flex-col justify-items-end mt-[20px] ">

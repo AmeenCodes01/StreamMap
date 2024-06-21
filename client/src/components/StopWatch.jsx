@@ -63,7 +63,6 @@ const onClick = ()=> {
   }
   
 }
-console.log(inSesh)
   return (
     <div
     //  onClick={onClick} 

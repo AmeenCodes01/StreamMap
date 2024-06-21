@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import StreamVid from "../components/StreamVid";
 import DisplayMessage from "../components/DisplayMessage";
-import StreamTimer from "../components/StreamTimer";
 import InSeshTimer from "../components/InSeshTimer";
 import Timer from "../components/Timer";
 import SleepTracker from "../components/SleepTimer";
@@ -14,7 +13,15 @@ import DiamondTimer, { DiamondTimerStyled } from "../components/DiamondTimer";
 import { HealthContextProvider } from "../context/HealthContext";
 import { LeaderBoardContextProvider } from "../context/LeaderBoardContext";
 import UserSessions from "../components/UserSessions";
+import { MdOutlineArrowOutward } from "react-icons/md";
+
 function User() {
+  const [showSepWindow, setShowSepWindow] = useState(false);
+  console.log("I get re rendered muliple USER ")
+  const handleButtonClick = () => {
+    console.log("rendering Sep Windows");
+    setShowSepWindow(true);
+  };
   return (
     <div className=" sm:mt-[30px] mt-[10px]">
       {/* STREAM PLAYER */}
@@ -30,14 +37,20 @@ function User() {
 
           <div className="flex sm:mt-[30px] mt-[25px] ">
             <Timer />
+            {/* <MdOutlineArrowOutward
+          size={25}
+          onClick={handleButtonClick}
+          className="hover:cursor-pointer bg-base-300 hidden sm:flex border-4"
+          /> */}
+          <SepWindow />
+
           </div>
         </div>
         {/* {/* //Progress Tracker */}
 
-        <div className="my-[20px]">
+        <div className="my-[20px] border-2 h-[40px] flex">
           {/* <StreamTimer/> */}
-
-          {/* <SepWindow /> */}
+          {/* <DiamondTimer secondsLeft={600} /> */}
         </div>
 
         <HealthContextProvider>
@@ -60,7 +73,7 @@ function User() {
           className="bg-base-200 w-full h-[00%] bottom-0 absolute"
           style={{}}
         ></div>
-        <DiamondTimerStyled />
+        {/* <DiamondTimerStyled /> */}
         <img src={myImage} alt="" className="flex h-[100%] " />
       </div>
     </div>

@@ -12,7 +12,6 @@ const useGetSessions = () => {
   const getSessions = async (room) => {
     //for specific rooms, this means I ll only query when user joins room. 
     //separate this func + call on mount from AllSessions :))
-    console.log("getting Sesh")
 
     setLoading(true);
     try {
@@ -26,7 +25,6 @@ const useGetSessions = () => {
         throw new Error(data.error);
       }
       // setSessions(data);
-     // console.log(data)
       return data 
     } catch (error) {
       // toast.error(error.message);

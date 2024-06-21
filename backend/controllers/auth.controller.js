@@ -4,7 +4,6 @@ import {generateTokenAndSetCookie} from "../utils/generateToken.js";
 export const signup = async (req, res) => {
   try {
     const {name, email, timeZone, country, color, profilePic} = req.body;
-    console.log(timeZone)
     const user = await User.findOne({email});
     if (user) {
       return res.status(400).json({error: "User already exists"});
@@ -48,10 +47,8 @@ export const login = async (req, res) => {
   try {
     const {email} = req.body;
     const user = await User.findOne({email});
-    console.log(email);
     if (user) {
   const token =  generateTokenAndSetCookie(user._id, res);
-      console.log(token)
       return res.status(201).json({user, token});
       //send data through sessions. if user, then use userId here ? , else add him up.
     } else {
@@ -62,11 +59,13 @@ export const login = async (req, res) => {
     res.status(500).json({error: "Internal Server Error"});
   }
 };
+
+
+
 export const check = async (req, res) => {
   try {
     const {email} = req.body;
     const user = await User.findOne({email});
-    console.log(email);
     if (user) {
       return res.status(200).json({exist: "true"});
     } else {

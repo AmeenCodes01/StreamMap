@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import { useSocketContext } from "../context/SocketContext";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useLiveStream } from "../hooks/useLiveStream";
 
 import { IoExit } from "react-icons/io5";
 
@@ -18,12 +19,12 @@ const MyMap = () => {
 
   const { authUser,setRoom } = useAuthContext();
   // write this into a useEffect.
-
+  const {checkLive} = useLiveStream()
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => {
     setVisible((visible) => !visible);
   }, []);
-  const { socket } = useSocketContext();
+  const { socket, setLive } = useSocketContext();
   // get all users by room. get room name from params.
   const [tab, setTab] = useState("Timer")
   useEffect(() => {
@@ -33,37 +34,32 @@ const MyMap = () => {
     }
   }, [authUser, socket]);
 
-  // useEffect(() => {
-  //   setKey(key + 1);
-  // }, [users]);
-
-  // useEffect(() => {
-  //   if (socket == null) return;
-  //   // const handler = (e) => console.log(e);
-  //   // socket.on("remove-device", e => console.log(e));
-
-  //   socket.on("action", (data) => {
-  //     console.log("Received action:", data);
-  //   });
-  //   return () => {
-  //     socket.off("action", handler);
-  //   };
-  // }, [socket]);
-
-  // const sendAction = () => {
-  //   if (socket) {
-  //     socket.emit("action", {
-  //       userId: authUser._id,
-  //       data: { message: "multiple tabs test" },
-  //     });
-  //   }
-//   // };
+ 
 useEffect(()=> {
 navigate("user")
 }, [])
   const onLeaveRoom = () => {
     socket.emit("leave-room", { room, userId: authUser._id });
   };
+
+  useEffect(() => {
+    //check livestream.
+    const liveCheck = async () => {
+      const data = await checkLive(room);
+      console.log("LIVE CHECK", data);
+      if (data) {
+        setLive(data.live);
+      }
+    };
+    liveCheck();
+  }, [room]);
+
+
+
+
+
+
+
   return (
     <div className="w-[100%]    flex flex-col  overflow-auto   relative   ">
       {/* MAP */}
@@ -112,7 +108,7 @@ navigate("user")
       onChange={(e) => setColor(e.target.value)}
       />
   </label>
-  <p className="mx-[5px] text-xs text-info"> {authUser.country}</p>
+  {/* <p className="mx-[5px] text-xs text-info"> {authUser.country}</p> */}
 </div>
 <div className="collapse ">
   <input type="checkbox" /> 

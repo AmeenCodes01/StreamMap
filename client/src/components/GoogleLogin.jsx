@@ -11,7 +11,6 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
           headers: {Authorization: `Bearer ${tokenResponse.access_token}`},
         })
         .catch((e) => (e.response ? setStatus("fail") : null));
-      console.log(userInfo);
       if (userInfo.data) {
         setProfile(userInfo.data);
 
@@ -28,7 +27,6 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
             }).catch((e) => (e.response ? setStatus("fail") : null));
 
             const data = await res.json();
-            console.log(data);
             if (data.error) {
               throw new Error(data.error);
             }

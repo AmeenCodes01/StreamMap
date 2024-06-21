@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import MyMap from "./pages/MyMap";
+import MyMap from "./pages/MyMap";  
 import Rooms from "./pages/Rooms";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import SignUp from "./pages/SignUp.jsx";
@@ -13,28 +13,6 @@ import AllUsers from "./pages/AllUsers.jsx";
 function App() {
   
   const {authUser} = useAuthContext();
-//   const [token, setToken] = useState(document.cookie.split('; ').find(row => row.startsWith('jwt='))?.split('=')[1]);
-// console.log(token)
-// useEffect(() => {
-//   const checkTokenExpiry = async () => {
-//     if (token) {
-//       const decodedToken = decodeToken(token);
-//       const currentTime = Math.floor(Date.now() / 1000);
-//       if (decodedToken.exp < currentTime) {
-//         try {
-//           const refreshedToken = await refreshToken();
-//           setToken(refreshedToken);
-//         } catch (error) {
-//           console.error('Error refreshing token:', error);
-//           // Handle token refresh failure
-//         }
-//       }
-//     }
-//   };
-
-//   checkTokenExpiry();
-// }, [token]);
-
 
 
 

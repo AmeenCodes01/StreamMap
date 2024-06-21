@@ -26,7 +26,6 @@ function SignUp() {
       signup(userInfo);
     }
   };
-  console.log(profile && signUp);
 
   if (loading) {
     return (

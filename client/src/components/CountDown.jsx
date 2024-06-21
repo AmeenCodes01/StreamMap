@@ -12,7 +12,6 @@ const Timer = ({animate }) => {
     localStorage.getItem("timerIsActive") === "true" || false
   );
   const { inSesh, setInSesh } = useTimeContext();
-console.log(timeLeft)
   useEffect(() => {
     let interval;
 

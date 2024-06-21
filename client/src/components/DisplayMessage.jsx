@@ -25,12 +25,10 @@ function DisplayMessage() {
     }
     
    
-    console.log(time, message)
     
     
     
     useEffect(()=> {
-        console.log("helllo")
         const handler = (e)=>{
           if (e.label ==="time"){
             const localTime = convertToTimeZone(e.hours, e.minutes, e.offset)

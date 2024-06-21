@@ -43,7 +43,6 @@ function Rooms() {
         <Link to="/Shamsia">
           <div
             onClick={() => {
-              console.log("hi");
               // socket.emit("join", {room: "Shamsia", username: "Ameen"});
             }}
             className="bg-black sm:h-[200px] sm:w-[200px] w-[50%] h-[50%] 

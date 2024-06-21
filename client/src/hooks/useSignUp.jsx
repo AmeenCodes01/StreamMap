@@ -26,13 +26,11 @@ const useSignup = () => {
       });
 
       const data = await res.json();
-      console.log(data);
       if (data.error) {
         throw new Error(data.error);
       }
       localStorage.setItem("auth-user", JSON.stringify(data));
       setAuthUser(data);
-      console.log(data);
     } catch (error) {
       toast.error(error.message);
     } finally {

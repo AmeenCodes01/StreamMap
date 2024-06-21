@@ -51,10 +51,8 @@ function Tracker({socket}) {
         setStreamFive(streamNextFive + 1);
         // socket.emit("nextStreamFive", streamNextFive);
 
-        console.log(streamNextFive);
         //update on all room users timer
         //socket.emit("nextStreamFive", streamNextFive)
-        console.log("in interval");
       }, 1000 * 3);
     } else {
       // console.log("StreamSeshEnd");
