@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import React, {useEffect, useState, useRef} from "react";
+import {CircularProgressbar, buildStyles} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { LuTimerReset } from "react-icons/lu";
-import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
-import { useTimeContext } from "../context/TimeContext";
+import {LuTimerReset} from "react-icons/lu";
+import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
+import {useTimeContext} from "../context/TimeContext";
 import useSaveSession from "../hooks/useSaveSession";
-import { useParams } from "react-router-dom";
-import { useSocketContext } from "../context/SocketContext";
-import { useAuthContext } from "../context/AuthContext";
+import {useParams} from "react-router-dom";
+import {useSocketContext} from "../context/SocketContext";
+import {useAuthContext} from "../context/AuthContext";
 
 const red = "#f54e4e";
 
@@ -41,19 +41,18 @@ export default function Timer() {
     parseInt(localStorage.getItem("sessions")) || 0
   );
 
-  const { startSession, sessionID } = useSaveSession();
+  const {startSession, sessionID} = useSaveSession();
 
-  const { authUser } = useAuthContext();
+  const {authUser} = useAuthContext();
 
-  const { id: room } = useParams();
+  const {id: room} = useParams();
 
   const intialTime = Number(
     localStorage.getItem("time") ||
       (mode === "work" ? workMinutes * 60 : breakMinutes * 60)
   );
 
-
-  const { socket } = useSocketContext();
+  const {socket} = useSocketContext();
 
   const toggle = mode === "break";
 
@@ -76,8 +75,8 @@ export default function Timer() {
       const nextSeconds =
         (nextMode === "work" ? workMinutes : breakMinutes) * 60;
       setSessions((prevSessions) => {
-        console.log(prevSessions,"prevSesiso")
-        return parseInt(prevSessions) + (mode === "work" ? 1 : 0)});
+        return parseInt(prevSessions) + (mode === "work" ? 1 : 0);
+      });
       setMode(nextMode);
       setSecondsLeft(nextSeconds);
       localStorage.setItem("startTime", Date.now());
@@ -105,7 +104,6 @@ export default function Timer() {
 
   const onResetTimer = () => {
     localStorage.removeItem("startTime");
-
     setShowRating(false);
     mode === "work" && secondsLeft !== workMinutes * 60
       ? socket.emit("reset-session", {
@@ -113,6 +111,7 @@ export default function Timer() {
           room,
         })
       : null;
+
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
     setSecondsLeft(resetSeconds);
     localStorage.removeItem("time");
@@ -125,23 +124,21 @@ export default function Timer() {
     localStorage.setItem("startTime", Date.now());
   };
 
-
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}
       <div className="flex flex-row">
-
         <input
-        value={sessions}
-            onChange={(e) => {
-              const regex = /^[0-9\b]+$/;
-              if (e.target.value === "" || regex.test(e.target.value)) {
-                setSessions(e.target.value)
-              }
-            }}
-            className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
-            />
-      
+          value={sessions}
+          onChange={(e) => {
+            const regex = /^[0-9\b]+$/;
+            if (e.target.value === "" || regex.test(e.target.value)) {
+              setSessions(e.target.value);
+            }
+          }}
+          className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
+        />
+
         <div className="w-[500px] mr-[10px] min-w-[100px]">
           <CircularProgressbar
             value={percentage}
@@ -265,7 +262,6 @@ export default function Timer() {
           </div>
         </div>
       </div>
-     
 
       <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
         <span className="text-xs self-center text-cente font-semibold">

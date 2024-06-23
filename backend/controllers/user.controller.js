@@ -1,17 +1,15 @@
 import User from "../models/User.js";
 //need to have a session ID.
-import Countries from "../models/Countries.model.js"
+import Countries from "../models/Countries.model.js";
 
 // export const getSessions = (req, res) => {};
 export const getUsers = async (req, res) => {
-  
-  
-  try {   
-    const {ids} = req.body
+  try {
+    const {ids} = req.body;
 
-    console.log(ids,"ids ")
-    const users = await User.find({ _id: { $in: ids } }).select("name _id country profilePic, timeZone").exec();
-    console.log(users,"users")
+    const users = await User.find({_id: {$in: ids}})
+      .select("name _id country profilePic timeZone")
+      .exec();
     // Step 2: Group users by country
     const groupedUsers = users.reduce((acc, user) => {
       const country = user.country;
@@ -21,15 +19,13 @@ export const getUsers = async (req, res) => {
       acc[country].push(user);
       return acc;
     }, {});
-    
+
     // Step 3: Join color information for each country
     for (const country in groupedUsers) {
-      const colorInfo = await Countries.findOne({ country }).exec();
-      console.log(colorInfo, "countrycOLOR      ")
+      const colorInfo = await Countries.findOne({country}).exec();
       groupedUsers[country].forEach((user) => {
-        
         user.color = colorInfo.color;
-      }); 
+      });
     }
 
     for (const country in groupedUsers) {
@@ -43,28 +39,26 @@ export const getUsers = async (req, res) => {
       }, {});
       groupedUsers[country] = Object.values(usersByTimeZone);
     }
-      console.log("groupedUsers", groupedUsers)
     res.status(200).json(groupedUsers);
   } catch (e) {
     console.log(e.message);
     console.error("Error in getUsers: ", e.message);
-    res.status(500).json({ error: "Internal  error" });
+    res.status(500).json({error: "Internal  error"});
   }
 };
-//why are we calling this in the first place ? no use in getting all users, is there 
+//why are we calling this in the first place ? no use in getting all users, is there
 
-};
 export const changeCountry = async (req, res) => {
   try {
-   const {newCountry, id} = req.body
-   const user = await User.findById(userId);
-     if (!user) {
+    const {newCountry, id} = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
       throw new Error("User not found");
     }
-    user.country = newCountry 
-    await user.save()
+    user.country = newCountry;
+    await user.save();
   } catch (e) {
- console.error("Error in changeCountry: ", e.message);
-    res.status(500).json({ error: "Internal Country Change  error" });
+    console.error("Error in changeCountry: ", e.message);
+    res.status(500).json({error: "Internal Country Change  error"});
   }
 };

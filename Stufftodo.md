@@ -1,60 +1,49 @@
-What is the use of user.controller ? Apparantly it get all users 
+What is the use of user.controller ? Apparantly it get all users
 
-Sleep tracker not sending data to database, set up API 
+Sleep tracker not sending data to database, set up API
 
+save goal of session input in localStorage.
 
-save goal of session input in localStorage. 
+--- get rating of a session. If not given, what to do then ? a popup to ask for
+it, mandatory ? entering goal is not mandatory
 
---- get rating of a session. If not given, what to do then ? a popup to ask for it, mandatory ? entering goal is not mandatory
+R A N K I N G S in rankings, when timer ends, remove session/user.
 
-R A N K I N G S 
-in rankings, when timer ends, remove session/user. 
-
-
-
- 
- 
 profile & shop first (new comps)
-
 
 --so from online users,
 
-STEPS
--get online users
--request their data from the api 
--group them based on countries. (I can do this in sql, right ?) use timezone of any user in there. 
--for each country in array, get colours api
--get colours & store them (add them to country array)
+STEPS -get online users -request their data from the api -group them based on
+countries. (I can do this in sql, right ?) use timezone of any user in there.
+-for each country in array, get colours api -get colours & store them (add them
+to country array)
 
+I make array of countries containing user & timezone & then from api, I get
+their colour. --so on signIn, I check if country exists, if it does, dont ask
+for colour, otherwise ask & let them know.
 
- I make array of countries containing user & timezone & then from api, I get their colour. 
---so on signIn, I check if country exists, if it does, dont ask for colour, otherwise ask & let them know. 
+S P R I N T S [] check Live through db instead of socket io <------
 
+- grab latest (of the room) and check if endedAt exist, if does, return true.
+  else return false.
 
-S P R I N T S 
-[] check Live through db instead of socket io <------
-   - grab latest (of the room) and check if endedAt exist, if does, return true. else return false. 
-   
-   - ID not required since it will just end the last session (of the room)
+- ID not required since it will just end the last session (of the room)
 
-[] fix timer showing even if new live. 
-[] add changing colour and country api and functionality 
-[] fix table styles on user page 
-[] fix sep window timer and full functionality 
-[] build profile icon (user, points, and no of promises, of 2 colours)
-[] shop page where to buy promises 
-[] fix socket issue, new user not shown, only on refresh
-[] fix timer so that it runs on remaining time (rn it resumes only when on the Timer tab)
+[] fix timer showing even if new live. [] add changing colour and country api
+and functionality [] fix table styles on user page [] fix sep window timer and
+full functionality [] build profile icon (user, points, and no of promises, of 2
+colours) [] shop page where to buy promises [] fix socket issue, new user not
+shown, only on refresh [] fix timer so that it runs on remaining time (rn it
+resumes only when on the Timer tab)
 
+[] add createdAt & EndedAt in user sessions table
 
+Q U E S ''' do I add list of in sesh timers, like a table during sessions ?
 
+F I X E S: removed tokens & protected route, sending userId where required.
 
-
-F I X E S: 
-removed tokens & protected route, sending userId where required.
-
-<<<<<<< HEAD
-----make a button for SepTimer and on clicking, setOpen of SepWindow to true. will fix the problem. 
+----make a button for SepTimer and on clicking, setOpen of SepWindow to true.
+will fix the problem.
 
    <p className=" flex flex-row     ">
                   <p className="badge  badge-md badge-primary rounded-[0.2px]">
@@ -87,20 +76,3 @@ removed tokens & protected route, sending userId where required.
                       ))
                     : null}
                 </div>
-=======
-
-PROBLEMS:
-- Socket io doesn't connect user to room // doesn't show up new users, only on refresh.
-- live status not real time // working accurately
-- 
-
-
-User Stories: 
-I want to see the live rankings & timers of other users when there's a live. 
-
-
------
-Just give workMinutes to timer to calculate diamonds. 
--------
-
->>>>>>> 4881f169b34ebefabd6a9c5b8a0837801725b0f0

@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import {Server} from "socket.io";
 import http from "http";
 import express from "express";
 import Session from "../models/Session.model.js";
@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3001",   
+    origin: "http://localhost:3001",
     methods: ["GET", "POST"],
   },
 });
@@ -17,14 +17,14 @@ export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
 };
 
-const users = {};   
+const users = {};
 
 //room Users
 const userSocketMap = {}; // {userId: socketId}
 let chatRoom = ""; // E.g. javascript, node,...
 let allUsers = []; // All users in current chat room
-let liveTime = {}
-export const sessions = {}
+let liveTime = {};
+export const sessions = {};
 const socketRooms = {};
 const userRooms = {};
 // io.sockets.clients("Shamsia")
@@ -37,70 +37,75 @@ io.on("connection", async (socket) => {
   // refreshToken(req,res)
 
   socket.on("identify", (userId) => {
-
-    socket.join(userId);   
+    socket.join(userId);
     socket.userId = userId;
 
     socketRooms[socket.id] = [];
-
   });
-  
-    socket.on("join-room", ({ userId, room: roomName }) => {
-      socket.join(roomName);
-      socketRooms[socket.id]?.push(roomName);
-      if (!userRooms[roomName]) {
-        userRooms[roomName] = [];  
+
+  socket.on("join-room", ({userId, room: roomName}) => {
+    socket.join(roomName);
+    socketRooms[socket.id]?.push(roomName);
+    if (!userRooms[roomName]) {
+      userRooms[roomName] = [];
+    }
+
+    if (!userRooms[roomName].includes(userId)) {
+      userRooms[roomName].push(userId);
+      // Send updated list of users in the room to all clients in the room
+      //Send live ID
+      io.to(roomName).emit("roomUsers", userRooms[roomName]);
+
+      if (liveTime[roomName]) {
+        socket.emit("live-status", {
+          status: true,
+          livestreamID: liveTime[roomName],
+        });
       }
-
-      if (!userRooms[roomName].includes(userId)) {
-        userRooms[roomName].push(userId);
-        // Send updated list of users in the room to all clients in the room
-        //Send live ID
-        io.to(roomName).emit("roomUsers", userRooms[roomName]);
-
-
-  if (liveTime[roomName]){
-    socket.emit("live-status", { status: true, livestreamID: liveTime[roomName] });
-  }   
-   
-
-      }
-    });
+    }
+  });
 
   socket.on("live", async (e) => {
-    io.to(e.room).emit("live-status", { status: e.live});
-
-   
+    io.to(e.room).emit("live-status", {status: e.live});
   });
-      
-    
+
   socket.on("display-message", (e) => {
     socket.broadcast.to(e.room).emit("stream-message", e);
     console.log(e);
   });
 
-  
-  socket.on("paused-session",({ id,room       , pause })=>{
-if(pause !== undefined && sessions[room]){
-  const userSeshIndex = sessions[room].findIndex(s => s._id.toString() === id)
-  sessions[room][userSeshIndex]= {...sessions[room][userSeshIndex], pause, pauseTime: Date.now()}
-  io.to(room).emit("paused-session", {id,pause})
-}
-})          
+  socket.on("paused-session", ({id, room, pause}) => {
+    if (pause !== undefined && sessions[room]) {
+      const userSeshIndex = sessions[room].findIndex(
+        (s) => s._id.toString() === id
+      );
+      sessions[room][userSeshIndex] = {
+        ...sessions[room][userSeshIndex],
+        pause,
+        pauseTime: Date.now(),
+      };
+      io.to(room).emit("paused-session", {id, pause});
+    }
+  });
 
-socket.on("reset-session",async({ id,room })=>{
-if(sessions[room] && id){
-  await Session.deleteOne({ _id : ObjectId(id) })
-  const userSeshIndex = sessions[room].findIndex(s => s._id.toString() === id);
-  if (userSeshIndex !== -1) {
-    sessions[room] = sessions[room].filter((s, index) => index !== userSeshIndex);
-  }
-io.to(room).emit("reset-session", {id})
-}
-})     
+  socket.on("reset-session", async ({id, room}) => {
+    if (sessions[room] && id) {
+      //Object ID is making the issue here, check
+      await Session.deleteOne({_id: id});
+      const userSeshIndex = sessions[room].findIndex(
+        (s) => s._id.toString() === id
+      );
+      if (userSeshIndex !== -1) {
+        sessions[room] = sessions[room].filter(
+          (s, index) => index !== userSeshIndex
+        );
+      }
 
+      io.to(room).emit("reset-session", {id});
+    }
+  });
 
-  socket.on("leave-room", ({ room: roomName, userId }) => {
+  socket.on("leave-room", ({room: roomName, userId}) => {
     socket.leave(roomName);
 
     if (userRooms[roomName]) {
@@ -135,4 +140,4 @@ io.to(room).emit("reset-session", {id})
     console.log("userRooms, socketRooms", userRooms, socketRooms);
   });
 });
-export { app, io, server };
+export {app, io, server};

@@ -26,11 +26,11 @@ function Map() {
     fillOpacity: 0.75,
     opacity: 10,
   };
-  const { users, loading } = useGetUsers();
-if (loading){
-  return;
-}
-console.log("usersMao", users)
+  const {users, loading} = useGetUsers();
+  if (loading) {
+    return;
+  }
+  console.log("usersMao", users);
 
   const onEachCountry = (country, layer) => {
     let countryName = country.properties.ADMIN;
@@ -38,16 +38,15 @@ console.log("usersMao", users)
 
     for (const key in users) {
       if (countryName === key) {
-        console.log(users[key][0]["color"])
-        color = users[key][0]["color"];
+        color = users[key][0][0]["color"];
       }
     }
     layer.setStyle({
       fillColor: color,
     });
     layer.bindPopup(countryName);
-    }
-    
+  };
+
   //   for (let i = 0; i < users.length; i++) {
   //     console.log(countryName, users[i].color , "colorU")
   //     if (countryName === users[i]) {
@@ -60,23 +59,24 @@ console.log("usersMao", users)
   //   layer.bindPopup(countryName);
   // };
   return (
-      <MapContainer
-        style={{
-          width: "100%",
-          // backgroundImage: `linear-gradient(to bottom, #CAF0F8, rgb(116, 192, 219))`,
-        }}
-        className="min-h-[75vh]  "
-        zoom={2}
-        center={center}>
-        <GeoJSON
-          key={key}
-          style={countryStyle}
-          data={mapData.features}
-          onEachFeature={onEachCountry}
-        />
+    <MapContainer
+      style={{
+        width: "100%",
+        // backgroundImage: `linear-gradient(to bottom, #CAF0F8, rgb(116, 192, 219))`,
+      }}
+      className="min-h-[75vh]  "
+      zoom={2}
+      center={center}
+    >
+      <GeoJSON
+        key={key}
+        style={countryStyle}
+        data={mapData.features}
+        onEachFeature={onEachCountry}
+      />
 
-        <SetViewOnClick coords={center} zoomed={zoomed} />
-      </MapContainer>
+      <SetViewOnClick coords={center} zoomed={zoomed} />
+    </MapContainer>
   );
 }
 
