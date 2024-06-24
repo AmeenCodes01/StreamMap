@@ -69,39 +69,39 @@ export const LeaderBoardContextProvider = ({children}) => {
     }
   }, [socket]); // Added socket to dependency array
 
-  // useEffect(() => {
-  //   const handler = ({id}) => {
-  //     setLiveRanking((prevLiveRanking) => {
-  //       // Check if the session already exists in the state
-  //       const existingSessionIndex = prevLiveRanking.findIndex(
-  //         (session) => session?._id === id
-  //       );
+  useEffect(() => {
+    const handler = ({id}) => {
+      setLiveRanking((prevLiveRanking) => {
+        // Check if the session already exists in the state
+        const existingSessionIndex = prevLiveRanking.findIndex(
+          (session) => session?._id === id
+        );
 
-  //       // If it exists, update the existing session
-  //       if (existingSessionIndex !== -1) {
-  //         const updatedRanking = [...prevLiveRanking];
-  //         const session = updatedRanking[existingSessionIndex];
-  //         updatedRanking[existingSessionIndex] = {
-  //           totalDuration: session.totalDuration,
-  //           totalScore: session.totalScore,
-  //           userId: session.userId,
-  //         };
-  //         return updatedRanking;
-  //       } else {
-  //         // If it doesn't exist, add the new session
-  //         const updatedRanking = [...prevLiveRanking, session];
-  //         return updatedRanking;
-  //       }
-  //     });
-  //   };
+        // If it exists, update the existing session
+        if (existingSessionIndex !== -1) {
+          const updatedRanking = [...prevLiveRanking];
+          const session = updatedRanking[existingSessionIndex];
+          updatedRanking[existingSessionIndex] = {
+            totalDuration: session.totalDuration,
+            totalScore: session.totalScore,
+            userId: session.userId,
+          };
+          return updatedRanking;
+        } else {
+          // If it doesn't exist, add the new session
+          const updatedRanking = [...prevLiveRanking, session];
+          return updatedRanking;
+        }
+      });
+    };
 
-  //   if (socket) {
-  //     socket.on("reset-session", handler);
-  //     return () => {
-  //       socket.off("reset-session", handler);
-  //     };
-  //   }
-  // }, [socket]);
+    if (socket) {
+      socket.on("reset-session", handler);
+      return () => {
+        socket.off("reset-session", handler);
+      };
+    }
+  }, [socket]);
   // Added socket to dependency array
 
   //on pause, send session id to socket, which will emit it to all clients, the client will take it and add pause to status , also update sessions obj.

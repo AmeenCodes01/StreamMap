@@ -13,18 +13,37 @@ function Rankings() {
   
   
   const SessionTableRow = ({ session }) => {
-    const {users, loading} = useGetUsers()
+    const {users} = useGetUsers()
     const { userId, goal, duration, totalDuration, totalScore, rating, _id, createdAt } =
       session;
 
-      if(loading){
-        return; 
-      }
+
+      const idToNameMap = (userId) => {
+        let foundName = null; // Initialize with a default value
+      
+        for (const country in users) {
+          users[country].forEach((users) => {
+            users.forEach((user) => {
+              if (userId === user._id) {
+                foundName = user.name; // Store the found name
+              }
+            });
+          });
+        }
+      
+        return foundName; // Return the name (or null if not found)
+      };
+      
+
+      
+//find id from name & display
 
     return (
       <tr className=" h-[50px]">
- {/* <td>
- {users.filter((u)=>  u._id===e.userId)[0].name ?users.filter((u)=>  u._id===e.userId)[0].name :null }</td>      */}
+ <td>
+ 
+ </td>     
+ <td>{idToNameMap(userId)} dd</td>
     <td>{goal}</td>
         <td className="items-center ">
           <RankingTimer
@@ -48,6 +67,7 @@ function Rankings() {
   // if (loading) {
   //   return <span className="loading loading-infinity loading-md"></span>;
   // }
+
   return (
     <div className="flex border-2 w-[80%] items-center self-center mt-[20px]">
           <Table className="table table-zebra table-xs  rounded-[12px] table-pin-rows  items-center">
