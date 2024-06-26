@@ -8,7 +8,7 @@ export const getUsers = async (req, res) => {
     const {ids} = req.body;
 
     const users = await User.find({_id: {$in: ids}})
-      .select("name _id country profilePic timeZone")
+      .select("name _id country profilePic timeZone scores")
       .exec();
     // Step 2: Group users by country
     const groupedUsers = users.reduce((acc, user) => {
@@ -45,12 +45,12 @@ export const getUsers = async (req, res) => {
     console.error("Error in getUsers: ", e.message);
     res.status(500).json({error: "Internal  error"});
   }
-};      
+};
 //why are we calling this in the first place ? no use in getting all users, is there
 
 export const changeCountry = async (req, res) => {
   try {
-    const {newCountry, id} = req.body;    
+    const {newCountry, id} = req.body;
     const user = await User.findById(userId);
     if (!user) {
       throw new Error("User not found");
@@ -62,4 +62,3 @@ export const changeCountry = async (req, res) => {
     res.status(500).json({error: "Internal Country Change  error"});
   }
 };
-   

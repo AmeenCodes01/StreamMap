@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
 // import toast from "react-hot-toast";
-import {useSocketContext} from "../context/SocketContext"
+import {useSocketContext} from "../context/SocketContext";
 const useGetUsers = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const {onlineUsers} = useSocketContext()
+  const {onlineUsers} = useSocketContext();
+  console.log;
   useEffect(() => {
-    console.log(onlineUsers,"onlineUses in hook ")
+    console.log(onlineUsers, "onlineUses in hook ");
     const getUsers = async () => {
       setLoading(true);
       try {
@@ -34,4 +35,4 @@ const useGetUsers = () => {
 };
 export default useGetUsers;
 
-// get onlineUsers information only. 
+// get onlineUsers information only.

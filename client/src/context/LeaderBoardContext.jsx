@@ -33,10 +33,10 @@ export const LeaderBoardContextProvider = ({children}) => {
       if (data) setLiveRanking(data);
     };
 
-    if (live && liveID) {
+    if (live) {
       getLiveRanking();
     }
-  }, [live, liveID, room]);
+  }, [live, room]);
 
   useEffect(() => {
     const handler = (sesh) => {
@@ -69,14 +69,16 @@ export const LeaderBoardContextProvider = ({children}) => {
     }
   }, [socket]); // Added socket to dependency array
 
+  //simple logic of resetting is that remove timer, title, set time to 00:00. everything else remians same.
   useEffect(() => {
     const handler = ({id}) => {
       setLiveRanking((prevLiveRanking) => {
         // Check if the session already exists in the state
+        //but it already should.
         const existingSessionIndex = prevLiveRanking.findIndex(
           (session) => session?._id === id
         );
-
+        console.log(prevLiveRanking, "prevRanking");
         // If it exists, update the existing session
         if (existingSessionIndex !== -1) {
           const updatedRanking = [...prevLiveRanking];
@@ -86,12 +88,15 @@ export const LeaderBoardContextProvider = ({children}) => {
             totalScore: session.totalScore,
             userId: session.userId,
           };
-          return updatedRanking;
-        } else {
-          // If it doesn't exist, add the new session
-          const updatedRanking = [...prevLiveRanking, session];
+
+          console.log(updatedRanking, "updatedRanking");
           return updatedRanking;
         }
+        //else {
+        //   // If it doesn't exist, add the new session  ?
+        //   const updatedRanking = [...prevLiveRanking, session];
+        //   return updatedRanking;
+        // }
       });
     };
 
@@ -102,17 +107,20 @@ export const LeaderBoardContextProvider = ({children}) => {
       };
     }
   }, [socket]);
+
   // Added socket to dependency array
 
   //on pause, send session id to socket, which will emit it to all clients, the client will take it and add pause to status , also update sessions obj.
 
   useEffect(() => {
     const handler = (sesh) => {
+      console.log(sesh, "ended session");
       setLiveRanking((prevLiveRanking) => {
         const updatedRanking = prevLiveRanking.map((session) => {
           if (session.userId === sesh.userId) {
             return {
               ...session,
+              //   goal: session.goal == "" ? sesh.goal : session.goal,
               totalScore: (session.totalScore || 0) + sesh.score,
               totalDuration: (session.totalDuration || 0) + sesh.duration,
               rating: sesh.rating,

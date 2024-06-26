@@ -34,6 +34,7 @@ const useGetRoomRankings = () => {
 
     setLoading(true);
     
+    console.log("sending req")
     try {
       const res = await fetch("/api/score/liveRanking", {
         method: "POST",
@@ -41,6 +42,7 @@ const useGetRoomRankings = () => {
         body: JSON.stringify({room, livestreamID: id}),
       });
       const data = await res.json();
+      console.log(data, "data")
       if (data.error) {
         throw new Error(data.error);
       }

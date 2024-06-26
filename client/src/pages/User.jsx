@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import StreamVid from "../components/StreamVid";
 import DisplayMessage from "../components/DisplayMessage";
 import InSeshTimer from "../components/InSeshTimer";
 import Timer from "../components/Timer";
 import SleepTracker from "../components/SleepTimer";
 import MoodTracker from "../components/MoodTracker";
-import { TimeContextProvider } from "../context/TimeContext";
+import {TimeContextProvider} from "../context/TimeContext";
 import Sessions from "../components/Sessions";
 import myImage from "../assets/Flamingo.png";
 import SepWindow from "../components/SepWindow";
-import DiamondTimer, { DiamondTimerStyled } from "../components/DiamondTimer";
-import { HealthContextProvider } from "../context/HealthContext";
-import { LeaderBoardContextProvider } from "../context/LeaderBoardContext";
+import DiamondTimer, {DiamondTimerStyled} from "../components/DiamondTimer";
+import {HealthContextProvider} from "../context/HealthContext";
+import {LeaderBoardContextProvider} from "../context/LeaderBoardContext";
 import UserSessions from "../components/UserSessions";
-import { MdOutlineArrowOutward } from "react-icons/md";
+import {MdOutlineArrowOutward} from "react-icons/md";
 
 function User() {
   const [showSepWindow, setShowSepWindow] = useState(false);
-  console.log("I get re rendered muliple USER ")
+  console.log("I get re rendered muliple USER ");
   const handleButtonClick = () => {
     console.log("rendering Sep Windows");
     setShowSepWindow(true);
@@ -42,8 +42,7 @@ function User() {
           onClick={handleButtonClick}
           className="hover:cursor-pointer bg-base-300 hidden sm:flex border-4"
           /> */}
-          <SepWindow />
-
+            <SepWindow />
           </div>
         </div>
         {/* {/* //Progress Tracker */}
@@ -58,12 +57,11 @@ function User() {
             <Sessions />
           </LeaderBoardContextProvider>
           <div className="md:flex md:flex-row-reverse  w-[100%] md:justify-between">
-
-          <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
-            <MoodTracker />
-            <SleepTracker />
-          </div>
-            <UserSessions/>
+            <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
+              <MoodTracker />
+              <SleepTracker />
+            </div>
+            <UserSessions />
           </div>
         </HealthContextProvider>
         <InSeshTimer />

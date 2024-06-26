@@ -24,11 +24,27 @@ export const useLiveStream = () => {
   };
 
   const endLive = async () => {
+    let ranking;
     try {
-      const res = await fetch("/api/live/endLive", {
+      //getLiveRanking first 3.
+      const rankingRes = await fetch("/api/score/liveRanking", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({room}),
+      });
+
+      const rankingData = await rankingRes.json();
+      if (rankingData.error) {
+        throw new Error(data.error);
+      }
+
+      ranking = rankingData.slice(0, 3);
+
+      ///////////////////////
+      const res = await fetch("/api/live/endLive", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({room, ranking}),
       });
       const data = await res.json();
       if (data.error) {
@@ -40,6 +56,7 @@ export const useLiveStream = () => {
       toast.error(error.message);
     }
   };
+
   const checkLive = async (sentRoom) => {
     console.log("checkLive", sentRoom);
 

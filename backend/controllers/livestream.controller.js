@@ -55,8 +55,7 @@ export const checkStream = async (req, res) => {
 };
 
 export const endLive = async (req, res) => {
-  const {room} = req.body;
-
+  const {room, ranking} = req.body;
   try {
     const livestream = await Livestream.findOne({room: room}).sort({
       createdAt: -1,
@@ -64,6 +63,7 @@ export const endLive = async (req, res) => {
     if (livestream && !livestream.endedAt) {
       // If the latest livestream has not ended, set its endedAt property
       livestream.endedAt = Date.now();
+      livestream.ranking = ranking;
       await livestream.save();
     }
     console.log(livestream);

@@ -8,14 +8,16 @@ import useSaveSession from "../hooks/useSaveSession";
 import {useParams} from "react-router-dom";
 import {useSocketContext} from "../context/SocketContext";
 import {useAuthContext} from "../context/AuthContext";
-
+import useIsTabActive from "../hooks/useIsTabActive"; // Import the hook
+import {setInterval, clearInterval} from "worker-timers";
 const red = "#f54e4e";
 
 export default function Timer() {
   const pausedTime = localStorage.getItem("PausedTime");
 
   const elapsedTime = (Date.now() - localStorage.getItem("startTime")) / 1000;
-
+  const isTabVisible = useIsTabActive();
+  console.log(isTabVisible, "vis");
   const {
     workMinutes,
     setWorkMinutes,
@@ -66,7 +68,7 @@ export default function Timer() {
     if (remainingTime > 0) {
       setSecondsLeft(isPaused ? pausedTime : parseInt(remainingTime));
     }
-  }, []);
+  }, [isTabVisible]);
 
   useEffect(() => {
     function switchMode() {
