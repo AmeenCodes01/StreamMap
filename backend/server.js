@@ -14,7 +14,7 @@ import userRoutes from "./routes/userRoutes.js";
 import sleepRoutes from "./routes/sleepRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import livestreamRoutes from "./routes/livestreamRoutes.js";
-
+import promisesRoutes from "./routes/promisesRoutes.js";
 dotenv.config();
 app.use(cors());
 app.use(express.json());
@@ -37,6 +37,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/sleep", sleepRoutes);
 app.use("/api/score", scoreRoutes);
 app.use("/api/live", livestreamRoutes);
+app.use("/api/promise", promisesRoutes);
 
 const PORT = process.env.PORT || 3000;
 

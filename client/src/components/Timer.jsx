@@ -134,7 +134,10 @@ export default function Timer() {
           value={sessions}
           onChange={(e) => {
             const regex = /^[0-9\b]+$/;
-            if (e.target.value === "" || regex.test(e.target.value)) {
+            if (
+              (e.target.value === "" || regex.test(e.target.value)) &&
+              e.target.value <= 10
+            ) {
               setSessions(e.target.value);
             }
           }}

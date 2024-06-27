@@ -1,26 +1,21 @@
 import mongoose from "mongoose";
-const promisesSchema = new mongoose.Schema({
+const promiseSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  Promises: {
-    type: [
-      {
-        promise: {
-          type: String,
-          required: true,
-        },
-        coins: {
-          type: Number,
-        },
-      },
-    ],
+  promise: {
+    type: String,
+    required: true,
+  },
+  coins: {
+    type: Number,
+    default: 0,
   },
 
   //name,country,pfp, timezone offset, country color
 });
-const Promises = mongoose.model("Promise", promisesSchema);
+const Promise = mongoose.model("Promise", promiseSchema);
 
-export default Promises;
+export default Promise;

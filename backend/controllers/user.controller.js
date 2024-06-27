@@ -8,7 +8,7 @@ export const getUsers = async (req, res) => {
     const {ids} = req.body;
 
     const users = await User.find({_id: {$in: ids}})
-      .select("name _id country profilePic timeZone scores")
+      .select("name _id country profilePic timeZone ")
       .exec();
     // Step 2: Group users by country
     const groupedUsers = users.reduce((acc, user) => {

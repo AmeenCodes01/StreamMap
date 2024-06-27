@@ -1,14 +1,22 @@
 import User from "../models/User.js";
-import {generateTokenAndSetCookie} from "../utils/generateToken.js";
-
+import Promise from "../models/Promises.model.js";
 export const signup = async (req, res) => {
   try {
     const {name, email, timeZone, country, color, profilePic} = req.body;
     const user = await User.findOne({email});
+
     if (user) {
       return res.status(400).json({error: "User already exists"});
       //send data through sessions. if user, then use userId here ? , else add him up.
     } else {
+      //create promise.
+
+      const donatePromise = new Promise({
+        promise: "Donate to Palestine",
+      });
+
+      await donatePromise.save();
+
       const newUser = new User({
         name,
         email,
@@ -17,13 +25,13 @@ export const signup = async (req, res) => {
         color,
         profilePic,
       });
-      if (newUser) {
-        generateTokenAndSetCookie(newUser._id, res);
 
+      if (newUser) {
         await newUser.save();
 
         res.status(201).json({
           _id: newUser._id,
+          p_id: donatePromise._id,
           name: newUser.name,
           email: newUser.email,
           timeZone: newUser.timeZone,
@@ -41,14 +49,12 @@ export const signup = async (req, res) => {
   }
 };
 
-
-
 export const login = async (req, res) => {
   try {
     const {email} = req.body;
     const user = await User.findOne({email});
     if (user) {
-  const token =  generateTokenAndSetCookie(user._id, res);
+      const token = generateTokenAndSetCookie(user._id, res);
       return res.status(201).json({user, token});
       //send data through sessions. if user, then use userId here ? , else add him up.
     } else {
@@ -59,8 +65,6 @@ export const login = async (req, res) => {
     res.status(500).json({error: "Internal Server Error"});
   }
 };
-
-
 
 export const check = async (req, res) => {
   try {

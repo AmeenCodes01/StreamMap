@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {FaPlus} from "react-icons/fa";
 import useGetUsers from "../hooks/useGetUsers";
 import {useAuthContext} from "../context/AuthContext";
@@ -6,8 +6,22 @@ function AllUsers() {
   const {users} = useGetUsers();
   const {authUser} = useAuthContext();
   //these things should be in authUser because this s
-  const [user, setUser] = useState();
-  useEffect(() => {}, [users]);
+  const [score, setScore] = useState();
+  useEffect(() => {
+    //we getting the score of authUser from here.
+    const User = Object.keys(users).filter((country) => {
+      let u;
+      users[country].filter((timeZone) => {
+        timeZone.filter((user) => {
+          if (user._id === authUser._id) {
+            u = user;
+          }
+        });
+      });
+      return u;
+    });
+    console.log(User);
+  }, []);
   return (
     <div className=" w-[100px] h-[100%] flex flex-col ">
       {/* get score */}

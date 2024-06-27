@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-// import {io} from "socket.io-client";
-import UserData from "../components/UserData";
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import {CiShop} from "react-icons/ci";
+
 // sm:justify-items-center
 // sm:items-center sm:justify-center
 
@@ -24,11 +24,17 @@ function Rooms() {
   return (
     <div
       className="bg-gray-500 h-[100vh] p-[20px] 
-      flex flex-row
+      flex flex-col
     "
     >
+      <div className="w-[100%] border-2 items-end justify-end flex  ">
+        <Link to="/shop">
+          <CiShop color="white" size={30} className="" />
+        </Link>
+      </div>
+
       {/* Input Country + color + username */}
-      <div className=" h-[100vh]">{/* <UserData /> */}</div>
+      {/* <div className=" h-[100vh] border-2"></div> */}
       {/* <input onClick={(event) => setUsername(event.target.value)} /> */}
       <div>
         {/* <button

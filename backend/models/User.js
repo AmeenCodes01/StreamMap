@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema(
   {
     name: {type: String, required: true},
@@ -14,7 +15,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    scores : [{score:Number, room: String}],
+    scores: [{score: Number, room: String}],
 
     //name,country,pfp, timezone offset, country color
   },
