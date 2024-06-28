@@ -3,13 +3,13 @@ import {
   updateScore,
   getRanking,
   getLiveRanking,
-  getTotalScore,
+  // getTotalScore,
 } from "../controllers/score.controller.js";
 
 const router = express.Router();
 router.post("/saveScore", updateScore);
 router.post("/ranking", getRanking);
 router.post("/liveRanking", getLiveRanking);
-router.post("/getScore", getTotalScore);
+// router.post("/getScore", getTotalScore);
 
 export default router;

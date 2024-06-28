@@ -22,8 +22,9 @@ const useLogin = () => {
         throw new Error(data.error);
       }
       // localStorage.setItem("token", JSON.stringify(data.token))
-      localStorage.setItem("auth-user", JSON.stringify(data.user));
+      localStorage.setItem("auth-user", JSON.stringify(data));
       setAuthUser(data);
+      
     } catch (error) {
       toast.error(error.message);
     } finally {

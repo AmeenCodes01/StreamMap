@@ -6,20 +6,20 @@ import {sessions} from "../socket/socket.js";
 //Promises should not be inside a room right ?
 //but invidual room points ? later
 
-export const getTotalScore = async (req, res) => {
-  try {
-    const {id} = req.body;
-    console.log(id, "idTotalScore");
-    const userScores = await User.findById(id).select("-_id scores").exec();
-    res.status(200).json(userScores);
+// export const getTotalScore = async (req, res) => {
+//   try {
+//     const {id} = req.body;
+//     console.log(id, "idTotalScore");
+//     const userScores = await User.findById(id).select("-_id scores").exec();
+//     res.status(200).json(userScores);
 
-    console.log(userScores, "scores");
-  } catch (error) {
-    res.status(500).json({error: "Internal  error"});
+//     console.log(userScores, "scores");
+//   } catch (error) {
+//     res.status(500).json({error: "Internal  error"});
 
-    console.error("Error getting Total Score:", error);
-  }
-};
+//     console.error("Error getting Total Score:", error);
+//   }
+// };
 
 export const updateScore = async (req, res) => {
   const {score: newScore, room, id: userId} = req.body;

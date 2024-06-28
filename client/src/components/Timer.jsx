@@ -34,8 +34,9 @@ export default function Timer() {
     breakMinutes,
     setBreakMinutes,
   } = useTimeContext();
-  const secondsLeftRef = useRef();
 
+
+  console.log(isRunning,"run", isPaused,"paused")
   const remainingTime =
     (mode === "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
 
@@ -49,8 +50,12 @@ export default function Timer() {
 
   const {id: room} = useParams();
 
+
+const key = `${authUser._id} + ${room}`
+
+
   const intialTime = Number(
-    localStorage.getItem("time") ||
+    localStorage.getItem(`${key}time`) ||
       (mode === "work" ? workMinutes * 60 : breakMinutes * 60)
   );
 

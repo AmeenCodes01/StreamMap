@@ -8,7 +8,7 @@ import useGetUsers from "../hooks/useGetUsers";
 function SetViewOnClick({coords, zoomed}) {
   const map = useMap();
   map.setView(coords, zoomed ? 3 : map.getZoom());
-  //setZoom(false);
+  // setZoom(false);
 
   return null;
 }
@@ -38,7 +38,8 @@ function Map() {
 
     for (const key in users) {
       if (countryName === key) {
-        color = users[key][0][0]["color"];
+        console.log(users[key][0][0], "colour")
+        color = users[key][0][0]
       }
     }
     layer.setStyle({
@@ -75,7 +76,7 @@ function Map() {
         onEachFeature={onEachCountry}
       />
 
-      <SetViewOnClick coords={center} zoomed={zoomed} />
+      <SetViewOnClick coords={center} zoomed={zoomed}  />
     </MapContainer>
   );
 }

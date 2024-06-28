@@ -1,8 +1,11 @@
 import User from "../models/User.js";
 import Promise from "../models/Promises.model.js";
+
+
+
 export const signup = async (req, res) => {
   try {
-    const {name, email, timeZone, country, color, profilePic} = req.body;
+    const {name, email, timeZone, country, profilePic} = req.body;
     const user = await User.findOne({email});
 
     if (user) {
@@ -11,34 +14,30 @@ export const signup = async (req, res) => {
     } else {
       //create promise.
 
-      const donatePromise = new Promise({
-        promise: "Donate to Palestine",
-      });
-
-      await donatePromise.save();
-
       const newUser = new User({
         name,
         email,
         timeZone,
         country,
-        color,
         profilePic,
-      });
-
-      if (newUser) {
-        await newUser.save();
-
-        res.status(201).json({
-          _id: newUser._id,
-          p_id: donatePromise._id,
-          name: newUser.name,
-          email: newUser.email,
-          timeZone: newUser.timeZone,
-          country: newUser.country,
-          color: newUser.color,
-          profilePic: newUser.profilePic,
         });
+                
+        if (newUser) {
+          await newUser.save();
+          
+          const donatePromise = new Promise({
+            promise: "Donate to Palestine",
+            userId: newUser._id
+            });
+            
+          await donatePromise.save();
+         
+          newUser.p_id = donatePromise._id
+          
+          await newUser.save()
+        console.log(donatePromise,newUser, "onSIGNUP")
+          
+        res.status(201).json(newUser);
       } else {
         res.status(400).json({error: "Invalid User data"});
       }
@@ -54,8 +53,7 @@ export const login = async (req, res) => {
     const {email} = req.body;
     const user = await User.findOne({email});
     if (user) {
-      const token = generateTokenAndSetCookie(user._id, res);
-      return res.status(201).json({user, token});
+      return res.status(201).json(user);
       //send data through sessions. if user, then use userId here ? , else add him up.
     } else {
       return res.status(400).json({error: "User does not exist"});

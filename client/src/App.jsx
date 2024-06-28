@@ -10,10 +10,9 @@ import User from "./pages/User.jsx";
 import LeaderBoard from "./pages/LeaderBoards/LeaderBoard.jsx";
 import AllUsers from "./pages/AllUsers.jsx";
 import Shop from "./pages/Shop.jsx";
-
 function App() {
   const {authUser} = useAuthContext();
-
+  console.log(authUser,"authUser")
   return (
     <BrowserRouter>
       <Routes>

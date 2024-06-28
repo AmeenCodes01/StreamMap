@@ -8,7 +8,6 @@ export const useTimeContext = () => {
 
 
 
-
 export const TimeContextProvider = ({children}) => {
   //in session timers
   const pausedTime = localStorage.getItem("PausedTime")
@@ -26,10 +25,9 @@ export const TimeContextProvider = ({children}) => {
     parseInt(localStorage.getItem("breakMinutes")) || 10
   );
     const [isPaused, setIsPaused] = useState(
-      localStorage.getItem("isPaused") === "true" ? true : false
+     ( localStorage.getItem("isPaused") === "true" ? true : false)
       )
   
-    
   
    
     const [showRating, setShowRating] = useState(false)

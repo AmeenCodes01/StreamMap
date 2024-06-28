@@ -4,28 +4,40 @@ import Select from "react-select";
 import useSignup from "../hooks/useSignUp";
 import useLogin from "../hooks/useLogin";
 import GoogleLogin from "../components/GoogleLogin";
+import { addCountry } from "../../../backend/controllers/countries.controller";
 function SignUp() {
   const [primColor, setColor] = useState("#4361ee");
-
+  const [showColour, setShowColor] = useState(false)
   const [myCountry, setMyCountry] = useState();
   const [signUp, setsignup] = useState(null);
   const [profile, setProfile] = useState();
-  const {loading, signup} = useSignup();
+  const {loading, signup, check, addCountry} = useSignup();
   const {login} = useLogin();
 
   const onSignIn = async () => {
-    if (primColor && myCountry) {
+    if ( myCountry) {
       const userInfo = {
         name: profile.given_name,
         profilePic: profile.picture,
         email: profile.email,
         country: myCountry,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        color: primColor,
       };
+      console.log(primColor, "color")
+      addCountry(myCountry,primColor)
       signup(userInfo);
     }
   };
+  //after taking country input, check if it country & its colour already exist by making a call to checkCountry.
+useEffect(()=>{
+  const checkCountry = async () =>{
+    const exist = await check(myCountry)
+    exist == false? setShowColor(true) : setShowColor(false)
+      console.log(exist, "exist")
+  }
+  checkCountry()
+}, [myCountry])
+
 
   if (loading) {
     return (
@@ -34,6 +46,9 @@ function SignUp() {
       </div>
     );
   }
+
+
+
   return (
     <div className="w-[100%] h-[100vh]    overflow-auto flex justify-center  relative">
       <div className="flex self-center flex-col justify-self-center  w-[300px] h-[500px] md:h-[700px] border-[1px] ">
@@ -134,11 +149,12 @@ function SignUp() {
                 name="color"
                 options={countryNames}
               />
-              <div className="flex pl-[10px]  mt-[20px] space-between justify-between ">
+{      showColour?        <div className="flex pl-[10px]  mt-[20px] space-between justify-between ">
                 <p className=" self-center">your favourite color:</p>
                 <label
                   className=" rounded-[6px] ml-[10px] self-end "
                   style={{backgroundColor: primColor, borderWidth: "0px"}}>
+
                   <input
                     type="color"
                     value={primColor}
@@ -148,7 +164,11 @@ function SignUp() {
                   />
                 </label>
               </div>
+            :null}
             </div>
+
+
+
             <div className=" flex   h-[100%] mt-[50px] justify-items-center justify-center align-bottom ">
               <button
                 onClick={() => {

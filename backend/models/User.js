@@ -9,14 +9,13 @@ const userSchema = new mongoose.Schema(
     timeZone: {
       type: String,
     },
-    color: {type: String, required: true},
     profilePic: {type: String, required: true},
     admin: {
       type: Boolean,
       default: false,
     },
     scores: [{score: Number, room: String}],
-
+    p_id: {type: String, unique: true}
     //name,country,pfp, timezone offset, country color
   },
   {timestamps: true}

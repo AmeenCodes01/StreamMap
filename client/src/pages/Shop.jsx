@@ -63,15 +63,17 @@ function Shop() {
   } = usePromise();
   useEffect(() => {
     const getScores = async () => {
-      const data = await getScore();
-      if (data.scores) {
-        const total = data.scores.reduce(
+      // const data = await getScore();
+      // if (data.scores) {
+
+        const total = authUser.scores.reduce(
           (partialSum, a) => partialSum + a.score,
           0
         );
         setScore(total);
-      }
+      // }
     };
+
     const getPromise = async () => {
       const data = await getPromises();
       if (data) {
@@ -82,6 +84,7 @@ function Shop() {
         setPromises(data);
       }
     };
+
     getPromise();
     getScores();
   }, []);
@@ -248,7 +251,7 @@ function Shop() {
         {promises?.map((promise) => (
           <div className="flex flex-col">
             <div className="flex flex-row space-between  justify-between border-2 ">
-              {promise._id !== authUser._id ? (
+              {promise._id !== authUser.p_id ? (
                 <>
                   <MdOutlineEdit
                     onClick={() => {
