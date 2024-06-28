@@ -1,15 +1,16 @@
-import {useAuthContext} from "../context/AuthContext";
 import toast from "react-hot-toast";
-
+import useAuthId from "./useAuthId";
 const usePromise = () => {
-  const {authUser} = useAuthContext();
+
+  const authId= useAuthId()  
 
   const getPromises = async () => {
+    console.log(authId,"auth Id")
     try {
       const res = await fetch("/api/promise/get", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: authUser._id}),
+        body: JSON.stringify({id: authId}),
       });
 
       const data = await res.json();
@@ -17,7 +18,7 @@ const usePromise = () => {
         console.log(data.error);
         throw new Error(data.error);
       }
-      return data._id;
+      return data;
     } catch (error) {
       toast.error(error.message);
     }
@@ -29,7 +30,7 @@ const usePromise = () => {
       const res = await fetch("/api/promise/new", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: authUser._id, promise, coins}),
+        body: JSON.stringify({id: authId, promise, coins}),
       });
 
       const data = await res.json();

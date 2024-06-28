@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 
 import { useSocketContext } from "../context/SocketContext";
-import { useAuthContext } from "../context/AuthContext";
 import { useTimeContext } from "../context/TimeContext";
 // import notificationSound from "../assets/sounds/notification.mp3";
-
+import useAuthId from "./useAuthId";
 const useListenSessions = () => {
 	const {allSessions,setAllSessions, seshInfo, setSeshInfo} = useTimeContext()
 	const { socket } = useSocketContext();
-	const {authUser} = useAuthContext()
+	const authId = useAuthId()
 	useEffect(() => {
 		socket?.on("newSession", (newSession) => {
 			// newMessage.shouldShake = true;
@@ -16,7 +15,7 @@ const useListenSessions = () => {
 			// sound.play();
         
 			setAllSessions([...allSessions, newSession]) 
-			if(newSession.userId == authUser._id){
+			if(newSession.userId == authId){
 			setSeshInfo([...seshInfo,newSession])
 			}
 		});

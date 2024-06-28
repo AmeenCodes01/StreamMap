@@ -61,26 +61,26 @@ function Shop() {
     updatePromise,
     editPromise,
   } = usePromise();
+
+
   useEffect(() => {
     const getScores = async () => {
-      // const data = await getScore();
-      // if (data.scores) {
+      const data = await getScore();
+      console.log(data,"data")
+      if (data.scores) {
 
-        const total = authUser.scores.reduce(
+        const total = data.scores.reduce(
           (partialSum, a) => partialSum + a.score,
           0
         );
         setScore(total);
-      // }
+       }
     };
 
     const getPromise = async () => {
       const data = await getPromises();
       if (data) {
-        // const total = data.scores.reduce(
-        //   (partialSum, a) => partialSum + a.score,
-        //   0
-        // );
+       
         setPromises(data);
       }
     };
@@ -88,7 +88,6 @@ function Shop() {
     getPromise();
     getScores();
   }, []);
-
   const toggleVisible = () => {
     setVisible(!visible);
   };

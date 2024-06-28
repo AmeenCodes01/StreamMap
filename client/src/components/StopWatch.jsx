@@ -2,50 +2,49 @@ import React, {useState, useEffect} from "react";
 import {useTimeContext} from "../context/TimeContext";
 import {IoIosSave} from "react-icons/io";
 import {MdOutlineDownloadDone} from "react-icons/md";
-
+import useAuthId from "../hooks/useAuthId";
+//so they could get isActive from context
 const Stopwatch = () => {
   const [desc, setDesc] = useState();
+  const {setIsStopWatchActive, isStopWatchActive, inSesh, setInSesh, isRunning} = useTimeContext()
+const key = useAuthId()
 
   const [timeElapsed, setTimeElapsed] = useState(
-    parseInt(localStorage.getItem("stopwatchTimeElapsed")) || 0
+    parseInt(localStorage.getItem(`${key}stopwatchTimeElapsed`)) || 0
   );
-  const [isActive, setIsActive] = useState(
-    localStorage.getItem("stopwatchIsActive") === "true" || false
-  );
+
   const [saved, setSaved] = useState(false);
 
-  const {inSesh, setInSesh} = useTimeContext();
   console.log(inSesh, "inSesh");
   useEffect(() => {
     let interval;
 
-    if (isActive) {
+    if (isStopWatchActive) {
       interval = setInterval(() => {
         setTimeElapsed((prevTime) => prevTime + 1);
       }, 1000);
     } else {
-      setIsActive(false);
+      setIsStopWatchActive(false);
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
-  }, [isActive]);
+  }, [isStopWatchActive]);
 
   useEffect(() => {
-    localStorage.setItem("stopwatchTimeElapsed", timeElapsed);
-    localStorage.setItem("stopwatchIsActive", isActive);
-  }, [timeElapsed, isActive]);
+    localStorage.setItem(`${key}stopwatchTimeElapsed`, timeElapsed);
+  }, [timeElapsed]);
 
   const startStopwatch = () => {
-    setIsActive(true);
+    setIsStopWatchActive(true);
   };
 
   const pauseStopwatch = () => {
-    setIsActive(false);
+    setIsStopWatchActive(false);
   };
 
   const resetStopwatch = () => {
-    setIsActive(false);
+    setIsStopWatchActive(false);
     setTimeElapsed(0);
   };
 
@@ -55,13 +54,13 @@ const Stopwatch = () => {
   };
 
   const onClick = () => {
-    if (!isActive) {
+    if (!setIsStopWatchActive) {
       startStopwatch();
     }
-    if (isActive) {
+    if (setIsStopWatchActive) {
       pauseStopwatch();
     }
-    if (!isActive && timeElapsed !== 0) {
+    if (!setIsStopWatchActive && timeElapsed !== 0) {
       resetStopwatch();
       //display a box asking if to save or not. or modal ?
     }
@@ -76,6 +75,7 @@ const Stopwatch = () => {
       //  onClick={onClick}
       className="flex flex-col"
     >
+
       <div className="flex flex-row  justify-items-center items-center ">
         <p className="ml-auto mr-auto text-lg">
           {Math.floor(timeElapsed / 60)}:{("0" + (timeElapsed % 60)).slice(-2)}
@@ -87,7 +87,7 @@ const Stopwatch = () => {
         onChange={(e) => setDesc(e.target.value)}
       />
       <div className="flex flex-row gap-[10px] self-center items-center my-[20px]">
-        {!isActive ? (
+        {!isStopWatchActive ? (
           <button className="btn btn-xs btn-secondary" onClick={startStopwatch}>
             Start
           </button>
@@ -98,7 +98,8 @@ const Stopwatch = () => {
         <button className="btn btn-xs btn-secondary" onClick={resetStopwatch}>
           Reset
         </button>
-        {!isActive && timeElapsed > 0 ? (
+        {/* show this only when session is running. */}
+        {!isStopWatchActive && timeElapsed > 0 && isRunning ? (
           !saved ? (
             <button className=" items-center bg-0" onClick={saveStopwatch}>
               <IoIosSave color="red" size={20} className="animate-pulse" />
@@ -112,4 +113,4 @@ const Stopwatch = () => {
   );
 };
 
-export default Stopwatch;
+export default React.memo(Stopwatch);

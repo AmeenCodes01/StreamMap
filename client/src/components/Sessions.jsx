@@ -6,11 +6,11 @@ import useSaveSession from "../hooks/useSaveSession";
 import useGetSessions from "../hooks/useGetSessions";
 import useListenSessions from "../hooks/useListenSession";
 import {useSocketContext} from "../context/SocketContext";
-import {useAuthContext} from "../context/AuthContext";
 import {useTimeContext} from "../context/TimeContext";
 import useSaveScore from "../hooks/useSaveScore";
 import {useHealthContext} from "../context/HealthContext";
 import {useLeaderBoardContext} from "../context/LeaderBoardContext";
+import useAuthId from "../hooks/useAuthId";
 function Sessions() {
   const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(100);
@@ -30,9 +30,9 @@ function Sessions() {
     setShowRating,
   } = useTimeContext();
   const {socket} = useSocketContext();
-  const {authUser} = useAuthContext();
   const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
+  const authId = useAuthId()
   // const {rankings, setRankings} = useLeaderBoardContext()
   useEffect(() => {
     socket?.on("newSession", (newSession) => {
@@ -40,7 +40,8 @@ function Sessions() {
       // const sound = new Audio(notificationSound);
       // sound.play();
 
-      if (newSession.userId == authUser._id) {
+  const authId = useAuthId()
+  if (newSession.userId == authId) {
         setSeshInfo([...seshInfo, newSession]);
       }
     });
@@ -80,7 +81,7 @@ function Sessions() {
       mood,
       score,
     };
-    saveScore(score, room, authUser._id);
+    saveScore(score, room, authId);
 
     saveSession(session);
     setShowRating(false);
@@ -89,28 +90,7 @@ function Sessions() {
     setSeshGoal();
 
     setSeshCount(seshCount + 1);
-    //check if in topuser
-    // const userIndex = rankings.findIndex(user => user.userId === authUser._id);
-    //  console.log(userIndex ,"eee")
-    // // If the user is found in the state array
-    // if (userIndex !== -1) {
-    //     // Create a copy of the user object to update its properties
-    //     const updatedUser = { ...rankings[userIndex] };
-
-    //     // Update the score and duration properties
-    //     updatedUser.totalScore += calculateSessionScore(workMinutes, seshRating)
-    //     updatedUser.totalDuration += workMinutes
-
-    //     // Create a new state array with the updated user object
-    //     const updatedRankingData = [
-    //         ...rankings.slice(0, userIndex),
-    //         updatedUser,
-    //         ...rankings.slice(userIndex + 1)
-    //     ];
-
-    //     // Update the state with the new array
-    //     setRankings(updatedRankingData);
-    // }
+   
   };
 
   useListenSessions();
@@ -196,3 +176,4 @@ export default React.memo(Sessions);
 //and then rank them, display them.
 //When new session comes, I will simply add to state and re rank.
 //........display time.
+//setShowRating to true when the inSesh timers stop running. 

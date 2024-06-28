@@ -1,16 +1,16 @@
 import toast from "react-hot-toast";
 import {useState} from "react";
 import {useSocketContext} from "../context/SocketContext";
-import {useAuthContext} from "../context/AuthContext";
-
+import useAuthId from "./useAuthId";
 const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
   const {socket} = useSocketContext();
-  const {authUser} = useAuthContext();
-
+  const authId = useAuthId()
   const startSession = async (session) => {
     setLoading(true);
+
+
     try {
       const res = await fetch("/api/sessions/start", {
         method: "POST",
@@ -27,7 +27,7 @@ const useSaveSession = () => {
       localStorage.setItem("sessionID", data._id);
       session["sessionID"] = sessionID;
       session["goal"] = session.goal;
-      session["userId"] = authUser._id;
+      session["userId"] = authId;
       socket?.emit("start-session", session);
     } catch (error) {
       toast.error(error.message);

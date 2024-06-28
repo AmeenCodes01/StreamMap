@@ -7,17 +7,13 @@ import {useTimeContext} from "../context/TimeContext";
 import useSaveSession from "../hooks/useSaveSession";
 import {useParams} from "react-router-dom";
 import {useSocketContext} from "../context/SocketContext";
-import {useAuthContext} from "../context/AuthContext";
-import useIsTabActive from "../hooks/useIsTabActive"; // Import the hook
+import useAuthId from "../hooks/useAuthId"
+
 import {setInterval, clearInterval} from "worker-timers";
 const red = "#f54e4e";
 
 export default function Timer() {
-  const pausedTime = localStorage.getItem("PausedTime");
-
-  const elapsedTime = (Date.now() - localStorage.getItem("startTime")) / 1000;
-  const isTabVisible = useIsTabActive();
-  console.log(isTabVisible, "vis");
+ 
   const {
     workMinutes,
     setWorkMinutes,
@@ -36,44 +32,42 @@ export default function Timer() {
   } = useTimeContext();
 
 
-  console.log(isRunning,"run", isPaused,"paused")
-  const remainingTime =
-    (mode === "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
-
-  const [sessions, setSessions] = useState(
-    parseInt(localStorage.getItem("sessions")) || 0
-  );
-
-  const {startSession, sessionID} = useSaveSession();
-
-  const {authUser} = useAuthContext();
+  const authId = useAuthId()
 
   const {id: room} = useParams();
 
 
-const key = `${authUser._id} + ${room}`
-
-
-  const intialTime = Number(
-    localStorage.getItem(`${key}time`) ||
-      (mode === "work" ? workMinutes * 60 : breakMinutes * 60)
-  );
+  const key = useAuthId()
+  
+  const [sessions, setSessions] = useState(
+    parseInt(localStorage.getItem(`${key}sessions`)) || 0
+    );
+    
+    const {startSession, sessionID} = useSaveSession();
+    
+    
+    const pausedTime = localStorage.getItem(`${key}PausedTime`);
+    
+    const elapsedTime = (Date.now() - localStorage.getItem(`${key}startTime`)) / 1000;
+  //   const remainingTime =
+  //     (mode === "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
+  // const intialTime = Number(
+  //   localStorage.getItem(`${key}time`) ||
+  //     (mode === "work" ? workMinutes * 60 : breakMinutes * 60)
+  // );
 
   const {socket} = useSocketContext();
 
   const toggle = mode === "break";
 
   function tick() {
+
     setSecondsLeft((prevSecondsLeft) => prevSecondsLeft - 1);
-    localStorage.setItem("time", secondsLeft - 1);
+    localStorage.setItem(`${key}time`, secondsLeft - 1);
   }
+  
   //get createdAt time.
 
-  useEffect(() => {
-    if (remainingTime > 0) {
-      setSecondsLeft(isPaused ? pausedTime : parseInt(remainingTime));
-    }
-  }, [isTabVisible]);
 
   useEffect(() => {
     function switchMode() {
@@ -86,17 +80,17 @@ const key = `${authUser._id} + ${room}`
       });
       setMode(nextMode);
       setSecondsLeft(nextSeconds);
-      localStorage.setItem("startTime", Date.now());
+      localStorage.setItem(`${key}startTime`, Date.now());
     }
 
-    if (localStorage.getItem("isRunning") === "true") {
+    if (localStorage.getItem(`${key}isRunning`) === "true") {
       const interval = setInterval(() => {
         if (!isPaused && secondsLeft > 0) {
           tick();
           //when session timer ends, progress asked only then. hidden while session ongoing. a new state. when session ends
         } else if (secondsLeft === 0) {
           switchMode();
-          localStorage.removeItem("startTime");
+          localStorage.removeItem(`${key}startTime`);
         }
       }, 1000); // Change interval to 1000 milliseconds (1 second)
 
@@ -110,26 +104,30 @@ const key = `${authUser._id} + ${room}`
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
   const onResetTimer = () => {
-    localStorage.removeItem("startTime");
+    localStorage.removeItem(`${key}startTime`);
     setShowRating(false);
     mode === "work" && secondsLeft !== workMinutes * 60
       ? socket.emit("reset-session", {
-          id: localStorage.getItem("sessionID"),
+          id: localStorage.getItem(`${key}sessionID`),
           room,
         })
       : null;
 
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
     setSecondsLeft(resetSeconds);
-    localStorage.removeItem("time");
+    setIsRunning(false)
+    setIsPaused(true)
+    localStorage.removeItem(`${key}time`);
   };
 
   const onToggle = () => {
     setMode(mode === "work" ? "break" : "work");
     const resetSeconds = (mode === "work" ? breakMinutes : workMinutes) * 60;
     setSecondsLeft(resetSeconds);
-    localStorage.setItem("startTime", Date.now());
+    localStorage.setItem(`${key}startTime`, Date.now());
   };
+
+
 
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
@@ -177,19 +175,20 @@ const key = `${authUser._id} + ${room}`
                   onClick={() => {
                     setIsPaused(false);
                     setIsRunning(true);
-                    localStorage.setItem("isRunning", "true");
-                    localStorage.setItem("startTime", Date.now());
+                    localStorage.setItem(`${key}isRunning`, "true");
+                    localStorage.setItem(`${key}startTime`, Date.now());
                     secondsLeft === workMinutes * 60
                       ? startSession({
                           room,
                           duration: workMinutes,
                           goal: seshGoal,
-                          id: authUser._id,
+                          id:   authId
+,
                         })
                       : null;
                     secondsLeft !== workMinutes * 60 && mode === "work"
                       ? socket.emit("paused-session", {
-                          id: localStorage.getItem("sessionID"),
+                          id: localStorage.getItem(`${key}sessionID`),
                           room,
                           pause: false,
                         })
@@ -206,11 +205,11 @@ const key = `${authUser._id} + ${room}`
               <button
                 onClick={() => {
                   setIsPaused(true);
-                  setIsRunning(false);
-                  localStorage.setItem("PausedTime", secondsLeft);
+                  setIsRunning(true);
+                  localStorage.setItem(`${key}PausedTime`, secondsLeft);
                   secondsLeft !== workMinutes * 60 && mode === "work"
                     ? socket.emit("paused-session", {
-                        id: localStorage.getItem("sessionID"),
+                        id: localStorage.getItem(`${key}sessionID`),
                         room,
                         pause: true,
                       })

@@ -1,11 +1,9 @@
 import toast from "react-hot-toast";
 import {useState} from "react";
-import {useAuthContext} from "../context/AuthContext";
-
+import useAuthId from "./useAuthId";
 const useSaveScore = () => {
   const [loading, setLoading] = useState(false);
-  const {authUser} = useAuthContext();
-  console.log(authUser._id);
+  const authId = useAuthId()
   const saveScore = async (score, room, id) => {
     setLoading(true);
     try {
@@ -26,29 +24,30 @@ const useSaveScore = () => {
       setLoading(false);
     }
   };
-  // const getScore = async () => {
-  //   try {
-  //     const res = await fetch("/api/score/getScore", {
-  //       method: "POST",
-  //       headers: {"Content-Type": "application/json"},
-  //       body: JSON.stringify({id: authUser._id}),
-  //     });
+  const getScore = async () => {
+    try {
+      const res = await fetch("/api/score/getScore", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId}),
+      });
 
-  //     const data = await res.json();
-  //     if (data.error) {
-  //       console.log(data.error);
-  //       throw new Error(data.error);
-  //     }
-  //     return data;
-  //   } catch (error) {
-  //     toast.error(error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      const data = await res.json();
+      console.log(data)
+      if (data.error) {
+        console.log(data.error);
+        throw new Error(data.error);
+      }
+      return data;
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {saveScore, loading,
-    // getScore
+    getScore
     };
 };
 
