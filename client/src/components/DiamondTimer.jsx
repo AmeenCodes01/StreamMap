@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useTimeContext } from "../context/TimeContext";
+import useStore  from "../context/TimeStore";
 import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 
 const GoalInput = styled.input`
@@ -37,8 +37,16 @@ const Dots = styled.div`
 function DiamondTimer({setIsOpen}) {
 
 
-  const { isPaused, setIsPaused, setIsRunning, secondsLeft: time , workMinutes} = useTimeContext();
-
+  const { isPaused, setIsPaused, setIsRunning, workMinutes,time} = useStore(
+    state =>({
+      workMinutes: state.workMinutes  ,
+      isPaused: state.isPaused,
+      setIsPaused: state.setIsPaused  ,  
+      setIsRunning: state.setIsRunning  ,
+      time:state.secondsLeft
+    })
+  );
+  console.log(time, workMinutes, isPaused)
 
     let diamDiv;
     if (workMinutes <26 ){
@@ -136,6 +144,7 @@ if ( time === workMinutes*60){
   
     >
       <div className="flex flex-col p-[10px] my-[20px]">
+        {/* //add all that functionality for sockets, reduntant. make it sep components.  */}
         {isPaused ? (
           <div className="flex flex-row gap-[10px]">
             <button

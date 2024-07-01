@@ -7,7 +7,6 @@ const useGetUsers = () => {
   const {onlineUsers} = useSocketContext();
   console.log;
   useEffect(() => {
-    console.log(onlineUsers, "onlineUses in hook ");
     const getUsers = async () => {
       setLoading(true);
       try {

@@ -46,7 +46,6 @@ navigate("user")
     //check livestream.
     const liveCheck = async () => {
       const data = await checkLive(room);
-      console.log("LIVE CHECK", data);
       if (data) {
         setLive(data.live);
       }

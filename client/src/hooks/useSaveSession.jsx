@@ -6,7 +6,8 @@ const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
   const {socket} = useSocketContext();
-  const authId = useAuthId()
+  const {authId} = useAuthId()
+
   const startSession = async (session) => {
     setLoading(true);
 

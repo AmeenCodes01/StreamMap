@@ -58,7 +58,6 @@ export const useLiveStream = () => {
   };
 
   const checkLive = async (sentRoom) => {
-    console.log("checkLive", sentRoom);
 
     try {
       const res = await fetch("/api/live/checkLive", {
@@ -67,7 +66,6 @@ export const useLiveStream = () => {
         body: JSON.stringify({sentRoom}),
       });
       const data = await res.json();
-      console.log(data, "live");
       setLive(data.live);
       if (data.error) {
         throw new Error(data.error);
@@ -82,3 +80,4 @@ export const useLiveStream = () => {
 
   return {startLive, endLive, checkLive};
 };
+//1719785504432 

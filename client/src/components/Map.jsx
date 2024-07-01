@@ -30,7 +30,6 @@ function Map() {
   if (loading) {
     return;
   }
-  console.log("usersMao", users);
 
   const onEachCountry = (country, layer) => {
     let countryName = country.properties.ADMIN;
@@ -38,7 +37,6 @@ function Map() {
 
     for (const key in users) {
       if (countryName === key) {
-        console.log(users[key][0][0], "colour")
         color = users[key][0][0]
       }
     }

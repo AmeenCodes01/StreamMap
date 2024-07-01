@@ -6,16 +6,15 @@ import useSaveSession from "../hooks/useSaveSession";
 import useGetSessions from "../hooks/useGetSessions";
 import useListenSessions from "../hooks/useListenSession";
 import {useSocketContext} from "../context/SocketContext";
-import {useTimeContext} from "../context/TimeContext";
+import  useStore  from "../context/TimeStore";
 import useSaveScore from "../hooks/useSaveScore";
 import {useHealthContext} from "../context/HealthContext";
 import {useLeaderBoardContext} from "../context/LeaderBoardContext";
 import useAuthId from "../hooks/useAuthId";
 function Sessions() {
-  const {mode, workMinutes} = useTimeContext();
+  // const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(100);
   const [seshCount, setSeshCount] = useState(0);
-  const [sessionID, setSessionID] = useState();
   const {id: room} = useParams();
   const {saveSession, loading} = useSaveSession();
   const {userSessions, loading: load} = useGetSessions();
@@ -28,11 +27,30 @@ function Sessions() {
     setSeshGoal,
     showRating,
     setShowRating,
-  } = useTimeContext();
+    mode, 
+    workMinutes,
+    isStopWatchActive,
+    isCountDownActive
+  } = useStore(
+    state =>({
+      inSesh: state.inSesh ,
+    setInSesh: state.setInSesh ,
+    seshInfo: state.seshInfo,
+    setSeshInfo: state.setSeshInfo ,
+    seshGoal: state.seshGoal ,
+    setSeshGoal: state.setSeshGoal ,
+    showRating: state.showRating ,
+    setShowRating: state.setShowRating ,
+    mode : state.mode, 
+    workMinutes : state.workMinutes,
+    isStopWatchActive: state.isStopWatchActive,
+    isCountDownActive: state.isCountDownActive
+    })
+  );
   const {socket} = useSocketContext();
   const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
-  const authId = useAuthId()
+  const {authId} = useAuthId()
   // const {rankings, setRankings} = useLeaderBoardContext()
   useEffect(() => {
     socket?.on("newSession", (newSession) => {
@@ -40,7 +58,6 @@ function Sessions() {
       // const sound = new Audio(notificationSound);
       // sound.play();
 
-  const authId = useAuthId()
   if (newSession.userId == authId) {
         setSeshInfo([...seshInfo, newSession]);
       }
@@ -133,7 +150,7 @@ function Sessions() {
             onChange={(e) => setSeshGoal(e.target.value)}
           /> */}
             </div>
-            {showRating ? (
+            {showRating && (!isStopWatchActive && !isCountDownActive) ? (
               <div className="flex flex-row mt-[10px] border-[10] ml-[auto] mr-[50px] ">
                 <p className="text-center self-center mr-[5px] md:text-[18px] italic">
                   rate your session :

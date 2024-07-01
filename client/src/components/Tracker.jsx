@@ -69,7 +69,6 @@ function Tracker({socket}) {
   useEffect(() => {
     if (socket == null) return;
     socket.on("nextStreamFive", (i) => {
-      console.log(i);
       setStreamFive(i);
     });
   }, [socket]);

@@ -3,7 +3,7 @@ import {useState} from "react";
 import useAuthId from "./useAuthId";
 const useSaveScore = () => {
   const [loading, setLoading] = useState(false);
-  const authId = useAuthId()
+  const {authId} = useAuthId()
   const saveScore = async (score, room, id) => {
     setLoading(true);
     try {

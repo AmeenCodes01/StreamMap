@@ -6,7 +6,7 @@ const useGetSessions = () => {
   const [sessions, setSessions] = useState([]);
   const [userSessions, setUserSessions] = useState([]);
 
-  const authId = useAuthId()
+  const {authId} = useAuthId()
 
   // const {onlineUsers} = useSocketContext()
   const getSessions = async (room) => {

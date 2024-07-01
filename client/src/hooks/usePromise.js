@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import useAuthId from "./useAuthId";
 const usePromise = () => {
 
-  const authId= useAuthId()  
+  const {authId}= useAuthId()  
 
   const getPromises = async () => {
     console.log(authId,"auth Id")

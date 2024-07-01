@@ -20,7 +20,6 @@ function AllUsers() {
       });
       return u;
     });
-    console.log(User);
   }, []);
   return (
     <div className=" w-[100px] h-[100%] flex flex-col ">

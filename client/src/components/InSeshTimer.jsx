@@ -28,7 +28,7 @@ function InSeshTimer() {
   );
 }
 
-export default InSeshTimer;
+export default React.memo(InSeshTimer)
 //when the big timer stops, the small will terminate and be saved. transfer timer to context, hence making Session independent, then 
 //
 //

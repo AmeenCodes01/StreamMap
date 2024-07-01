@@ -5,7 +5,7 @@ import {sessions} from "../socket/socket.js";
 
 //Promises should not be inside a room right ?
 //but invidual room points ? later
-
+   
 export const getTotalScore = async (req, res) => {
   try {
     const {id} = req.body;
@@ -23,7 +23,7 @@ export const getTotalScore = async (req, res) => {
 
 export const updateScore = async (req, res) => {
   const {score: newScore, room, id: userId} = req.body;
-
+  
   try {
     // Find the user document by userId
     const user = await User.findById(userId);

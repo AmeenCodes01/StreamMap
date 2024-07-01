@@ -5,7 +5,6 @@ import {useSocketContext} from "../context/SocketContext";
 import useGetUsers from "../hooks/useGetUsers";
 
 const UserTimes = memo((c) => {
-  console.log(c, "USERTimes");
   const [render, setRender] = useState(0);
   useEffect(() => {
     const intervalId = setInterval(() => {

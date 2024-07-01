@@ -4,12 +4,15 @@ import { SessionTable } from "../components/SessionTable";
 import { useSocketContext } from "../context/SocketContext";
 import useListenSessions from "../hooks/useListenSession";
 import { useParams } from "react-router-dom";
-import { useTimeContext } from "../context/TimeContext";
+import { useStore } from "zustand";
 
 
 function AllSessions() {
   const { loading, sessions, getSessions } = useGetSessions();
-  const{ allSessions, setAllSessions } = useTimeContext();
+  const{ allSessions, setAllSessions } = useStore(
+    state => ({
+      allSessions: state.allSessions, setAllSessions: state.setAllSessions    })
+  );
   const { id: room } = useParams();
 
   useEffect(() => {

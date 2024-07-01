@@ -5,7 +5,6 @@ import InSeshTimer from "../components/InSeshTimer";
 import Timer from "../components/Timer";
 import SleepTracker from "../components/SleepTimer";
 import MoodTracker from "../components/MoodTracker";
-import {TimeContextProvider} from "../context/TimeContext";
 import Sessions from "../components/Sessions";
 import myImage from "../assets/Flamingo.png";
 import SepWindow from "../components/SepWindow";
@@ -17,7 +16,6 @@ import {MdOutlineArrowOutward} from "react-icons/md";
 
 function User() {
   const [showSepWindow, setShowSepWindow] = useState(false);
-  console.log("I get re rendered muliple USER ");
   const handleButtonClick = () => {
     console.log("rendering Sep Windows");
     setShowSepWindow(true);
@@ -26,7 +24,6 @@ function User() {
     <div className=" sm:mt-[30px] mt-[10px]">
       {/* STREAM PLAYER */}
 
-      <TimeContextProvider>
         <div className="flex sm:flex-row flex-col ">
           <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
             <StreamVid />
@@ -37,22 +34,17 @@ function User() {
 
           <div className="flex sm:mt-[30px] mt-[25px] ">
             <Timer />
-            {/* <MdOutlineArrowOutward
-          size={25}
-          onClick={handleButtonClick}
-          className="hover:cursor-pointer bg-base-300 hidden sm:flex border-4"
-          /> */}
+
             <SepWindow />
           </div>
         </div>
-        {/* {/* //Progress Tracker */}
 
         <div className="my-[20px] border-2 h-[40px] flex">
           {/* <StreamTimer/> */}
           {/* <DiamondTimer secondsLeft={600} /> */}
         </div>
 
-        <HealthContextProvider>
+        {/* <HealthContextProvider>
           <LeaderBoardContextProvider>
             <Sessions />
           </LeaderBoardContextProvider>
@@ -63,9 +55,8 @@ function User() {
             </div>
             <UserSessions />
           </div>
-        </HealthContextProvider>
+        </HealthContextProvider> */}
         <InSeshTimer />
-      </TimeContextProvider>
       <div className=" h-[200px] flex w-[60px] overflow-hidden relative ">
         <div
           className="bg-base-200 w-full h-[00%] bottom-0 absolute"
