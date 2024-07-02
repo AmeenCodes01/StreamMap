@@ -52,3 +52,27 @@ S C O R I N G A L G O
 rating weight 1.5
 
 60x + 10y = 11 , 90x + 10y = 14
+
+
+~STOPWATCH 
+
+(why does timer start running along it ?)
+
+-check isRunnign & isPaused. 
+(persist timer. call & set from stopwatch.jsx)
+~
+
+
+
+---------T I M E R----------
+when reset, then isPaused time should not be considered. 
+//if isPaused time, set to 
+
+
+COUNTDOWN 
+
+timeLeft.
+setTimeLeft when timeLeft paused 
+--- condition on isCountDownActive
+
+persist. 
