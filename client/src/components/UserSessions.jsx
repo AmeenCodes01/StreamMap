@@ -1,16 +1,16 @@
-import React from 'react'
-import { SessionTable } from './SessionTable'
-import { useStore } from "zustand";
+import React from "react";
+import {SessionTable} from "./SessionTable";
+import useStore from "../context/TimeStore";
 
 function UserSessions() {
-    const {seshInfo} = useStore(state => ({
-      seshInfo: state.seshInfo, 
-    }))
+  const {seshInfo} = useStore((state) => ({
+    seshInfo: state.seshInfo,
+  }));
   return (
     <div className="h-[90%] flex w-[86%] mr-[auto] ml-[auto] justify-center self-center ">
-          <SessionTable arr={seshInfo} />
-        </div>
-  )
+      <SessionTable arr={seshInfo} />
+    </div>
+  );
 }
 
-export default UserSessions
+export default UserSessions;

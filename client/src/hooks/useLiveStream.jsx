@@ -1,29 +1,28 @@
-import {useParams} from "react-router-dom";
 import {useSocketContext} from "../context/SocketContext";
+import toast from "react-hot-toast";
 
 export const useLiveStream = () => {
-  const {id: room} = useParams();
   const {setLive} = useSocketContext();
-  const startLive = async () => {
+  const startLive = async (room, link) => {
     try {
       const res = await fetch("/api/live/startLive", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room}),
+        body: JSON.stringify({room, link}),
       });
       const data = await res.json();
+
       if (data.error) {
         throw new Error(data.error);
       }
-      // setSessions(data);
-      // console.log(data)
+      console.log(data, "LIVE SYATYE");
       return data;
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  const endLive = async () => {
+  const endLive = async (room) => {
     let ranking;
     try {
       //getLiveRanking first 3.
@@ -58,7 +57,6 @@ export const useLiveStream = () => {
   };
 
   const checkLive = async (sentRoom) => {
-
     try {
       const res = await fetch("/api/live/checkLive", {
         method: "POST",
@@ -80,4 +78,4 @@ export const useLiveStream = () => {
 
   return {startLive, endLive, checkLive};
 };
-//1719785504432 
+//1719785504432

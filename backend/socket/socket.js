@@ -66,7 +66,7 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("live", async (e) => {
-    io.to(e.room).emit("live-status", {status: e.live});
+    io.to(e.room).emit("live-status", {status: e.live, link: e.link});
   });
 
   socket.on("display-message", (e) => {

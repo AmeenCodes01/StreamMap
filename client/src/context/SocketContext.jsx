@@ -13,12 +13,15 @@ export const SocketContextProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const {authUser} = useAuthContext();
   const [live, setLive] = useState(false);
+  const [liveLink, setLiveLink] = useState("");
   const [liveID, setLiveID] = useState(localStorage.getItem("liveID") || null);
   useEffect(() => {
     if (socket == null) return;
     socket.on("live-status", (data) => {
       console.log("Live status received:", data);
       setLive(data.status);
+      console.log(data, "live");
+      if (data.status) setLiveLink(data.newStream.link);
     });
 
     // Cleanup function
@@ -56,7 +59,16 @@ export const SocketContextProvider = ({children}) => {
   }, [socket, authUser]);
   return (
     <SocketContext.Provider
-      value={{liveID, setLiveID, socket, onlineUsers, live, setLive}}
+      value={{
+        liveID,
+        setLiveID,
+        socket,
+        onlineUsers,
+        live,
+        setLive,
+        liveLink,
+        setLiveLink,
+      }}
     >
       {children}
     </SocketContext.Provider>

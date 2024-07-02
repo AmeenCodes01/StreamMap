@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import useGetSessions from "../hooks/useGetSessions";
-import { SessionTable } from "../components/SessionTable";
-import { useSocketContext } from "../context/SocketContext";
+import {SessionTable} from "../components/SessionTable";
+import {useSocketContext} from "../context/SocketContext";
 import useListenSessions from "../hooks/useListenSession";
-import { useParams } from "react-router-dom";
-import { useStore } from "zustand";
-
+import {useParams} from "react-router-dom";
+import useStore from "../context/TimeStore";
 
 function AllSessions() {
-  const { loading, sessions, getSessions } = useGetSessions();
-  const{ allSessions, setAllSessions } = useStore(
-    state => ({
-      allSessions: state.allSessions, setAllSessions: state.setAllSessions    })
-  );
-  const { id: room } = useParams();
+  const {loading, sessions, getSessions} = useGetSessions();
+  const {allSessions, setAllSessions} = useStore((state) => ({
+    allSessions: state.allSessions,
+    setAllSessions: state.setAllSessions,
+  }));
+  const {id: room} = useParams();
 
   useEffect(() => {
     const getSesh = async () => {

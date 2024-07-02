@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import  useStore  from "../context/TimeStore";
+import React, {useState, useEffect} from "react";
+import useStore from "../context/TimeStore";
 import ProgressTimer from "./ProgressTimer";
-import { IoIosSave } from "react-icons/io";
-import { MdOutlineDownloadDone } from "react-icons/md";
+import {IoIosSave} from "react-icons/io";
+import {MdOutlineDownloadDone} from "react-icons/md";
 import useAuthId from "../hooks/useAuthId";
 import {setInterval, clearInterval} from "worker-timers";
 
-const Timer = ({ animate }) => {
-  const { key } = useAuthId();
+const Timer = ({animate}) => {
+  const {key} = useAuthId();
   const [timeLeft, setTimeLeft] = useState(
     parseInt(localStorage.getItem(`${key}countdownTimeLeft`)) || 10
   );
@@ -27,7 +27,6 @@ const Timer = ({ animate }) => {
     setIsCountDownActive: state.setIsCountDownActive,
     isRunning: state.isRunning,
   }));
-
 
   useEffect(() => {
     let interval;
@@ -68,11 +67,28 @@ const Timer = ({ animate }) => {
   };
 
   const saveCountdown = () => {
-    timeLeft != 0 ? saveInSesh({ time: time * 60 - timeLeft, desc }) : null;
+    timeLeft != 0 ? saveInSesh({time: time * 60 - timeLeft, desc}) : null;
     setSaved(true);
   };
 
   const progress = ((time * 60 - timeLeft * 60) / (time * 60)) * 100;
+  if (
+    isCountDownActive &&
+    timeLeft > 0 &&
+    timeLeft !== time * 60 &&
+    !isRunning
+  ) {
+    if (!saved) {
+      console.log("inside saved, not saved");
+    } else {
+      zy;
+    }
+  }
+  !isCountDownActive && timeLeft > 0 && timeLeft !== time * 60 && !isRunning
+    ? !saved
+      ? console.log("inside !ISsBED")
+      : console.log("not saved")
+    : "all false";
 
   //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
   return animate ? (

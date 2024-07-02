@@ -1,45 +1,44 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import TimeTable from "../components/TimeTable";
 import Tracker from "../components/Tracker";
 import Map from "../components/Map";
-import { useParams } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
-import { useSocketContext } from "../context/SocketContext";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useLiveStream } from "../hooks/useLiveStream";
+import {useParams} from "react-router-dom";
+import {useAuthContext} from "../context/AuthContext";
+import {useSocketContext} from "../context/SocketContext";
+import {Link, Outlet, useNavigate} from "react-router-dom";
+import {useLiveStream} from "../hooks/useLiveStream";
 
-import { IoExit } from "react-icons/io5";
-
+import {IoExit} from "react-icons/io5";
 
 const MyMap = () => {
   // myCountry saves user country
   const navigate = useNavigate();
 
-  const { id: room } = useParams();
+  const {id: room} = useParams();
 
-  const { authUser,setRoom } = useAuthContext();
+  const {authUser, setRoom} = useAuthContext();
   // write this into a useEffect.
-  const {checkLive} = useLiveStream()
+  const {checkLive} = useLiveStream();
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => {
     setVisible((visible) => !visible);
   }, []);
-  const { socket, setLive } = useSocketContext();
+  const {socket, setLive, setLiveLink} = useSocketContext();
   // get all users by room. get room name from params.
-  const [tab, setTab] = useState("Timer")
+  const [tab, setTab] = useState("Timer");
   useEffect(() => {
-    setRoom(room)
+    setRoom(room);
     if (socket !== null) {
-      socket.emit("join-room", { room, userId: authUser._id });
+      socket.emit("join-room", {room, userId: authUser._id});
     }
   }, [authUser, socket]);
 
- 
-useEffect(()=> {
-navigate("user")
-}, [])
+  useEffect(() => {
+    navigate("user");
+  }, []);
+
   const onLeaveRoom = () => {
-    socket.emit("leave-room", { room, userId: authUser._id });
+    socket.emit("leave-room", {room, userId: authUser._id});
   };
 
   useEffect(() => {
@@ -48,16 +47,15 @@ navigate("user")
       const data = await checkLive(room);
       if (data) {
         setLive(data.live);
+        console.log(data, "liveDATA");
+        if (data.live) {
+          console.log(data.link);
+          setLiveLink(data.link);
+        }
       }
     };
     liveCheck();
   }, [room]);
-
-
-
-
-
-
 
   return (
     <div className="w-[100%]    flex flex-col  overflow-auto   relative   ">
@@ -95,41 +93,62 @@ navigate("user")
       </div>
 
       <div className="flex    gap-[10px] pt-[10px] self-end   ">
-  <label
-    className=" rounded-[6px] "
-    style={{ backgroundColor: authUser.color, borderWidth: "0px" }}
-  >
-    <input
-      type="color"
-      value={authUser.color}
-      className="w-[15px] h-[15px]  border-[0px] self-center  block opacity-0"
-      style={{ backgroundColor: authUser.color, borderWidth: "0px" }}
-      onChange={(e) => setColor(e.target.value)}
-      />
-  </label>
-  {/* <p className="mx-[5px] text-xs text-info"> {authUser.country}</p> */}
-</div>
-<div className="collapse ">
-  <input type="checkbox" /> 
-  <div className="collapse-title text-xl font-medium">
-    Click me to show/hide content
-  </div>
-  <div className="collapse-content"> 
-    <p>hello</p>
-  </div>
-</div>
-{/* <Tracker/> */}
+        <label
+          className=" rounded-[6px] "
+          style={{backgroundColor: authUser.color, borderWidth: "0px"}}
+        >
+          <input
+            type="color"
+            value={authUser.color}
+            className="w-[15px] h-[15px]  border-[0px] self-center  block opacity-0"
+            style={{backgroundColor: authUser.color, borderWidth: "0px"}}
+            onChange={(e) => setColor(e.target.value)}
+          />
+        </label>
+        {/* <p className="mx-[5px] text-xs text-info"> {authUser.country}</p> */}
+      </div>
+      <div className="collapse ">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">
+          Click me to show/hide content
+        </div>
+        <div className="collapse-content">
+          <p>hello</p>
+        </div>
+      </div>
+      {/* <Tracker/> */}
       <div className="px-[10px]">
-<div role="tablist" className="tabs tabs-boxed tabs-xs">
-  <Link role="tab" to="user" className={`tab ${tab =="Timer" ? "tab-active" : null} `} onClick={()=>setTab("Timer")}>Timer</Link>
-  <Link role="tab" to="leaderboard" className={`tab ${tab =="Leaderboard" ? "tab-active" : null} `} onClick={()=>setTab("Leaderboard")} >Leaderboard</Link>
-  <Link role="tab" to="allUsers" className={`tab ${tab =="Study Buddies" ? "tab-active" : null} `} onClick={()=>setTab("Study Buddies")} >Study Buddies</Link>
-</div>
+        <div role="tablist" className="tabs tabs-boxed tabs-xs">
+          <Link
+            role="tab"
+            to="user"
+            className={`tab ${tab == "Timer" ? "tab-active" : null} `}
+            onClick={() => setTab("Timer")}
+          >
+            Timer
+          </Link>
+          <Link
+            role="tab"
+            to="leaderboard"
+            className={`tab ${tab == "Leaderboard" ? "tab-active" : null} `}
+            onClick={() => setTab("Leaderboard")}
+          >
+            Leaderboard
+          </Link>
+          <Link
+            role="tab"
+            to="allUsers"
+            className={`tab ${tab == "Study Buddies" ? "tab-active" : null} `}
+            onClick={() => setTab("Study Buddies")}
+          >
+            Study Buddies
+          </Link>
+        </div>
 
-      <Outlet />
+        <Outlet />
 
-{/* CHANGE MAP COUNTRIES & COLOR */}
-{/* 
+        {/* CHANGE MAP COUNTRIES & COLOR */}
+        {/* 
 <div className="flex flex-row self-center w-[100%] items-center justify-center">
 <h1 className=""> JESS, WE GOT YOU      </h1>
 <iframe className="self-center mr-[auto] ml-[auto]" src="https://giphy.com/embed/l41Yh1olOKd1Tgbw4" width="300" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/studiosoriginals-domitille-collardey-l41Yh1olOKd1Tgbw4">via GIPHY</a></p>
@@ -142,22 +161,17 @@ navigate("user")
 </div>
  */}
 
-
-
-{/* {sleepTime} hr */}
-{/* <div className="rating mt-[20px]">
+        {/* {sleepTime} hr */}
+        {/* <div className="rating mt-[20px]">
 <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
 <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" checked />
 <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
 <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
 <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" />
 </div> */}
-
-</div>
-
+      </div>
     </div>
   );
 };
 
 export default MyMap;
-

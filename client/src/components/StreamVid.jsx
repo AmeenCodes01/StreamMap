@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { IoCheckmarkDone } from "react-icons/io5";
-import { useSocketContext } from "../context/SocketContext";
-import { toast, Toaster } from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {IoCheckmarkDone} from "react-icons/io5";
+import {useSocketContext} from "../context/SocketContext";
+import toast from "react-hot-toast";
+import {useParams} from "react-router-dom";
 import DisplayMessage from "./DisplayMessage";
-import { useLiveStream } from "../hooks/useLiveStream";  
+import {useLiveStream} from "../hooks/useLiveStream";
+import {useAuthContext} from "../context/AuthContext";
 function StreamVid() {
-  const [link, setLink] = useState();
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
@@ -15,39 +15,63 @@ function StreamVid() {
   const [minutes, setMinutes] = useState();
   const [title, setTitle] = useState();
 
-  const { socket, setLive, live, liveID, setLiveID} = useSocketContext();
-  const { id: room } = useParams();
-  const {startLive, endLive} = useLiveStream()
+  const {socket, setLive, live, liveLink, setLiveLink} = useSocketContext();
+  const {id: room} = useParams();
+  const {startLive, endLive} = useLiveStream();
+  const {authUser} = useAuthContext();
+
+  console.log(room, "room");
 
   const onClick = () => {
     //save to localstorage
     setVisible(true);
   };
+
   const onChange = () => {
     setVisible(false);
   };
 
-  const onLive = ()=>{
-    setLive(prevLive => {
-      const newLive = !prevLive;
-//on every refresh, it can just check if live or not through API.
-       newLive === true ? startLive() : endLive()
-      if (socket === null) return;
-      socket.emit("live", ({live:newLive, room }))
-      return newLive;
-    });
-  }
+  useEffect(() => {
+    if (liveLink !== "") {
+      setVisible(live);
+    }
+  }, [liveLink]);
 
+  const onLive = () => {
+    setLive((prevLive) => {
+      const newLive = !prevLive;
+      //on every refresh, it can just check if live or not through API.
+      if (socket === null) return;
+      //if turning on live, link needed.
+      if (prevLive === false) {
+        if (liveLink) {
+          startLive(room, liveLink);
+          socket.emit("live", {live: newLive, room, link: liveLink});
+          return newLive;
+        } else {
+          toast.error("please provide a link to your live");
+          return prevLive;
+        }
+      } else {
+        endLive(room);
+        setVisible(false);
+        setLiveLink("");
+        socket.emit("live", {live: newLive, room});
+
+        return newLive;
+      }
+    });
+  };
 
   const onSend = () => {
-    if (mode) {  
+    if (mode) {
       if (title && (hours || minutes)) {
         socket?.emit("display-message", {
           label: "time",
           hours,
           minutes,
           room,
-          offset:  5.5
+          offset: 5.5,
           //- new Date().getTimezoneOffset()/60
         });
       } else {
@@ -55,9 +79,9 @@ function StreamVid() {
       }
     } else {
       if (title && message) {
-        socket?.emit("display-message", { label: "message", message });
+        socket?.emit("display-message", {label: "message", message});
       } else {
-        console.log("title & message not provided. ");                                                                                                       
+        console.log("title & message not provided. ");
       }
     }
   };
@@ -65,47 +89,53 @@ function StreamVid() {
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
-
-      <p>Live  </p>
-      <input 
-  type="checkbox" 
-  checked={live} 
-  className="toggle toggle-sm self-center" 
-  onChange={()=> {
-    onLive()
-  }} 
-/>
-
+        <p>Live </p>
+        <input
+          type="checkbox"
+          checked={live}
+          className="toggle toggle-sm self-center"
+          disabled={authUser.admin === true ? true : false}
+          onChange={() => {
+            onLive();
+          }}
+        />
       </div>
 
       {!visible ? (
         <>
-          {" "}
-          <div className="flex flex-row gap-[15px] ">
-            <input
-              type="text"
-              placeholder='share>embed copy inside src="" '
-              className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
-              onChange={(e) => setLink(e.target.value)}
-            />
-            <IoCheckmarkDone
-              size={20}
-              className="self-center"
-              onClick={onClick}
-            />
-          </div>
-          <p className="text-xs text-error mb-[20px]">
-            {" "}
-            make sure the src link is pasted properly!
-          </p>{" "}
+          {authUser.admin ? (
+            <>
+              <div className="flex flex-row gap-[15px] ">
+                <input
+                  type="text"
+                  value={liveLink}
+                  placeholder='share>embed copy inside src="" '
+                  className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
+                  onChange={(e) => {
+                    setLiveLink(e.target.value);
+                  }}
+                  // send link to all in room.
+                />
+                <IoCheckmarkDone
+                  size={20}
+                  className="self-center"
+                  onClick={onClick}
+                />
+              </div>
+              <p className="text-xs text-error mb-[20px]">
+                {" "}
+                make sure the src link is pasted properly!
+              </p>{" "}
+            </>
+          ) : null}
         </>
       ) : null}
-      
+
       {visible && (
         <>
           <iframe
             className="rounded-[20px] aspect-video	  "
-            src={link}
+            src={liveLink}
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -173,7 +203,7 @@ function StreamVid() {
           ) : (
             <textarea
               className="textarea textarea-secondary bg-secondary placeholder:text-xs"
-              placeholder="message"  
+              placeholder="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             ></textarea>
@@ -193,11 +223,7 @@ function StreamVid() {
         {!showMessage ? "display message/time to all clients " : "hide"}{" "}
       </button>
 
-      {
-        <div className="w-full h-full z-[100000000]">
-          <Toaster />
-        </div>
-      }
+      {<div className="w-full h-full z-[100000000]"></div>}
     </div>
   );
 }
