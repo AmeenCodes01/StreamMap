@@ -13,7 +13,6 @@ const Stopwatch = () => {
   } = useTimer(
     "stopwatch"
   );
-console.log("false")
   const {
     isRunning,
     saveInSesh,
@@ -27,7 +26,6 @@ console.log("false")
   // );
   const [saved, setSaved] = useState(false);
 useEffect(()=>{
-console.log(timeElapsed)
 }, [isStopWatchActive ])
   // useEffect(() => {
   //   let interval;

@@ -13,13 +13,14 @@ import {HealthContextProvider} from "../context/HealthContext";
 import {LeaderBoardContextProvider} from "../context/LeaderBoardContext";
 import UserSessions from "../components/UserSessions";
 import {MdOutlineArrowOutward} from "react-icons/md";
-
+import useAuthId from "../hooks/useAuthId";
 function User() {
   const [showSepWindow, setShowSepWindow] = useState(false);
-  const handleButtonClick = () => {
-    console.log("rendering Sep Windows");
-    setShowSepWindow(true);
-  };
+ const {authId} = useAuthId()
+
+  if (authId == null){
+return;
+  }
   return (
     <div className=" sm:mt-[30px] mt-[10px]">
       {/* STREAM PLAYER */}

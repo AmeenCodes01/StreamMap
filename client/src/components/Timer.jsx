@@ -1,20 +1,21 @@
-import React, {useEffect, useState, useRef} from "react";
-import {CircularProgressbar, buildStyles} from "react-circular-progressbar";
+import React, { useEffect, useState, useRef } from "react";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import {LuTimerReset} from "react-icons/lu";
-import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
+import { LuTimerReset } from "react-icons/lu";
+import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
 import useSaveSession from "../hooks/useSaveSession";
-import {useParams} from "react-router-dom";
-import {useSocketContext} from "../context/SocketContext";
+import { useParams } from "react-router-dom";
+import { useSocketContext } from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 
-import {setInterval, clearInterval} from "worker-timers";
+import { setInterval, clearInterval } from "worker-timers";
 import useStore from "../context/TimeStore";
 import useTimer from "../hooks/useTimer";
 const red = "#f54e4e";
 
 export default function Timer() {
   const {
+    isPaused,
     // workMinutes,
     // setWorkMinutes,
     // isPaused,
@@ -24,6 +25,7 @@ export default function Timer() {
     // isRunning,
     // setIsRunning,
     seshGoal,
+    setSecondsLeft,
     setShowRating,
     // secondsLeft,
     // setSecondsLeft,
@@ -36,7 +38,7 @@ export default function Timer() {
   } = useStore((state) => ({
     // workMinutes: state.workMinutes,
     // setWorkMinutes: state.setWorkMinutes,
-    // isPaused: state.isPaused,
+    isPaused: state.isPaused,
     // setIsPaused: state.setIsPaused,
     // mode: state.mode,
     // setMode: state.setMode,
@@ -45,7 +47,7 @@ export default function Timer() {
     seshGoal: state.seshGoal,
     setShowRating: state.setShowRating,
     // secondsLeft: state.secondsLeft,
-    // setSecondsLeft: state.setSecondsLeft,
+    setSecondsLeft: state.setSecondsLeft,
     // breakMinutes: state.breakMinutes,
     // setBreakMinutes: state.setBreakMinutes,
     // isStopWatchActive: state.isStopWatchActive,
@@ -53,14 +55,14 @@ export default function Timer() {
     // timeElapsed: state.timeElapsed,
     // setTimeElapsed: state.setTimeElapsed,
   }));
-  const {authId, key} = useAuthId();
+  const { authId, key } = useAuthId();
   //   const elapsedTime = (Date.now() - localStorage.getItem(`${key}startTime`)) / 1000;
 
   //  const remainingTime = ((localStorage.getItem(`${key}mode`) === 'work' ? workMinutes : breakMinutes) * 60) - elapsedTime;
   // console.log(remainingTime,  elapsedTime, localStorage.getItem(`${key}startTime`)  )
   // useEffect(() => {
   //   // Retrieve necessary localStorage values
-  //   const pausedTime = localStorage.getItem(`${key}PausedTime`) 
+  //   const pausedTime = localStorage.getItem(`${key}PausedTime`)
   //   setWorkMinutes(parseInt(localStorage.getItem(`${key}workMinutes`)) || 60);
   //   setBreakMinutes(parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10);
   //   const storedStartTime = localStorage.getItem(`${key}startTime`);
@@ -70,8 +72,7 @@ export default function Timer() {
   //   const breakMinutes =
   //   parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
   //   const mode = localStorage.getItem(`${key}mode`) || "work";
-    
-    
+
   //   setMode(mode);
   //   setWorkMinutes(workMinutes);
   //   setBreakMinutes(breakMinutes);
@@ -86,7 +87,7 @@ export default function Timer() {
   //   if (storedStartTime == null) {
   //     remainingTime = workMinutes;
   //   }
-    
+
   //   setIsPaused(localStorage.getItem(`${key}isPaused`) === "true");
   //   // Update state with the correct values
   //   setSecondsLeft(
@@ -96,13 +97,24 @@ export default function Timer() {
   //   ? remainingTime
   //   : workMinutes * 60
   //   );
-    
-    const {isPaused,isRunning, mode, workMinutes, setWorkMinutes, breakMinutes,setBreakMinutes, time:secondsLeft,
 
-      start, pause, reset
+  const {
+    isRunning,
+    mode,
+    workMinutes,
+    setWorkMinutes,
+    breakMinutes,
+    setBreakMinutes,
+    time: secondsLeft,
+    loadedData,
+    start,
+    pause,
+    reset,
+    isCountDownActive,
+    isStopWatchActive,
+    toggle,
+  } = useTimer("pomodoro");
 
-    } = useTimer("pomodoro")
-   
   //   setIsRunning(storedIsRunning || false);
   // }, []);
 
@@ -113,17 +125,17 @@ export default function Timer() {
   // console.log(secondsLeft,localStorage.getItem(`${key}isPaused`) )
   // console.log( parseInt(localStorage.getItem(`${key}workMinutes`)) )
   // console.log(secondsLeft, elapsedTime, intialTime)
-  const {id: room} = useParams();
+  const { id: room } = useParams();
 
   const [sessions, setSessions] = useState(
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
   );
 
-  const {startSession, sessionID} = useSaveSession();
+  // const {startSession, sessionID} = useSaveSession();
 
-  const {socket} = useSocketContext();
+  const { socket } = useSocketContext();
 
-  const toggle = mode === "break";
+  const toggleMode = mode === "break";
 
   // function tick() {
   //   setSecondsLeft(secondsLeft - 1 < 0 ? 0 : secondsLeft - 1);
@@ -175,29 +187,31 @@ export default function Timer() {
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
   const onResetTimer = () => {
-    localStorage.removeItem(`${key}startTime`);
-    localStorage.removeItem(`${key}PausedTime`);
-    setShowRating(false);
-    mode === "work" && secondsLeft !== workMinutes * 60
-      ? socket.emit("reset-session", {
-          id: localStorage.getItem(`${key}sessionID`),
-          room,
-        })
-      : null;
+    reset();
+    // localStorage.removeItem(`${key}startTime`);
+    // localStorage.removeItem(`${key}PausedTime`);
+    // setShowRating(false);
+    // mode === "work" && secondsLeft !== workMinutes * 60
+    //   ? socket.emit("reset-session", {
+    //       id: localStorage.getItem(`${key}sessionID`),
+    //       room,
+    //     })
+    //   : null;
 
-    const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
-    setSecondsLeft(resetSeconds);
-    setIsRunning(false);
-    setIsPaused(true);
+    // const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+    // setSecondsLeft(resetSeconds);
+    // setIsRunning(false);
+    // setIsPaused(true);
 
     // localStorage.removeItem(`${key}time`);
   };
 
   const onToggle = () => {
-    setMode(mode === "work" ? "break" : "work");
-    localStorage.setItem(`${key}startTime`, Date.now());
-    const resetSeconds = (mode === "work" ? breakMinutes : workMinutes) * 60;
-    setSecondsLeft(resetSeconds);
+    toggle();
+    // setMode(mode === "work" ? "break" : "work");
+    // localStorage.setItem(`${key}startTime`, Date.now());
+    // const resetSeconds = (mode === "work" ? breakMinutes : workMinutes) * 60;
+    // setSecondsLeft(resetSeconds);
   };
 
   //get all & set. seconds, isRunning,
@@ -221,15 +235,14 @@ export default function Timer() {
   // useEffect(() => {
   //   localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   // }, [breakMinutes]);
-
-
+  if (loadedData == false){
+    return;
+  }
+  console.log(isPaused, "pauasedid ");
   return (
-
-
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}
       <div className="flex flex-row">
-        
         <input
           value={sessions}
           onChange={(e) => {
@@ -270,10 +283,11 @@ export default function Timer() {
                 <button
                   className="btn btn-success items-center justify-center"
                   onClick={() => {
+                    start();
                     // !isRunning
                     //   ? localStorage.setItem(`${key}startTime`, Date.now())
                     //   : null;
-                   
+
                     // setIsPaused(false);
                     // setIsRunning(true);
 
@@ -305,19 +319,19 @@ export default function Timer() {
             ) : (
               <button
                 onClick={() => {
-                  setIsPaused(true);
+                  pause();
+                  //   setIsPaused(true);
 
                   //setIsRunning(true);
-                  localStorage.setItem(`${key}PausedTime`, secondsLeft);
                   //  localStorage.setItem(`${key}isRunning`, "true");
 
-                  secondsLeft !== workMinutes * 60 && mode === "work"
-                    ? socket.emit("paused-session", {
-                        id: localStorage.getItem(`${key}sessionID`),
-                        room,
-                        pause: true,
-                      })
-                    : null;
+                  // secondsLeft !== workMinutes * 60 && mode === "work"
+                  //   ? socket.emit("paused-session", {
+                  //       id: localStorage.getItem(`${key}sessionID`),
+                  //       room,
+                  //       pause: true,
+                  //     })
+                  //   : null;
                 }}
                 className="btn btn-warning items-center justify-center"
               >
@@ -336,6 +350,9 @@ export default function Timer() {
                       setWorkMinutes(e.target.value);
                       mode === "work" && setSecondsLeft(e.target.value * 60);
                       localStorage.setItem(`${key}workMinutes`, e.target.value);
+                      //startTime & pausedTime
+                      localStorage.removeItem(`${key}startTime`);
+                      localStorage.removeItem(`${key}PausedTime`);
                     }}
                     max={120}
                     min={0}
@@ -362,6 +379,8 @@ export default function Timer() {
                         `${key}breakMinutes`,
                         e.target.value
                       );
+                      localStorage.removeItem(`${key}startTime`);
+                      localStorage.removeItem(`${key}PausedTime`);
                     }}
                     max={120}
                     step={5}
@@ -380,7 +399,7 @@ export default function Timer() {
           </div>
         </div>
       </div>
-
+{isPaused &&
       <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
         <span className="text-xs self-center text-cente font-semibold">
           Work
@@ -388,13 +407,14 @@ export default function Timer() {
         <input
           type="checkbox"
           className="toggle  toggle-xs"
-          checked={toggle}
+          checked={toggleMode}
           onChange={onToggle}
-        />
+          />
         <span className="text-xs self-center text-center font-semibold">
           Break
         </span>
       </div>
+        }
     </div>
   );
 }

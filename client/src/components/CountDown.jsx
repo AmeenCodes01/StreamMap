@@ -49,20 +49,7 @@ pause()
     setSaved(true);
   };
   // const progress = ((time * 60 - timeLeft * 60) / (time * 60)) * 100;
-  if (
-    isCountDownActive &&
-    timeLeft > 0 &&
-    timeLeft !== time * 60 &&
-    !isRunning
-  ) {
-    if (!saved) {
-      console.log("inside saved, not saved");
-    } else {
-      console.log
-    }
-  }
-  console.log(isRunning)
- console.log(isCountDownActive === false && timeLeft !== time*60 && isRunning && !saved ,"savecondition")
+  
  //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
   return animate ? (
     <ProgressTimer time={timeLeft} progress={progress} />
