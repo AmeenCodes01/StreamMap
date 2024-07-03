@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import React, {useEffect, useState, useRef} from "react";
+import {CircularProgressbar, buildStyles} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { LuTimerReset } from "react-icons/lu";
-import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
+import {LuTimerReset} from "react-icons/lu";
+import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
 import useSaveSession from "../hooks/useSaveSession";
-import { useParams } from "react-router-dom";
-import { useSocketContext } from "../context/SocketContext";
+import {useParams} from "react-router-dom";
+import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 
-import { setInterval, clearInterval } from "worker-timers";
+import {setInterval, clearInterval} from "worker-timers";
 import useStore from "../context/TimeStore";
 import useTimer from "../hooks/useTimer";
 const red = "#f54e4e";
@@ -55,7 +55,7 @@ export default function Timer() {
     // timeElapsed: state.timeElapsed,
     // setTimeElapsed: state.setTimeElapsed,
   }));
-  const { authId, key } = useAuthId();
+  const {authId, key} = useAuthId();
   //   const elapsedTime = (Date.now() - localStorage.getItem(`${key}startTime`)) / 1000;
 
   //  const remainingTime = ((localStorage.getItem(`${key}mode`) === 'work' ? workMinutes : breakMinutes) * 60) - elapsedTime;
@@ -125,7 +125,7 @@ export default function Timer() {
   // console.log(secondsLeft,localStorage.getItem(`${key}isPaused`) )
   // console.log( parseInt(localStorage.getItem(`${key}workMinutes`)) )
   // console.log(secondsLeft, elapsedTime, intialTime)
-  const { id: room } = useParams();
+  const {id: room} = useParams();
 
   const [sessions, setSessions] = useState(
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
@@ -133,7 +133,7 @@ export default function Timer() {
 
   // const {startSession, sessionID} = useSaveSession();
 
-  const { socket } = useSocketContext();
+  const {socket} = useSocketContext();
 
   const toggleMode = mode === "break";
 
@@ -235,10 +235,9 @@ export default function Timer() {
   // useEffect(() => {
   //   localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   // }, [breakMinutes]);
-  if (loadedData == false){
-    return;
-  }
-  console.log(isPaused, "pauasedid ");
+  // if (loadedData == false) {
+  //   return;
+  // }
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}
@@ -399,22 +398,22 @@ export default function Timer() {
           </div>
         </div>
       </div>
-{isPaused &&
-      <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
-        <span className="text-xs self-center text-cente font-semibold">
-          Work
-        </span>
-        <input
-          type="checkbox"
-          className="toggle  toggle-xs"
-          checked={toggleMode}
-          onChange={onToggle}
+      {isPaused && (
+        <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
+          <span className="text-xs self-center text-cente font-semibold">
+            Work
+          </span>
+          <input
+            type="checkbox"
+            className="toggle  toggle-xs"
+            checked={toggleMode}
+            onChange={onToggle}
           />
-        <span className="text-xs self-center text-center font-semibold">
-          Break
-        </span>
-      </div>
-        }
+          <span className="text-xs self-center text-center font-semibold">
+            Break
+          </span>
+        </div>
+      )}
     </div>
   );
 }
