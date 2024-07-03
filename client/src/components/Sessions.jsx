@@ -6,14 +6,15 @@ import useSaveSession from "../hooks/useSaveSession";
 import useGetSessions from "../hooks/useGetSessions";
 import useListenSessions from "../hooks/useListenSession";
 import {useSocketContext} from "../context/SocketContext";
-import  useStore  from "../context/TimeStore";
+import useStore from "../context/TimeStore";
 import useSaveScore from "../hooks/useSaveScore";
 import {useHealthContext} from "../context/HealthContext";
 import {useLeaderBoardContext} from "../context/LeaderBoardContext";
+import {useShallow} from "zustand/react/shallow";
 import useAuthId from "../hooks/useAuthId";
 function Sessions() {
   // const {mode, workMinutes} = useTimeContext();
-  const [seshRating, setSeshRating] = useState(100);
+  const [seshRating, setSeshRating] = useState(``);
   const [seshCount, setSeshCount] = useState(0);
   const {id: room} = useParams();
   const {saveSession, loading} = useSaveSession();
@@ -27,38 +28,40 @@ function Sessions() {
     setSeshGoal,
     showRating,
     setShowRating,
-    mode, 
+    setRated,
     workMinutes,
     isStopWatchActive,
-    isCountDownActive
+    isCountDownActive,
   } = useStore(
-    state =>({
-      inSesh: state.inSesh ,
-    setInSesh: state.setInSesh ,
-    seshInfo: state.seshInfo,
-    setSeshInfo: state.setSeshInfo ,
-    seshGoal: state.seshGoal ,
-    setSeshGoal: state.setSeshGoal ,
-    showRating: state.showRating ,
-    setShowRating: state.setShowRating ,
-    mode : state.mode, 
-    workMinutes : state.workMinutes,
-    isStopWatchActive: state.isStopWatchActive,
-    isCountDownActive: state.isCountDownActive
-    })
+    useShallow((state) => ({
+      inSesh: state.inSesh,
+      setInSesh: state.setInSesh,
+      seshInfo: state.seshInfo,
+      setSeshInfo: state.setSeshInfo,
+      seshGoal: state.seshGoal,
+      setSeshGoal: state.setSeshGoal,
+      showRating: state.showRating,
+      setShowRating: state.setShowRating,
+      mode: state.mode,
+      workMinutes: state.workMinutes,
+      isStopWatchActive: state.isStopWatchActive,
+      isCountDownActive: state.isCountDownActive,
+      setRated: state.setRated,
+    }))
   );
   const {socket} = useSocketContext();
   const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
-  const {authId} = useAuthId()
+  const {authId} = useAuthId();
   // const {rankings, setRankings} = useLeaderBoardContext()
+
   useEffect(() => {
     socket?.on("newSession", (newSession) => {
       // newMessage.shouldShake = true;
       // const sound = new Audio(notificationSound);
       // sound.play();
 
-  if (newSession.userId == authId) {
+      if (newSession.userId == authId) {
         setSeshInfo([...seshInfo, newSession]);
       }
     });
@@ -86,6 +89,7 @@ function Sessions() {
       // Round the total score to the nearest integer
       return Math.round(totalScore);
     };
+
     const score = calculateSessionScore(workMinutes, seshRating);
 
     const session = {
@@ -98,20 +102,22 @@ function Sessions() {
       mood,
       score,
     };
-    saveScore(score, room, authId);
+
+    saveScore(score, room);
 
     saveSession(session);
     setShowRating(false);
+    setRated(true);
+    localStorage.setItem(`${key}rated`, true);
     setInSesh([]);
     setSeshInfo([...seshInfo, session]);
     setSeshGoal();
 
     setSeshCount(seshCount + 1);
-   
   };
 
   useListenSessions();
-
+  console.log();
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
@@ -150,7 +156,7 @@ function Sessions() {
             onChange={(e) => setSeshGoal(e.target.value)}
           /> */}
             </div>
-            {showRating && (!isStopWatchActive && !isCountDownActive) ? (
+            {showRating && !isStopWatchActive && !isCountDownActive ? (
               <div className="flex flex-row mt-[10px] border-[10] ml-[auto] mr-[50px] ">
                 <p className="text-center self-center mr-[5px] md:text-[18px] italic">
                   rate your session :
@@ -158,7 +164,7 @@ function Sessions() {
                 <input
                   type="text"
                   value={seshRating}
-                  maxLength={3}
+                  maxLength={2}
                   className="input input-bordered text-warning text-center p-[2px] input-warning max-w-xs w-[50px]  h-[30px] focus:outline-none"
                   onChange={(e) => {
                     const regex = /^[0-9\b]+$/;
@@ -193,4 +199,4 @@ export default React.memo(Sessions);
 //and then rank them, display them.
 //When new session comes, I will simply add to state and re rank.
 //........display time.
-//setShowRating to true when the inSesh timers stop running. 
+//setShowRating to true when the inSesh timers stop running.

@@ -16,48 +16,48 @@ import {MdOutlineArrowOutward} from "react-icons/md";
 import useAuthId from "../hooks/useAuthId";
 function User() {
   const [showSepWindow, setShowSepWindow] = useState(false);
- const {authId} = useAuthId()
+  const {authId} = useAuthId();
 
-  if (authId == null){
-return;
+  if (authId == null) {
+    return;
   }
   return (
     <div className=" sm:mt-[30px] mt-[10px]">
       {/* STREAM PLAYER */}
 
-        <div className="flex sm:flex-row flex-col ">
-          <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
-            <StreamVid />
-            <div className="flex ml-auto mr-auto">
-              <DisplayMessage />
-            </div>
-          </div>
-
-          <div className="flex sm:mt-[30px] mt-[25px] ">
-            <Timer />
-
-            <SepWindow />
+      <div className="flex sm:flex-row flex-col ">
+        <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
+          <StreamVid />
+          <div className="flex ml-auto mr-auto">
+            <DisplayMessage />
           </div>
         </div>
 
-        <div className="my-[20px] border-2 h-[40px] flex">
-          {/* <StreamTimer/> */}
-          {/* <DiamondTimer secondsLeft={600} /> */}
-        </div>
+        <div className="flex sm:mt-[30px] mt-[25px] ">
+          <Timer />
 
-        {/* <HealthContextProvider>
-          <LeaderBoardContextProvider>
-            <Sessions />
-          </LeaderBoardContextProvider>
-          <div className="md:flex md:flex-row-reverse  w-[100%] md:justify-between">
-            <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
-              <MoodTracker />
-              <SleepTracker />
-            </div>
-            <UserSessions />
+          <SepWindow />
+        </div>
+      </div>
+
+      <div className="my-[20px] border-2 h-[40px] flex">
+        {/* <StreamTimer/> */}
+        {/* <DiamondTimer secondsLeft={600} /> */}
+      </div>
+
+      <HealthContextProvider>
+        <LeaderBoardContextProvider>
+          <Sessions />
+        </LeaderBoardContextProvider>
+        <div className="md:flex md:flex-row-reverse  w-[100%] md:justify-between">
+          <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
+            <MoodTracker />
+            <SleepTracker />
           </div>
-        </HealthContextProvider> */}
-        <InSeshTimer />
+          <UserSessions />
+        </div>
+      </HealthContextProvider>
+      <InSeshTimer />
       <div className=" h-[200px] flex w-[60px] overflow-hidden relative ">
         <div
           className="bg-base-200 w-full h-[00%] bottom-0 absolute"

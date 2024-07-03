@@ -74,7 +74,7 @@ export const saveSession = async (req, res) => {
       sessionID,
       room,
     } = req.body;
-
+    console.log(sessionID, "session ID");
     // Find the session by ID
     const session = await Session.findById(sessionID);
     if (!session) {
@@ -95,19 +95,19 @@ export const saveSession = async (req, res) => {
     await session.save();
 
     // Find the existing session in the sessions object
-    const userSeshIndex = sessions[room].findIndex(
-      (s) => s._id.toString() === sessionID
-    );
-    if (userSeshIndex !== -1) {
-      sessions[room] = sessions[room].filter(
-        (s, index) => index !== userSeshIndex
-      );
-    }
+    // const userSeshIndex = sessions[room].findIndex(
+    //   (s) => s._id.toString() === sessionID
+    // );
+    // if (userSeshIndex !== -1) {
+    //   sessions[room] = sessions[room].filter(
+    //     (s, index) => index !== userSeshIndex
+    //   );
+    // }
 
     // Emit the end-session event
     io.to(room).emit("end-sessions", session);
 
-    console.log(sessions, "sessions obj");
+    //console.log(sessions, "sessions obj");
     return res.status(201).json(session);
   } catch (error) {
     console.error("Error in saveSession controller: ", error.message);

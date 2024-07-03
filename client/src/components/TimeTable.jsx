@@ -113,6 +113,10 @@ function TimeTable({toggleVisible}) {
                     <UserTimes time={timeZone[0].timeZone} />
 
                     {timeZone.map((user) => {
+                      if (typeof user !== "object") {
+                        return;
+                      }
+
                       return (
                         <li className="flex flex-col gap-[12px] ">
                           <ul className="  flex flex-row px-[10px] py-[15px]">

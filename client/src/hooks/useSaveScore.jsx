@@ -3,14 +3,15 @@ import {useState} from "react";
 import useAuthId from "./useAuthId";
 const useSaveScore = () => {
   const [loading, setLoading] = useState(false);
-  const {authId} = useAuthId()
-  const saveScore = async (score, room, id) => {
+  const {authId} = useAuthId();
+  const saveScore = async (score, room) => {
+    console.log(authId);
     setLoading(true);
     try {
       const res = await fetch("/api/score/saveScore", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({score, room, id}),
+        body: JSON.stringify({score, room, authId}),
       });
 
       const data = await res.json();
@@ -33,7 +34,7 @@ const useSaveScore = () => {
       });
 
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       if (data.error) {
         console.log(data.error);
         throw new Error(data.error);
@@ -46,9 +47,7 @@ const useSaveScore = () => {
     }
   };
 
-  return {saveScore, loading,
-    getScore
-    };
+  return {saveScore, loading, getScore};
 };
 
 export default useSaveScore;

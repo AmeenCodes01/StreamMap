@@ -22,6 +22,8 @@ const useStore = create((set, get) => ({
   showRating: false,
   setShowRating: (show) => set({showRating: show}),
 
+  rated: false,
+  setRated: (rated) => set({rated: rated}),
   mode: "work",
   setMode: (mode) => set({mode}),
 

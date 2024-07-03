@@ -14,7 +14,7 @@ export const SocketContextProvider = ({children}) => {
   const {authUser} = useAuthContext();
   const [live, setLive] = useState(false);
   const [liveLink, setLiveLink] = useState("");
-  const [liveID, setLiveID] = useState(localStorage.getItem("liveID") || null);
+  console.log(onlineUsers, "onlineUsers");
   useEffect(() => {
     if (socket == null) return;
     socket.on("live-status", (data) => {
@@ -60,8 +60,6 @@ export const SocketContextProvider = ({children}) => {
   return (
     <SocketContext.Provider
       value={{
-        liveID,
-        setLiveID,
         socket,
         onlineUsers,
         live,

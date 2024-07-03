@@ -6,11 +6,10 @@ const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
   const {socket} = useSocketContext();
-  const {authId} = useAuthId()
+  const {authId} = useAuthId();
 
   const startSession = async (session) => {
     setLoading(true);
-
 
     try {
       const res = await fetch("/api/sessions/start", {
@@ -40,7 +39,7 @@ const useSaveSession = () => {
   const saveSession = async (session) => {
     const sessionID = localStorage.getItem("sessionID");
     session["sessionID"] = sessionID;
-
+    console.log(session, "s e s s i o n ");
     setLoading(true);
     try {
       const res = await fetch("/api/sessions/save", {

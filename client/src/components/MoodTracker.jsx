@@ -2,7 +2,9 @@ import React, {useEffect, useState} from "react";
 import {SiCoffeescript} from "react-icons/si";
 import BeanIcons from "./BeanIcons";
 import {useHealthContext} from "../context/HealthContext";
+import useAuthId from "../hooks/useAuthId";
 function MoodTracker() {
+  const {authId} = useAuthId();
   const moodDictionary = [
     {text: "amazing", color: "#be7261"},
     {text: "ok", color: "#9f5754"},
@@ -10,18 +12,18 @@ function MoodTracker() {
     {text: "sad", color: "#683842"},
     {text: "stressed", color: "#492233"},
   ];
-
+  //make it auth specigiv
   const {mood, setMood} = useHealthContext();
   const [moodColor, setMoodColor] = useState(
     localStorage.getItem("mood")
       ? moodDictionary.find(
-          (moodObj) => moodObj.text === localStorage.getItem("mood")
+          (moodObj) => moodObj.text === localStorage.getItem(`${authId}mood`)
         ).color
       : ""
   );
 
   useEffect(() => {
-    localStorage.setItem("mood", mood);
+    localStorage.setItem(`${authId}mood`, mood);
   }, [mood, moodColor]);
 
   return (

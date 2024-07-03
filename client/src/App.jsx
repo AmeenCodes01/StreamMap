@@ -12,7 +12,7 @@ import AllUsers from "./pages/AllUsers.jsx";
 import Shop from "./pages/Shop.jsx";
 function App() {
   const {authUser} = useAuthContext();
-  console.log(authUser,"authUser")
+  console.log(authUser, "authUser");
   return (
     <BrowserRouter>
       <Routes>
