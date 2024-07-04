@@ -26,7 +26,7 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
 
   useEffect(() => {
     let interval;
-
+          
     if (isActive) {
       interval = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
@@ -60,6 +60,7 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
   }, [socket]);
   let minutes;
   let seconds;
+
   if (!isNaN(remainingTime)) {
     minutes = Math.floor(timeLeft / 60)
       .toString()
@@ -71,7 +72,10 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
     minutes = "00";
     seconds = "00";
   }
+
   const percentage = Math.round((1 - remainingTime / duration) * 100);
+
+
   return (
     <div style={{textAlign: "center"}}>
       <div style={{marginBottom: "10px"}}>

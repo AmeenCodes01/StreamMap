@@ -2,7 +2,7 @@ import Sleep from "../models/Sleep.model.js";
 import { io } from "../socket/socket.js";      
 
 export const saveSleep = async (req, res)=>{
-    try {
+    try {     
         const {hours} = req.body;
         const userId = req.user._id;
         //first check already exist for past 24 hr for this user/ if so,modify

@@ -4,16 +4,18 @@ import "react-circular-progressbar/dist/styles.css";
 import {LuTimerReset} from "react-icons/lu";
 import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
 import useSaveSession from "../hooks/useSaveSession";
-import {useParams} from "react-router-dom";
 import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 import {useShallow} from "zustand/react/shallow";
 
 import {setInterval, clearInterval} from "worker-timers";
 import useStore from "../context/TimeStore";
+import usePomodoro from "../hooks/usePomodoro";
 const red = "#f54e4e";
 
 export default function Timer() {
+
+
   const {
     workMinutes,
     setWorkMinutes,
@@ -32,7 +34,6 @@ export default function Timer() {
     isStopWatchActive,
     isCountDownActive,
     setInSesh,
-    showRating,
     rated,
     setRated,
   } = useStore(
@@ -56,15 +57,14 @@ export default function Timer() {
       timeElapsed: state.timeElapsed,
       setTimeElapsed: state.setTimeElapsed,
       setInSesh: state.setInSesh,
-      showRating: state.showRating,
       rated: state.rated,
       setRated: state.setRated,
     }))
   );
 
-  const {authId, key} = useAuthId();
+  const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
-
+  const {start, pause} = usePomodoro()
   useEffect(() => {
     // Retrieve necessary localStorage values
     const pausedTime = localStorage.getItem(`${key}PausedTime`);
@@ -104,7 +104,6 @@ export default function Timer() {
     setIsRunning(storedIsRunning || false);
   }, []);
 
-  const {id: room} = useParams();
 
   const [sessions, setSessions] = useState(
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
@@ -147,7 +146,6 @@ export default function Timer() {
         localStorage.setItem(`${key}PausedTime`, nextSeconds);
       }
     }
-    console.log(disabled, rated);
 
     if (isRunning) {
       const interval = setInterval(() => {
@@ -176,10 +174,10 @@ export default function Timer() {
     setShowRating(false);
     mode === "work" && secondsLeft !== workMinutes * 60
       ? socket.emit("reset-session", {
-          id: localStorage.getItem(`${key}sessionID`),
+          id: localStorage.getItem("sessionID"),
           room,
         })
-      : null;
+      : null
 
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
 
@@ -270,29 +268,16 @@ export default function Timer() {
                 <button
                   disabled={disabled}
                   className="btn btn-success items-center justify-center"
+                //so I will start(room, workMinutes, )
                   onClick={() => {
-                    !isRunning
-                      ? localStorage.setItem(`${key}startTime`, Date.now())
-                      : null;
-
-                    setIsPaused(false);
-                    setIsRunning(true);
-                    setRated(false);
-                    secondsLeft === workMinutes * 60
-                      ? startSession({
-                          room,
-                          duration: workMinutes,
-                          goal: seshGoal,
-                          id: authId,
-                        })
-                      : null;
-                    secondsLeft !== workMinutes * 60 && mode === "work"
-                      ? socket.emit("paused-session", {
-                          id: localStorage.getItem(`${key}sessionID`),
-                          room,
-                          pause: false,
-                        })
-                      : null;
+                    secondsLeft === workMinutes * 60 ?
+                    start({ room,
+                            duration: workMinutes,
+                            goal: seshGoal,
+                           id: authId,
+                           }):
+                           start()
+                   
                   }}
                 >
                   <FaPlayCircle size={15} />
@@ -306,18 +291,19 @@ export default function Timer() {
               <button
                 className="btn btn-warning items-center justify-center"
                 onClick={() => {
-                  setIsPaused(true);
-                  setIsRunning(true);
-                  localStorage.setItem(`${key}PausedTime`, secondsLeft);
-                  localStorage.setItem(`${key}isRunning`, "true");
+                  pause()
+                  // setIsPaused(true);
+                  // setIsRunning(true);
+                  // localStorage.setItem(`${key}PausedTime`, secondsLeft);
+                  // localStorage.setItem(`${key}isRunning`, "true");
 
-                  secondsLeft !== workMinutes * 60 && mode === "work"
-                    ? socket.emit("paused-session", {
-                        id: localStorage.getItem(`${key}sessionID`),
-                        room,
-                        pause: true,
-                      })
-                    : null;
+                  // secondsLeft !== workMinutes * 60 && mode === "work"
+                  //   ? socket.emit("paused-session", {
+                  //       id: localStorage.getItem(`${key}sessionID`),
+                  //       room,
+                  //       pause: true,
+                  //     })
+                  //   : null;
                 }}
               >
                 <FaPauseCircle size={15} />

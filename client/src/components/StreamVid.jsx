@@ -94,7 +94,7 @@ function StreamVid() {
           type="checkbox"
           checked={live}
           className="toggle toggle-sm self-center"
-          disabled={authUser.admin === true ? true : false}
+          disabled={authUser.admin === true ? false : true}
           onChange={() => {
             onLive();
           }}

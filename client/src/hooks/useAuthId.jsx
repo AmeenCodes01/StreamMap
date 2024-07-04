@@ -1,5 +1,5 @@
 import { useAuthContext } from "../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
 
 
@@ -8,7 +8,7 @@ const useAuthId = () =>{
     const {authUser } = useAuthContext()
     const key = `${authUser._id}${room}`
     const authId = authUser._id
-    return {authId, key}
+    return {authId, key, room}
 }
 
 export default useAuthId

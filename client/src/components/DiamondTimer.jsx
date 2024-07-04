@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import useStore  from "../context/TimeStore";
 import { FaPlayCircle, FaPauseCircle } from "react-icons/fa";
+import usePomodoro from "../hooks/usePomodoro";
 
 const GoalInput = styled.input`
   transition: width 1s;
@@ -34,8 +35,7 @@ const Dots = styled.div`
   }
 `;
 
-function DiamondTimer({setIsOpen}) {
-
+function DiamondTimer({setIsOpen, isOpen}) {
 
   const { isPaused, setIsPaused, setIsRunning, workMinutes,time} = useStore(
     state =>({
@@ -46,7 +46,6 @@ function DiamondTimer({setIsOpen}) {
       time:state.secondsLeft
     })
   );
-  console.log(time, workMinutes, isPaused)
 
     let diamDiv;
     if (workMinutes <26 ){
@@ -59,7 +58,7 @@ function DiamondTimer({setIsOpen}) {
       diamDiv = 20
     }
     
-    
+    const {start, pause} = usePomodoro()
 
   const diam = parseInt(workMinutes) % diamDiv !== 0 ? Math.floor(workMinutes / diamDiv) + 1
       : workMinutes / diamDiv;
@@ -106,6 +105,12 @@ if ( time === workMinutes*60){
     setIsOpen(false)
       
 }
+
+// if(isOpen  === false){
+//   console.log("close")
+// setIsOpen(false)
+// }
+
 
     if (time === 0){
       setIsOpen(false)
@@ -154,13 +159,7 @@ if ( time === workMinutes*60){
                 height:"30px", 
                 width:"30px"
               }}
-              onClick={() => {
-                setIsPaused(false);
-                setIsRunning(true);
-                localStorage.setItem("isRunning", "true");
-                localStorage.setItem("startTime", Date.now());
-              
-              }}
+              onClick={start}
             >
               <FaPlayCircle size={15} /> 
             </button>
@@ -173,12 +172,7 @@ if ( time === workMinutes*60){
             height:"30px", 
             width:"30px"
           }}
-            onClick={() => {
-              setIsPaused(true);
-              setIsRunning(false);
-              localStorage.setItem("PausedTime", time);
-             
-            }}
+            onClick={pause}
             className="btn btn-warning items-center justify-center"
           >
             <FaPauseCircle size={15} /> 
