@@ -56,6 +56,7 @@ const Stopwatch = () => {
   const resetStopwatch = () => {
     setIsStopWatchActive(false);
     setTimeElapsed(0);
+    setSaved(false);
   };
 
   const saveStopwatch = () => {

@@ -66,7 +66,7 @@ const Timer = ({animate}) => {
 
   const resetTimer = () => {
     setIsCountDownActive(false);
-
+    setSaved(false);
     setTimeLeft(time * 60 || 10 * 60);
   };
 

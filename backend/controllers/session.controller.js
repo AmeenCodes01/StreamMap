@@ -7,10 +7,11 @@ export const getSessions = async (req, res) => {
   try {
     const {room} = req.body;
     const userSessions = await Session.find({
-      // // userId: id,
+      userId: id,
       room: room,
-      // "createdAt": { "$gt": new Date(Date.now - 24 * 60 * 60 * 1000)}
+      createdAt: {$gt: new Date(Date.now - 24 * 60 * 60 * 1000)},
     });
+
     res.status(201).json(userSessions);
   } catch (error) {
     console.error("Error in getUserSessions: ", error.message);
@@ -73,6 +74,7 @@ export const saveSession = async (req, res) => {
       score,
       sessionID,
       room,
+      timers,
     } = req.body;
     console.log(sessionID, "session ID");
     // Find the session by ID
@@ -90,6 +92,7 @@ export const saveSession = async (req, res) => {
     session.mood = mood;
     session.score = score;
     session.endedAt = Date.now();
+    session.timers = timers;
 
     // Save the updated session
     await session.save();

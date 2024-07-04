@@ -49,6 +49,7 @@ function Sessions() {
       setRated: state.setRated,
     }))
   );
+
   const {socket} = useSocketContext();
   const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
