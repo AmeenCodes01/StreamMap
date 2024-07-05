@@ -6,14 +6,16 @@ import {useParams} from "react-router-dom";
 import DisplayMessage from "./DisplayMessage";
 import {useLiveStream} from "../hooks/useLiveStream";
 import {useAuthContext} from "../context/AuthContext";
+
 function StreamVid() {
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
-  const [message, setMessage] = useState();
-  const [hours, setHours] = useState();
-  const [minutes, setMinutes] = useState();
-  const [title, setTitle] = useState();
+  const [message, setMessage] = useState("");
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
 
   const {socket, setLive, live, liveLink, setLiveLink} = useSocketContext();
   const {id: room} = useParams();
@@ -65,27 +67,33 @@ function StreamVid() {
 
   const onSend = () => {
     if (mode) {
-      if (title && (hours || minutes)) {
+      if (title && date) {
         socket?.emit("display-message", {
           label: "time",
-          hours,
-          minutes,
           room,
-          offset: 5.5,
-          //- new Date().getTimezoneOffset()/60
+          date,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          title,
         });
       } else {
         toast.error("cannot display a blank message");
       }
     } else {
       if (title && message) {
-        socket?.emit("display-message", {label: "message", message});
+        console.log("display message socket io");
+        socket?.emit("display-message", {
+          label: "message",
+          message,
+          room,
+          title,
+        });
       } else {
         console.log("title & message not provided. ");
       }
     }
+    setShowMessage(false);
   };
-
+  console.log(date);
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
@@ -94,7 +102,10 @@ function StreamVid() {
           type="checkbox"
           checked={live}
           className="toggle toggle-sm self-center"
-          disabled={authUser.admin === true ? false : true}
+          disabled={
+            false
+            // authUser.admin === true ? false : true
+          }
           onChange={() => {
             onLive();
           }}
@@ -103,31 +114,31 @@ function StreamVid() {
 
       {!visible ? (
         <>
-          {authUser.admin ? (
-            <>
-              <div className="flex flex-row gap-[15px] ">
-                <input
-                  type="text"
-                  value={liveLink}
-                  placeholder='share>embed copy inside src="" '
-                  className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
-                  onChange={(e) => {
-                    setLiveLink(e.target.value);
-                  }}
-                  // send link to all in room.
-                />
-                <IoCheckmarkDone
-                  size={20}
-                  className="self-center"
-                  onClick={onClick}
-                />
-              </div>
-              <p className="text-xs text-error mb-[20px]">
-                {" "}
-                make sure the src link is pasted properly!
-              </p>{" "}
-            </>
-          ) : null}
+          {/* {authUser.admin ? ( */}
+          <>
+            <div className="flex flex-row gap-[15px] ">
+              <input
+                type="text"
+                value={liveLink}
+                placeholder='share>embed copy inside src="" '
+                className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
+                onChange={(e) => {
+                  setLiveLink(e.target.value);
+                }}
+                // send link to all in room.
+              />
+              <IoCheckmarkDone
+                size={20}
+                className="self-center"
+                onClick={onClick}
+              />
+            </div>
+            <p className="text-xs text-error mb-[20px]">
+              {" "}
+              make sure the src link is pasted properly!
+            </p>{" "}
+          </>
+          {/* ) : null} */}
         </>
       ) : null}
 
@@ -156,7 +167,7 @@ function StreamVid() {
       )}
       {/* Show this time to all users.  */}
       {showMessage ? (
-        <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px]">
+        <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px] ">
           <input
             type="text"
             placeholder="Title"
@@ -178,28 +189,34 @@ function StreamVid() {
             </label>
           </div>
           {mode ? (
-            <div className="flex flex-row gap-[8px] self-center">
-              <input
-                type="text"
-                value={hours}
-                onChange={(e) =>
-                  /^\d*$/.test(e.target.value) ? setHours(e.target.value) : null
-                }
-                className="w-[30px] text-center bg-secondary    focus:outline-none"
-              />
-              <span>h</span>
-              <input
-                type="text"
-                value={minutes}
-                onChange={(e) =>
-                  /^\d*$/.test(e.target.value)
-                    ? setMinutes(e.target.value)
-                    : null
-                }
-                className="w-[30px]  text-center bg-secondary   focus:outline-none"
-              />
-              <span>m</span>
-            </div>
+            // <div className="flex flex-row gap-[8px] self-center">
+            //   <input
+            //     type="text"
+            //     value={hours}
+            //     onChange={(e) =>
+            //       /^\d*$/.test(e.target.value) ? setHours(e.target.value) : null
+            //     }
+            //     className="w-[30px] text-center bg-secondary    focus:outline-none"
+            //   />
+            //   <span>h</span>
+            //   <input
+            //     type="text"
+            //     value={minutes}
+            //     onChange={(e) =>
+            //       /^\d*$/.test(e.target.value)
+            //         ? setMinutes(e.target.value)
+            //         : null
+            //     }
+            //     className="w-[30px]  text-center bg-secondary   focus:outline-none"
+            //   />
+            //   <span>m</span>
+            // </div>
+            <input
+              aria-label="Date and time"
+              type="datetime-local"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
           ) : (
             <textarea
               className="textarea textarea-secondary bg-secondary placeholder:text-xs"
