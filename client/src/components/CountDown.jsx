@@ -16,13 +16,13 @@ const Timer = ({animate}) => {
   const [desc, setDesc] = useState("");
   const [saved, setSaved] = useState(false);
   const {
-    saveInSesh,
+    setInSesh, 
     isCountDownActive,
     setIsCountDownActive,
     isRunning,
   } = useStore(
     useShallow((state) => ({
-      saveInSesh: state.saveInSesh,
+      setInSesh: state.setInSesh,
       isCountDownActive: state.isCountDownActive,
       setIsCountDownActive: state.setIsCountDownActive,
       isRunning: state.isRunning,
@@ -71,7 +71,7 @@ const Timer = ({animate}) => {
   };
 
   const saveCountdown = () => {
-    timeLeft != 0 ? saveInSesh({time: time * 60 - timeLeft, desc}) : null;
+    timeLeft != 0 ? setInSesh({time: time * 60 - timeLeft, desc}) : null;
     setSaved(true);
   };
 

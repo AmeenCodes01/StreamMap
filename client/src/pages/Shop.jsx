@@ -8,6 +8,10 @@ import {MdOutlineEdit, MdDeleteOutline} from "react-icons/md";
 import {Modal, Button} from "react-daisyui";
 import toast from "react-hot-toast";
 import {useAuthContext} from "../context/AuthContext";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import {Link} from "react-router-dom";
+
+
 const ModalInput = ({onChangeP, valueP, valueC, onChangeC, mode, coins}) => {
   return (
     <div>
@@ -67,13 +71,10 @@ function Shop() {
     const getScores = async () => {
       const data = await getScore();
       console.log(data,"data")
-      if (data.scores) {
+      if (data) {
 
-        const total = data.scores.reduce(
-          (partialSum, a) => partialSum + a.score,
-          0
-        );
-        setScore(total);
+        
+        setScore(data);
        }
     };
 
@@ -88,6 +89,9 @@ function Shop() {
     getPromise();
     getScores();
   }, []);
+
+console.log(score)
+
   const toggleVisible = () => {
     setVisible(!visible);
   };
@@ -122,6 +126,7 @@ function Shop() {
     }
 
     const newP = await newPromise(newTitle, newCoins);
+
     if (newP) {
       setPromises((prevPromises) => {
         const updatedPromises = [
@@ -131,7 +136,11 @@ function Shop() {
         return updatedPromises;
       });
     }
-    setScore((score) => score - (mode === "new" ? newCoins : coins));
+ const data = await updatePromise(newP._id, parseInt(coins));
+ if(data){
+   setScore((score) => score - (mode === "new" ? newCoins : coins));
+
+ }
 
     setNewTitle("");
     setNewCoins(0);
@@ -204,9 +213,14 @@ function Shop() {
       console.error("Error updating coins:", error);
     }
   };
-
+console.log(score)
   return (
     <div className="  h-[100vh]  flex p-[20px]  flex-col  gap-[30px] ">
+      <Link to="/">
+      
+      <IoMdArrowRoundBack size={25} />
+      </Link>
+
       {/* get score */}
       <div className="border-1 ml-[auto] p-[5px]  rounded-lg ">{score}</div>
       <div className=" ">
@@ -223,29 +237,7 @@ function Shop() {
         </div>
       </div>
       {/* //add a promise */}
-      {/* <div>
-        <input
-          className="border-1 text-white italic font-[12px] px-[5px] self-center"
-          placeholder="promise"
-          value={currentProm}
-          onChange={(e) => setcurrentProm(e.target.value)}
-        />
-        <input
-          className="border-1 text-white italic font-[12px] px-[5px] self-center"
-          placeholder="coins"
-          value={coins}
-          onChange={(e) => {
-            const regex = /^[0-9\b]+$/;
-            if (e.target.value === "" || regex.test(e.target.value)) {
-              setCoins(e.target.value);
-            }
-          }}
-        />
-
-        <button onClick={onNewPromise}>
-          <TiTickOutline size={20} />
-        </button>
-      </div> */}
+     
       <div className="flex gap-[20px] ">
         {promises?.map((promise) => (
           <div className="flex flex-col">

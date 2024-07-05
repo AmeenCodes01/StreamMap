@@ -15,8 +15,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     scores: [{score: Number, room: String}],
-    p_id: {type: String, unique: true}
-    //name,country,pfp, timezone offset, country color
+    p_id: {type: String, unique: true},
+    currentScore: {type:Number},
+    //name,country,pfp, timezone offset, country color, currentScore
   },
   {timestamps: true}
 );

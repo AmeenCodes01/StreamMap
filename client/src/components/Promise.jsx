@@ -2,6 +2,8 @@ import React from "react";
 import {CiSquarePlus} from "react-icons/ci";
 
 function Promise({promise, coins, id, setMode, openModal, setCurrentProm}) {
+
+  console.log(coins)
   return (
     <div className="inline-block">
       <div className="border-1  items-center text-center p-[10px]  ">
@@ -18,6 +20,10 @@ function Promise({promise, coins, id, setMode, openModal, setCurrentProm}) {
             openModal();
           }}
         />
+      </div>
+      <div className="">
+
+      { promise ==="Donate to Palestine" && <p> ${Math.floor(coins/2)} promise of donation  (supposing 2 points for 1$)</p> }
       </div>
     </div>
   );

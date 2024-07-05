@@ -76,7 +76,7 @@ export const saveSession = async (req, res) => {
       room,
       timers,
     } = req.body;
-    console.log(sessionID, "session ID");
+    console.log(timers, "session timers");
     // Find the session by ID
     const session = await Session.findById(sessionID);
     if (!session) {

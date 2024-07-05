@@ -3,6 +3,7 @@ import {
   deletePromise,
   editPromise,
   getPromises,
+  getTotalDonation,
   newPromise,
   updatePromise,
 } from "../controllers/promises.controller.js";
@@ -13,4 +14,5 @@ router.post("/new", newPromise);
 router.post("/edit", editPromise);
 router.post("/delete", deletePromise);
 router.post("/update", updatePromise);
+router.get("/total", getTotalDonation)
 export default router;

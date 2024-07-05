@@ -13,13 +13,13 @@ const Stopwatch = () => {
     isStopWatchActive,
     setIsStopWatchActive,
     isRunning,
-    saveInSesh,
+    setInSesh,
   } = useStore(
     useShallow((state) => ({
       isStopWatchActive: state.isStopWatchActive,
       setIsStopWatchActive: state.setIsStopWatchActive,
       isRunning: state.isRunning,
-      saveInSesh: state.saveInSesh,
+      setInSesh: state.setInSesh,
     }))
   );
 
@@ -60,7 +60,7 @@ const Stopwatch = () => {
   };
 
   const saveStopwatch = () => {
-    saveInSesh({time: timeElapsed, desc: desc});
+    setInSesh({time: timeElapsed, desc: desc});
     setSaved(true);
   };
   return (

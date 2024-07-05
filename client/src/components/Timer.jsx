@@ -3,7 +3,6 @@ import {CircularProgressbar, buildStyles} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import {LuTimerReset} from "react-icons/lu";
 import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
-import useSaveSession from "../hooks/useSaveSession";
 import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 import {useShallow} from "zustand/react/shallow";
@@ -33,9 +32,10 @@ export default function Timer() {
     setBreakMinutes,
     isStopWatchActive,
     isCountDownActive,
-    setInSesh,
+    resetInSesh,
     rated,
     setRated,
+    
   } = useStore(
     useShallow((state) => ({
       workMinutes: state.workMinutes,
@@ -56,7 +56,7 @@ export default function Timer() {
       isCountDownActive: state.isCountDownActive,
       timeElapsed: state.timeElapsed,
       setTimeElapsed: state.setTimeElapsed,
-      setInSesh: state.setInSesh,
+      resetInSesh: state.resetInSesh,
       rated: state.rated,
       setRated: state.setRated,
     }))
@@ -109,7 +109,6 @@ export default function Timer() {
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
   );
 
-  const {startSession} = useSaveSession();
 
   const {socket} = useSocketContext();
 
@@ -182,7 +181,7 @@ export default function Timer() {
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
 
     setSecondsLeft(resetSeconds);
-    setInSesh([]);
+    resetInSesh()
     setIsRunning(false);
     setIsPaused(true);
     setRated(false);

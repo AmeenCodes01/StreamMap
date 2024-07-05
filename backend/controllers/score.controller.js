@@ -10,10 +10,11 @@ export const getTotalScore = async (req, res) => {
   try {
     const {id} = req.body;
     console.log(id, "idTotalScore");
-    const userScores = await User.findById(id).select("-_id scores").exec();
-    res.status(200).json(userScores);
+    const user = await User.findById(id)
+    console.log
+    res.status(200).json(user.currentScore);
 
-    console.log(userScores, "scores");
+    console.log(user, "scores");
   } catch (error) {
     res.status(500).json({error: "Internal  error"});
 
@@ -28,6 +29,7 @@ export const updateScore = async (req, res) => {
   try {
     // Find the user document by userId
     const user = await User.findById(userId);
+
     let s;
     // Check if the user exists
     if (!user) {
@@ -46,7 +48,11 @@ export const updateScore = async (req, res) => {
       user.scores.push({room, score: newScore});
       s = newScore;
     }
-
+    const total = user.scores.reduce(
+      (partialSum, a) => partialSum + a.score,
+      0
+    );
+    user.currentScore = total
     // Save the updated user document
     await user.save();
     res.status(200).json(`Score for room ${room} updated to ${s}`);

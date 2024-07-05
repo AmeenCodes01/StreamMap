@@ -1,26 +1,25 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {CiShop} from "react-icons/ci";
-
+import usePromise from "../hooks/usePromise";
 // sm:justify-items-center
 // sm:items-center sm:justify-center
 
 function Rooms() {
-  const [username, setUsername] = useState();
-  // useEffect(() => {
-  //   const s = io("http://localhost:3000");
-  //   setSocket(s);
+  const [totalDon, setTotalDon] = useState();
+  const {getTotalDonations} = usePromise()
+  useEffect(() => {
+    const getTotalDonate = async () => {
+      const data = await getTotalDonations();
+      if (data) {
 
-  //   return () => {
-  //     s.disconnect();
-  //   };
-  // }, []);
+        
+        setTotalDon(data);
+       }
+    };
 
-  // useEffect(() => {
-  //   if (socket == null) return;
-  //   socket.on("send-message", (message) => console.log(message));
-  // }, [socket]);
-
+   
+getTotalDonate()  }, []);
   return (
     <div
       className="bg-gray-500 h-[100vh] p-[20px] 
@@ -72,6 +71,7 @@ function Rooms() {
           </div>
         </Link>
       </div>
+      <span className="text-bold">{Math.floor(parseInt(totalDon)/2)}$ donated</span>
     </div>
   );
 }

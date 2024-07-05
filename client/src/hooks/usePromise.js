@@ -90,7 +90,7 @@ const usePromise = () => {
       const res = await fetch("/api/promise/update", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id, coins}),
+        body: JSON.stringify({id, coins,authId}),
       });
 
       const data = await res.json();
@@ -105,7 +105,30 @@ const usePromise = () => {
       toast.error(error.message);
     }
   };
+  const getTotalDonations =async () => {
+    console.log("E")
+    try {
+      const res = await fetch("/api/promise/total", {
+        method: "GET",
+        // headers: {"Content-Type": "application/json"},
+        // body: JSON.stringify({id, coins}),
+      });
 
-  return {getPromises, newPromise, deletePromise, updatePromise, editPromise};
-};
+      const data = await res.json();
+console.log(data)
+      if (data.error) {
+        console.log(data.error);
+        throw new Error(data.error);
+      }
+      console.log(data, "upadtedPromise");
+      return data
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  
+  return {getPromises, newPromise, deletePromise, updatePromise, editPromise,getTotalDonations};
+  }
+
+
 export default usePromise;

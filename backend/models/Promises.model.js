@@ -9,13 +9,13 @@ const promiseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  coins: {
-    type: Number,
-    default: 0,
-  },
+  // coins: [{score: Number, room: String}],
+  coins: Number
+
 
   //name,country,pfp, timezone offset, country color
 });
 const Promise = mongoose.model("Promise", promiseSchema);
 
 export default Promise;
+//coins : [ {room: coins}, {room, coins}]

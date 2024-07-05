@@ -49,11 +49,11 @@ function Sessions() {
       setRated: state.setRated,
     }))
   );
-
+console.log(inSesh)
   const {socket} = useSocketContext();
   const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
-  const {authId} = useAuthId();
+  const {authId,key} = useAuthId();
   // const {rankings, setRankings} = useLeaderBoardContext()
 
   useEffect(() => {

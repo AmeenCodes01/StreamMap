@@ -69,7 +69,9 @@ const useStore = create((set, get) => ({
 
   inSesh: [],
   setInSesh: (sesh) => set({inSesh: [...get().inSesh, sesh]}),
-  saveInSesh: (sesh) => set((state) => ({inSesh: [...state.inSesh, state]})),
+  resetInSesh: () => set({ inSesh: [] })
+
+ // saveInSesh: (sesh) => set((state) => ({inSesh: [...state.inSesh, state]})),
 }));
 
 export default useStore;
