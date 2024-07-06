@@ -7,6 +7,9 @@ function AllUsers() {
   const {authUser} = useAuthContext();
   //these things should be in authUser because this s
   const [score, setScore] = useState();
+
+
+
   useEffect(() => {
     //we getting the score of authUser from here.
     const User = Object.keys(users).filter((country) => {
@@ -24,7 +27,7 @@ function AllUsers() {
   return (
     <div className=" w-[100px] h-[100%] flex flex-col ">
       {/* get score */}
-      <div>score</div>
+      {/* <div>score</div>
       <div>
         <div className=" flex flex-row justify-between w-[100%] ">
           <h2>Promises</h2>
@@ -38,7 +41,7 @@ function AllUsers() {
         <div className="border-2 w-[100%]  ">
           coins submitted for this promise
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

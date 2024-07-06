@@ -10,11 +10,10 @@ import {useShallow} from "zustand/react/shallow";
 import {setInterval, clearInterval} from "worker-timers";
 import useStore from "../context/TimeStore";
 import usePomodoro from "../hooks/usePomodoro";
+import timerEnd from "/timerEnd.mp3"
 const red = "#f54e4e";
 
 export default function Timer() {
-
-
   const {
     workMinutes,
     setWorkMinutes,
@@ -65,19 +64,23 @@ export default function Timer() {
   const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
   const {start, pause} = usePomodoro()
+  const audio = document.getElementById("audio_tag");
+  const [play, setPlay] = useState(false);
+
   useEffect(() => {
     // Retrieve necessary localStorage values
-    const pausedTime = localStorage.getItem(`${key}PausedTime`);
+    
     setWorkMinutes(parseInt(localStorage.getItem(`${key}workMinutes`)) || 60);
     setBreakMinutes(parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10);
+    
     const storedStartTime = localStorage.getItem(`${key}startTime`);
     const storedIsRunning = localStorage.getItem(`${key}isRunning`) === "true";
-    const workMinutes =
-      parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
-    const breakMinutes =
-      parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
+    const workMinutes = parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
+    const breakMinutes = parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
+    const pausedTime = localStorage.getItem(`${key}PausedTime`) || workMinutes*60 
     const mode = localStorage.getItem(`${key}mode`) || "work";
 
+    
     setMode(mode);
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
@@ -85,26 +88,27 @@ export default function Timer() {
     // if any ls value is null, set it to workMinutes
     // Calculate elapsedTime based on storedStartTime
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
-
+    
     // Calculate remainingTime using the correct values
     let remainingTime =
-      (mode == "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
+    (mode == "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
+
     if (storedStartTime == null) {
-      remainingTime = workMinutes;
+      remainingTime = workMinutes*60;
     }
+   
+   
     setIsPaused(localStorage.getItem(`${key}isPaused`) === "true");
     // Update state with the correct values
     setSecondsLeft(
       localStorage.getItem(`${key}isPaused`) === "true"
         ? pausedTime
         : remainingTime > 0
-        ? remainingTime
+        ? remainingTime 
         : workMinutes * 60
     );
-    setIsRunning(storedIsRunning || false);
+   
   }, []);
-
-
   const [sessions, setSessions] = useState(
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
   );
@@ -122,6 +126,7 @@ export default function Timer() {
 
   useEffect(() => {
     function switchMode() {
+      audio.play()
       const nextMode = mode === "work" ? "break" : "work";
       console.log(nextMode, "mextMODE");
       nextMode === "break" ? setShowRating(true) : null;
@@ -165,6 +170,9 @@ export default function Timer() {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
+console.log(totalSeconds)
+console.log(isRunning, isPaused)
+console.log(secondsLeft)
 
   const onResetTimer = () => {
     localStorage.removeItem(`${key}startTime`);
@@ -222,6 +230,9 @@ export default function Timer() {
   useEffect(() => {
     localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   }, [breakMinutes]);
+
+
+
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}
@@ -364,6 +375,8 @@ export default function Timer() {
           </div>
         </div>
       </div>
+      <audio id="audio_tag" src={timerEnd} />
+
       {isPaused && (
         <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
           <span className="text-xs self-center text-cente font-semibold">

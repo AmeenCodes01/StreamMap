@@ -64,19 +64,17 @@ function Shop() {
     deletePromise,
     updatePromise,
     editPromise,
+    loading
   } = usePromise();
 
 
   useEffect(() => {
     const getScores = async () => {
+      console.log("FURICKING RUNNIIIIII")
       const data = await getScore();
       console.log(data,"data")
-      if (data) {
-
-        
-        setScore(data);
-       }
-    };
+      setScore(data ? data : 0)
+    }
 
     const getPromise = async () => {
       const data = await getPromises();
@@ -84,7 +82,8 @@ function Shop() {
        
         setPromises(data);
       }
-    };
+    
+    }
 
     getPromise();
     getScores();
@@ -95,6 +94,9 @@ console.log(score)
   const toggleVisible = () => {
     setVisible(!visible);
   };
+
+
+
   const onChangePromise = (e) => {
     mode !== "new"
       ? setcurrentProm((prevProm) => {
@@ -136,11 +138,11 @@ console.log(score)
         return updatedPromises;
       });
     }
- const data = await updatePromise(newP._id, parseInt(coins));
- if(data){
-   setScore((score) => score - (mode === "new" ? newCoins : coins));
+//  const data = await updatePromise(newP._id, parseInt(coins));
+//  if(data){
+//    setScore((score) => score - (mode === "new" ? newCoins : coins));
 
- }
+//  }
 
     setNewTitle("");
     setNewCoins(0);
@@ -151,13 +153,16 @@ console.log(score)
   const onEditPromise = async () => {
     const edit = await editPromise(currentProm._id, currentProm.promise);
     if (edit) {
+      console.log(edit,"edit")
       setPromises((prevPromises) => {
-        const updatedPromises = [...prevPromises];
-        updatedPromises.map((promise) => {
-          if (promise._id == edit._id) {
-            promise.promise = edit.promise;
+        const updatedPromises = prevPromises.map((prom) => {
+          if (prom._id === edit) {
+            console.log("macy"); // Optional: You can log something here
+            return { ...prom, promise: currentProm.promise };
           }
+          return prom; // Return the original promise if not updated
         });
+      
         return updatedPromises;
       });
     }
@@ -182,11 +187,7 @@ console.log(score)
     }
   };
 
-  // const ref = useRef();
-  // const handleShow = useCallback(() => {
-  //   ref.current?.showModal();
-  // }, [ref]);
-  console.log(promises);
+
   const onUpdateCoins = async () => {
     try {
       console.log(coins, currentProm.coins, "ee");
@@ -213,7 +214,14 @@ console.log(score)
       console.error("Error updating coins:", error);
     }
   };
-console.log(score)
+  // const ref = useRef();
+  // const handleShow = useCallback(() => {
+  //   ref.current?.showModal();
+  // }, [ref]);
+if(loading){
+  return;''
+}  
+console.log(currentProm,"currentProm")
   return (
     <div className="  h-[100vh]  flex p-[20px]  flex-col  gap-[30px] ">
       <Link to="/">
@@ -247,6 +255,8 @@ console.log(score)
                   <MdOutlineEdit
                     onClick={() => {
                       setMode("edit");
+                      toggleVisible();
+
                       setcurrentProm(promise);
                     }}
                   />

@@ -213,7 +213,7 @@ export const deletePromise = async (req, res) => {
   try {
     const {id} = req.body;
     // Here id is the _id of the promise
-
+console.log(id,"deltepromiseID")
     const deletedPromise = await Promise.findByIdAndDelete(id);
     // The promise with the specified id has been deleted
 
@@ -240,7 +240,7 @@ if (coins > 0){
   const user = await User.findById(authId)
   user.currentScore -= coins
     await user.save()
-}
+}    
 
     res.status(200).json(currentPromise);
   } catch (error) {

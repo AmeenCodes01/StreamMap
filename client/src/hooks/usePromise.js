@@ -1,10 +1,15 @@
+
+import { useState } from "react";
 import toast from "react-hot-toast";
 import useAuthId from "./useAuthId";
-const usePromise = () => {
+import { Loading } from "react-daisyui";
 
+const usePromise = () => {
+const [loading, setLoading] = useState(false)
   const {authId}= useAuthId()  
 
   const getPromises = async () => {
+    setLoading(true)
     console.log(authId,"auth Id")
     try {
       const res = await fetch("/api/promise/get", {
@@ -18,6 +23,7 @@ const usePromise = () => {
         console.log(data.error);
         throw new Error(data.error);
       }
+      setLoading(false)
       return data;
     } catch (error) {
       toast.error(error.message);
@@ -67,6 +73,7 @@ const usePromise = () => {
   };
 
   const deletePromise = async (id) => {
+    console.log("DELid",id)
     try {
       const res = await fetch("/api/promise/delete", {
         method: "POST",
@@ -106,6 +113,7 @@ const usePromise = () => {
     }
   };
   const getTotalDonations =async () => {
+    setLoading(true)
     console.log("E")
     try {
       const res = await fetch("/api/promise/total", {
@@ -121,13 +129,14 @@ console.log(data)
         throw new Error(data.error);
       }
       console.log(data, "upadtedPromise");
+      setLoading(false)
       return data
     } catch (error) {
       toast.error(error.message);
     }
   };
   
-  return {getPromises, newPromise, deletePromise, updatePromise, editPromise,getTotalDonations};
+  return {getPromises, newPromise, deletePromise, updatePromise, editPromise,getTotalDonations, loading};
   }
 
 

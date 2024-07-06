@@ -10,7 +10,7 @@ const promiseSchema = new mongoose.Schema({
     required: true,
   },
   // coins: [{score: Number, room: String}],
-  coins: Number
+  coins: {type:Number, required: false, default: 0}
 
 
   //name,country,pfp, timezone offset, country color
