@@ -121,6 +121,7 @@ export const getLiveRanking = async (req, res) => {
 
   const live = await Livestream.findOne({room: room}).sort({createdAt: -1}); // Ensure to await the result
   if (!live) {
+    //return no livestream.
     throw new Error("no livestream");
   }
 

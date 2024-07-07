@@ -35,7 +35,6 @@ export const signup = async (req, res) => {
           newUser.p_id = donatePromise._id
           
           await newUser.save()
-        console.log(donatePromise,newUser, "onSIGNUP")
           
         res.status(201).json(newUser);
       } else {

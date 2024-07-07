@@ -3,7 +3,7 @@ import {CiSquarePlus} from "react-icons/ci";
 
 function Promise({promise, coins, id, setMode, openModal, setCurrentProm}) {
 
-  console.log(coins)
+  console.log(id, "id of pro in prom")
   return (
     <div className="inline-block">
       <div className="border-1  items-center text-center p-[10px]  ">

@@ -6,7 +6,6 @@ export const checkCountry =async (req,res)=>{
 try{
     const {country} = req.body
     const Country = await Countries.findOne({country})
-    console.log(Country,"country")
     if(Country){
         return res.status(201).json({exist:true})
     }else{

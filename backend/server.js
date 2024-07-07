@@ -20,13 +20,11 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-console.log("uri", process.env.MONGO_URI);
 const connectToMongoDB = () => {
   mongoose.connect(
     process.env.MONGO_URI,
     {useNewUrlParser: true, useUnifiedTopology: true},
     () => {
-      console.log("Connected to MongoDB");
     }
   );
   mongoose.set("strictQuery", true);
@@ -46,5 +44,4 @@ const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
   connectToMongoDB();
-  console.log(`Server Running on port ${PORT}`);
 });

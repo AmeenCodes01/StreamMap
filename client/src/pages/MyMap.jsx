@@ -7,9 +7,7 @@ import {useAuthContext} from "../context/AuthContext";
 import {useSocketContext} from "../context/SocketContext";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import {useLiveStream} from "../hooks/useLiveStream";
-
 import {IoExit} from "react-icons/io5";
-
 const MyMap = () => {
   // myCountry saves user country
   const navigate = useNavigate();
@@ -23,15 +21,21 @@ const MyMap = () => {
   const toggleVisible = useCallback(() => {
     setVisible((visible) => !visible);
   }, []);
-  const {socket, setLive, setLiveLink} = useSocketContext();
+  const {socket, setLive, setLiveLink, isConnected} = useSocketContext();
   // get all users by room. get room name from params.
   const [tab, setTab] = useState("Timer");
-  useEffect(() => {
-    setRoom(room);
-    if (socket !== null) {
-      socket.emit("join-room", {room, userId: authUser._id});
+
+
+  const joinRoom = useCallback(() => {
+    if (socket && isConnected && authUser && room) {
+      console.log("Emitting join-room event", room, authUser._id);
+      socket.emit("join-room", { room, userId: authUser._id });
     }
-  }, [authUser, socket]);
+  }, [socket, isConnected, authUser, room]);
+
+  useEffect(() => {
+    joinRoom();
+  }, [joinRoom]);
 
   useEffect(() => {
     navigate("user");

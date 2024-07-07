@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {CiShop} from "react-icons/ci";
 import usePromise from "../hooks/usePromise";
+
 // sm:justify-items-center
 // sm:items-center sm:justify-center
 
