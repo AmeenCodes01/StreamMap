@@ -37,10 +37,22 @@ io.on("connection", async (socket) => {
   // refreshToken(req,res)
 
   socket.on("identify", (userId) => {
+    // Check if user is already connected
+    if (userSocketMap[userId]) {
+      // Disconnect the previous socket
+      io.to(userSocketMap[userId]).emit(
+        "forced_disconnect",
+        "You've been logged in from another tab or browser."
+      );
+      io.sockets.sockets.get(userSocketMap[userId])?.disconnect(true);
+    }
+
     socket.join(userId);
     socket.userId = userId;
+    userSocketMap[userId] = socket.id;
+    socketRooms[socket.id] = null; // Initially not in any room
 
-    socketRooms[socket.id] = [];
+    console.log(`User ${userId} identified with socket ${socket.id}`);
   });
 
   socket.on("join-room", ({userId, room: roomName}) => {
@@ -105,39 +117,42 @@ io.on("connection", async (socket) => {
     }
   });
 
-  socket.on("leave-room", ({room: roomName, userId}) => {
-    socket.leave(roomName);
-
-    if (userRooms[roomName]) {
-      const index = userRooms[roomName].indexOf(socket.userId);
-      if (index !== -1) {
-        userRooms[roomName].splice(index, 1);
-        // Send updated list of users in the room to all clients in the room
-        io.to(roomName).emit("roomUsers", userRooms[roomName]);
-      }
-    }
-    console.log("leave", userRooms, socketRooms);
+  socket.on("leave-room", ({room: roomName}) => {
+    leaveRoom(socket, roomName);
   });
 
-  // socket.on() is used to listen to the events. can be used both on client and server side
   socket.on("disconnect", () => {
-    console.log("user disconnected", socket.id);
+    console.log("User disconnected", socket.id);
 
-    socketRooms[socket.id]?.forEach((roomName) => {
-      socket.leave(roomName);
-      // Update userRooms object
-      if (userRooms[roomName]) {
-        const index = userRooms[roomName].indexOf(socket.userId);
-        if (index !== -1) {
-          userRooms[roomName].splice(index, 1);
-          // Send updated list of users in the room to all clients in the room
-          io.to(roomName).emit("roomUsers", userRooms[roomName]);
-        }
-      }
-    });
-    // Clean up socketRooms object
+    if (socketRooms[socket.id]) {
+      leaveRoom(socket, socketRooms[socket.id]);
+    }
+
+    if (socket.userId) {
+      delete userSocketMap[socket.userId];
+    }
+
     delete socketRooms[socket.id];
-    console.log("userRooms, socketRooms", userRooms, socketRooms);
   });
 });
 export {app, io, server};
+
+function leaveRoom(socket, roomName) {
+  socket.leave(roomName);
+
+  if (userRooms[roomName]) {
+    const index = userRooms[roomName].indexOf(socket.userId);
+    if (index !== -1) {
+      userRooms[roomName].splice(index, 1);
+      io.to(roomName).emit("roomUsers", userRooms[roomName]);
+    }
+
+    if (userRooms[roomName].length === 0) {
+      delete userRooms[roomName];
+    }
+  }
+
+  socketRooms[socket.id] = null;
+
+  console.log(`User ${socket.userId} left room ${roomName}`);
+}

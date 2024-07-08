@@ -6,11 +6,11 @@ import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
 import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 import {useShallow} from "zustand/react/shallow";
-
+import {Progress} from "react-daisyui";
 import {setInterval, clearInterval} from "worker-timers";
 import useStore from "../context/TimeStore";
 import usePomodoro from "../hooks/usePomodoro";
-import timerEnd from "/timerEnd.mp3"
+import timerEnd from "/timerEnd.mp3";
 const red = "#f54e4e";
 
 export default function Timer() {
@@ -34,7 +34,6 @@ export default function Timer() {
     resetInSesh,
     rated,
     setRated,
-    
   } = useStore(
     useShallow((state) => ({
       workMinutes: state.workMinutes,
@@ -63,24 +62,26 @@ export default function Timer() {
 
   const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
-  const {start, pause} = usePomodoro()
+  const {start, pause} = usePomodoro();
   const audio = document.getElementById("audio_tag");
   const [play, setPlay] = useState(false);
 
   useEffect(() => {
     // Retrieve necessary localStorage values
-    
+
     setWorkMinutes(parseInt(localStorage.getItem(`${key}workMinutes`)) || 60);
     setBreakMinutes(parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10);
-    
+
     const storedStartTime = localStorage.getItem(`${key}startTime`);
     const storedIsRunning = localStorage.getItem(`${key}isRunning`) === "true";
-    const workMinutes = parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
-    const breakMinutes = parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
-    const pausedTime = localStorage.getItem(`${key}PausedTime`) || workMinutes*60 
+    const workMinutes =
+      parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
+    const breakMinutes =
+      parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
+    const pausedTime =
+      localStorage.getItem(`${key}PausedTime`) || workMinutes * 60;
     const mode = localStorage.getItem(`${key}mode`) || "work";
 
-    
     setMode(mode);
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
@@ -88,31 +89,28 @@ export default function Timer() {
     // if any ls value is null, set it to workMinutes
     // Calculate elapsedTime based on storedStartTime
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
-    
+
     // Calculate remainingTime using the correct values
     let remainingTime =
-    (mode == "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
+      (mode == "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
 
     if (storedStartTime == null) {
-      remainingTime = workMinutes*60;
+      remainingTime = workMinutes * 60;
     }
-   
-   
+
     setIsPaused(localStorage.getItem(`${key}isPaused`) === "true");
     // Update state with the correct values
     setSecondsLeft(
       localStorage.getItem(`${key}isPaused`) === "true"
         ? pausedTime
         : remainingTime > 0
-        ? remainingTime 
+        ? remainingTime
         : workMinutes * 60
     );
-   
   }, []);
   const [sessions, setSessions] = useState(
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
   );
-
 
   const {socket} = useSocketContext();
 
@@ -126,7 +124,7 @@ export default function Timer() {
 
   useEffect(() => {
     function switchMode() {
-      audio.play()
+      audio.play();
       const nextMode = mode === "work" ? "break" : "work";
       console.log(nextMode, "mextMODE");
       nextMode === "break" ? setShowRating(true) : null;
@@ -170,9 +168,9 @@ export default function Timer() {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
-console.log(totalSeconds)
-console.log(isRunning, isPaused)
-console.log(secondsLeft)
+  console.log(totalSeconds);
+  console.log(isRunning, isPaused);
+  console.log(secondsLeft);
 
   const onResetTimer = () => {
     localStorage.removeItem(`${key}startTime`);
@@ -184,12 +182,12 @@ console.log(secondsLeft)
           id: localStorage.getItem("sessionID"),
           room,
         })
-      : null
+      : null;
 
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
 
     setSecondsLeft(resetSeconds);
-    resetInSesh()
+    resetInSesh();
     setIsRunning(false);
     setIsPaused(true);
     setRated(false);
@@ -230,9 +228,7 @@ console.log(secondsLeft)
   useEffect(() => {
     localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   }, [breakMinutes]);
-
-
-
+  console.log(percentage);
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}
@@ -252,7 +248,19 @@ console.log(secondsLeft)
         />
 
         <div className="w-[500px] mr-[10px] min-w-[100px]">
-          <CircularProgressbar
+          {/* <Progress value={19} className="w-56" /> */}
+          <progress
+            className={`progress w-56 ${
+              mode === "work" ? "progress-success" : "progress-error"
+            }`}
+            value={100 - percentage}
+            max="100"
+          ></progress>
+
+          {`${minutes < 10 ? "0" : ""}${minutes}:${
+            seconds < 10 ? "0" : ""
+          }${seconds}`}
+          {/* <CircularProgressbar
             value={percentage}
             strokeWidth={30}
             text={`${minutes < 10 ? "0" : ""}${minutes}:${
@@ -268,7 +276,7 @@ console.log(secondsLeft)
               trailColor: "#d6d6d6",
               tailColor: red,
             })}
-          />
+          /> */}
         </div>
         <div className="flex items-center justify-items-center flex-col">
           <div className="flex flex-col p-[10px]">
@@ -278,16 +286,16 @@ console.log(secondsLeft)
                 <button
                   disabled={disabled}
                   className="btn btn-success items-center justify-center"
-                //so I will start(room, workMinutes, )
+                  //so I will start(room, workMinutes, )
                   onClick={() => {
-                    secondsLeft === workMinutes * 60 ?
-                    start({ room,
-                            duration: workMinutes,
-                            goal: seshGoal,
-                           id: authId,
-                           }):
-                           start()
-                   
+                    secondsLeft === workMinutes * 60
+                      ? start({
+                          room,
+                          duration: workMinutes,
+                          goal: seshGoal,
+                          id: authId,
+                        })
+                      : start();
                   }}
                 >
                   <FaPlayCircle size={15} />
@@ -301,7 +309,7 @@ console.log(secondsLeft)
               <button
                 className="btn btn-warning items-center justify-center"
                 onClick={() => {
-                  pause()
+                  pause();
                   // setIsPaused(true);
                   // setIsRunning(true);
                   // localStorage.setItem(`${key}PausedTime`, secondsLeft);

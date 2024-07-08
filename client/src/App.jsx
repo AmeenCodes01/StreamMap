@@ -38,7 +38,15 @@ function App() {
           <Route path="allUsers" element={<AllUsers />} />
         </Route>
       </Routes>
-      <Toaster />
+      <Toaster
+        containerClassName="z-[10000000]"
+        toastOptions={{
+          className: "z-[10000]",
+          style: {
+            zIndex: "100000000",
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }

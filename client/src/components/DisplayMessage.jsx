@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {useSocketContext} from "../context/SocketContext";
 import {fromZonedTime, toZonedTime, format} from "date-fns-tz";
 import {parseISO} from "date-fns";
-
 function DisplayMessage() {
   const {socket} = useSocketContext();
   const [message, setMessage] = useState("");
