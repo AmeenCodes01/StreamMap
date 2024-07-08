@@ -1,5 +1,5 @@
-import {createContext, useState, useEffect, useContext} from "react";
-import {useAuthContext} from "./AuthContext";
+import { createContext, useState, useEffect, useContext } from "react";
+import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 
 const SocketContext = createContext();
@@ -8,55 +8,70 @@ export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
-export const SocketContextProvider = ({children}) => {
+export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const {authUser} = useAuthContext();
+  const { authUser } = useAuthContext();
   const [live, setLive] = useState(false);
   const [liveLink, setLiveLink] = useState("");
-  console.log(onlineUsers, "onlineUsers");
+  const [isConnected, setIsConnected] = useState(false);
+console.log(onlineUsers,"user")
   useEffect(() => {
-    if (socket == null) return;
-    socket.on("live-status", (data) => {
-      console.log("Live status received:", data);
-      setLive(data.status);
-      console.log(data, "live");
-      if (data.status) setLiveLink(data.newStream.link);
-    });
+    let newSocket;
 
-    // Cleanup function
-    return () => {
-      // Remove the event listener when the component unmounts
-      socket.off("live-status");
-    };
-  }, [socket]);
-
-  useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:3000");
-      // Identify the user with the server
-      socket.emit("identify", authUser._id);
-      setSocket(socket);
-      return () => socket.close();
-    } else {
-      if (socket) {
-        socket.close();
-        setSocket(null);
-      }
-    }
-  }, []);
+      newSocket = io("http://localhost:3000", {
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        timeout: 10000,
+      });
 
-  useEffect(() => {
-    if (socket === null) return;
-    const handler = (e) => {
-      setOnlineUsers(e);
-    };
-    socket.on("roomUsers", handler);
+      newSocket.on("connect", () => {
+        console.log("Socket connected");
+        setIsConnected(true);
+        newSocket.emit("identify", authUser._id);
+      });
+
+      newSocket.on("disconnect", (reason) => {
+        console.log("Socket disconnected:", reason);
+        setIsConnected(false);
+      });
+
+      newSocket.on("connect_error", (error) => {
+        console.error("Connection error:", error);
+        setIsConnected(false);
+      });
+
+      newSocket.on("live-status", (data) => {
+        console.log("Live status received:", data);
+        setLive(data.status);
+        if (data.status) setLiveLink(data.newStream.link);
+      });
+
+      newSocket.on("roomUsers", (users) => {
+        console.log("Online users:", users);
+        setOnlineUsers(users);
+      });
+
+      setSocket(newSocket);
+    }
 
     return () => {
-      socket.off("roomUsers", handler);
+      if (newSocket) {
+        newSocket.off("live-status");
+        newSocket.off("roomUsers");
+        newSocket.close();
+      }
     };
-  }, [socket, authUser]);
+  }, [authUser]);
+
+  // Function to manually reconnect if needed
+  const reconnect = () => {
+    if (socket) {
+      socket.connect();
+    }
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -66,11 +81,11 @@ export const SocketContextProvider = ({children}) => {
         setLive,
         liveLink,
         setLiveLink,
+        isConnected,
+        reconnect,
       }}
     >
       {children}
     </SocketContext.Provider>
   );
 };
-
-// now everytime I start a session, I want it to go to all clients. I will store its ID & status as active on server-side. will send this when user joins.

@@ -40,6 +40,9 @@ const ModalInput = ({onChangeP, valueP, valueC, onChangeC, mode, coins}) => {
       {mode === "delete" ? (
         <p>Are you sure you want to delete this promise ?</p>
       ) : null}{" "}
+       <form method="dialog" className="modal-backdrop">
+    {/* <button>close</button> */}
+  </form>
     </div>
   );
 };
@@ -52,10 +55,11 @@ function Shop() {
   const [coins, setCoins] = useState(0); //temp coins, check against score
   const [error, setError] = useState();
   const [mode, setMode] = useState();
-  const [newTitle, setNewTitle] = useState(); //new promise title
-  const [newCoins, setNewCoins] = useState(); //new promise coins
+  const [newTitle, setNewTitle] = useState(""); //new promise title
+  const [newCoins, setNewCoins] = useState(0); //new promise coins
 
   const [visible, setVisible] = useState(false);
+  console.log(visible,"visible")
   const {getScore} = useSaveScore();
   const {authUser} = useAuthContext();
   const {
@@ -70,7 +74,6 @@ function Shop() {
 
   useEffect(() => {
     const getScores = async () => {
-      console.log("FURICKING RUNNIIIIII")
       const data = await getScore();
       console.log(data,"data")
       setScore(data ? data : 0)
@@ -89,7 +92,6 @@ function Shop() {
     getScores();
   }, []);
 
-console.log(score)
 
   const toggleVisible = () => {
     setVisible(!visible);
@@ -133,7 +135,7 @@ console.log(score)
       setPromises((prevPromises) => {
         const updatedPromises = [
           ...prevPromises,
-          {promise: newTitle, coins: newCoins},
+          {promise: newTitle, coins: newCoins, _id: newP}
         ];
         return updatedPromises;
       });
@@ -144,8 +146,7 @@ console.log(score)
 
 //  }
 
-    setNewTitle("");
-    setNewCoins(0);
+   cleanUp()
     toggleVisible();
     //check if enough coins
   };
@@ -166,6 +167,7 @@ console.log(score)
         return updatedPromises;
       });
     }
+    cleanUp()
     toggleVisible();
   };
 
@@ -181,6 +183,7 @@ console.log(score)
           return updatedProm;
         });
       }
+      cleanUp()
       toggleVisible();
     } catch (error) {
       console.error("Error deleting promise:", error);
@@ -206,23 +209,30 @@ console.log(score)
             return updatedPromises;
           });
           setScore((prevScore) => prevScore - coins);
-          setCoins(0);
         }
       }
+      cleanUp()
       toggleVisible();
     } catch (error) {
       console.error("Error updating coins:", error);
     }
   };
-  // const ref = useRef();
-  // const handleShow = useCallback(() => {
-  //   ref.current?.showModal();
-  // }, [ref]);
+
 if(loading){
   return;''
 }  
-console.log(currentProm,"currentProm")
-  return (
+
+const cleanUp = ()=>{
+  setNewTitle("")
+  setNewCoins("")
+  setcurrentProm()
+  setCoins(0)
+  setMode("")
+}
+
+
+
+return (
     <div className="  h-[100vh]  flex p-[20px]  flex-col  gap-[30px] ">
       <Link to="/">
       
@@ -234,12 +244,14 @@ console.log(currentProm,"currentProm")
       <div className=" ">
         <div className=" flex flex-row justify-between w-[100%] ">
           <h1>Promises</h1>
+
           <FaPlus
             className="hover:cursor-pointer"
             size={20}
             onClick={() => {
               setMode("new");
               toggleVisible();
+              console.log("clicked")
             }}
           />
         </div>
@@ -262,6 +274,7 @@ console.log(currentProm,"currentProm")
                   />
                   <MdDeleteOutline
                     onClick={() => {
+                      console.log(promise, "red")
                       setMode("delete");
                       toggleVisible();
                       setcurrentProm(promise);
@@ -282,9 +295,12 @@ console.log(currentProm,"currentProm")
           </div>
         ))}
       </div>
-      {currentProm ? (
+      {currentProm || mode ==="new" ? (
         <div className="font-sans">
-          <Modal.Legacy open={visible}>
+          <Modal.Legacy open={visible} onClickBackdrop={()=>{
+           cleanUp()
+            toggleVisible()
+            }}>
             {" "}
             <Modal.Body>
               {mode == "new" ? (
@@ -328,7 +344,7 @@ console.log(currentProm,"currentProm")
                 <TiTickOutline size={20} />
               </button>
             </form>
-            #{" "}
+            
           </Modal.Legacy>
         </div>
       ) : null}

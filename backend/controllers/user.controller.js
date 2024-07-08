@@ -22,7 +22,6 @@ export const getUsers = async (req, res) => {
       acc[country].push(user);
       return acc;
     }, {});
-    console.log(groupedUsers,"groupedUser")
     // Step 3: Join color information for each country
     for (const country in groupedUsers) {
       const colorInfo = await Countries.findOne({country}).exec();

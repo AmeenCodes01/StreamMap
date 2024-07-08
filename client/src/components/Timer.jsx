@@ -12,7 +12,6 @@ import useStore from "../context/TimeStore";
 import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
 const red = "#f54e4e";
-
 export default function Timer() {
   const {
     workMinutes,

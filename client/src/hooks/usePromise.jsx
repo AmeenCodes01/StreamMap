@@ -2,7 +2,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import useAuthId from "./useAuthId";
-import { Loading } from "react-daisyui";
 
 const usePromise = () => {
 const [loading, setLoading] = useState(false)
