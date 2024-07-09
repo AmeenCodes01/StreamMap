@@ -17,7 +17,6 @@ export const LeaderBoardContextProvider = ({children}) => {
   const {socket} = useSocketContext();
   const {getRankings, loading, getLiveRankings} = useGetRoomRankings();
   const {live} = useSocketContext();
-  console.log("liveRanking", liveRanking);
   useEffect(() => {
     const getRanking = async () => {
       const data = await getRankings(room);
@@ -35,6 +34,7 @@ export const LeaderBoardContextProvider = ({children}) => {
 
     if (live) {
       getLiveRanking();
+      console.log(liveRanking, "got liveRanking");
     }
   }, [live, room]);
 

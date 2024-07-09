@@ -14,10 +14,23 @@ import {LeaderBoardContextProvider} from "../context/LeaderBoardContext";
 import UserSessions from "../components/UserSessions";
 import {MdOutlineArrowOutward} from "react-icons/md";
 import useAuthId from "../hooks/useAuthId";
+import {useNavigate, useParams} from "react-router-dom";
 function User() {
+  const navigate = useNavigate();
+  const {id} = useParams();
   const [showSepWindow, setShowSepWindow] = useState(false);
   const {authId} = useAuthId();
+  useEffect(() => {
+    const handlePopState = () => {
+      navigate(`/${id}/user`, {replace: true});
+    };
 
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate, id]);
   if (authId == null) {
     return;
   }

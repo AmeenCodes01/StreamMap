@@ -8,6 +8,7 @@ import {useSocketContext} from "../context/SocketContext";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import {useLiveStream} from "../hooks/useLiveStream";
 import {IoExit} from "react-icons/io5";
+
 const MyMap = () => {
   // myCountry saves user country
   const navigate = useNavigate();
@@ -25,11 +26,10 @@ const MyMap = () => {
   // get all users by room. get room name from params.
   const [tab, setTab] = useState("Timer");
 
-
   const joinRoom = useCallback(() => {
     if (socket && isConnected && authUser && room) {
       console.log("Emitting join-room event", room, authUser._id);
-      socket.emit("join-room", { room, userId: authUser._id });
+      socket.emit("join-room", {room, userId: authUser._id});
     }
   }, [socket, isConnected, authUser, room]);
 
@@ -64,7 +64,7 @@ const MyMap = () => {
   return (
     <div className="w-[100%]    flex flex-col  overflow-auto   relative   ">
       {/* MAP */}
-      <div className="z-[1000000] w-[100%] flex flex-row">
+      <div className=" w-[100%] flex flex-row">
         <Map />
 
         <div
@@ -80,7 +80,7 @@ const MyMap = () => {
         </div>
         <button
           onClick={toggleVisible}
-          className="btn  absolute  
+          className=" absolute  
     z-[1000000] btn btn-xs btn-primary  right-[10px] top-[10px] "
           style={{
             display: visible ? "none" : "block",
@@ -90,7 +90,7 @@ const MyMap = () => {
         </button>
 
         {visible ? (
-          <div className=" pl-[12px] w-[80%] sm:w-[16%] h-[100%]  sm:block h-[100%]    ">
+          <div className=" pl-[12px] w-[80%] sm:w-[16%]        h-[100%]  sm:block    ">
             <TimeTable toggleVisible={toggleVisible} />
           </div>
         ) : null}

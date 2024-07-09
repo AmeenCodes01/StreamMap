@@ -8,6 +8,11 @@ function Login() {
   const [login, setLogin] = useState(null);
   const [profile, setProfile] = useState();
   const {loading, login: logging} = useLogin();
+  console.log(
+    localStorage.clear(),
+    localStorage.getItem("authUser"),
+    "authUser"
+  );
   if (loading) {
     return (
       <div className="flex self-center justify-self-center justify-center h-[100vh]">

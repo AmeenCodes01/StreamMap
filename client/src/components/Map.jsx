@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {MapContainer, GeoJSON, Marker, useMap} from "react-leaflet";
+import {MapContainer, GeoJSON, Pane, useMap} from "react-leaflet";
 import mapData from "../data/countries.json";
 import "leaflet/dist/leaflet.css";
 import "./MyMap.css";
@@ -37,7 +37,7 @@ function Map() {
 
     for (const key in users) {
       if (countryName === key) {
-        color = users[key][0][0]
+        color = users[key][0][0];
       }
     }
     layer.setStyle({
@@ -62,19 +62,22 @@ function Map() {
       style={{
         width: "100%",
         // backgroundImage: `linear-gradient(to bottom, #CAF0F8, rgb(116, 192, 219))`,
+        zIndex: 0,
       }}
       className="min-h-[75vh]  "
       zoom={2}
       center={center}
     >
-      <GeoJSON
-        key={key}
-        style={countryStyle}
-        data={mapData.features}
-        onEachFeature={onEachCountry}
-      />
+      <Pane name="custom-pane" style={{zIndex: 0}}>
+        <GeoJSON
+          key={key}
+          style={countryStyle}
+          data={mapData.features}
+          onEachFeature={onEachCountry}
+        />
 
-      <SetViewOnClick coords={center} zoomed={zoomed}  />
+        <SetViewOnClick coords={center} zoomed={zoomed} />
+      </Pane>
     </MapContainer>
   );
 }

@@ -2,35 +2,45 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {CiShop} from "react-icons/ci";
 import usePromise from "../hooks/usePromise";
+import {RiLogoutCircleLine} from "react-icons/ri";
+import {useNavigate} from "react-router-dom";
 
 // sm:justify-items-center
 // sm:items-center sm:justify-center
 
 function Rooms() {
   const [totalDon, setTotalDon] = useState();
-  const {getTotalDonations} = usePromise()
+  const {getTotalDonations} = usePromise();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getTotalDonate = async () => {
       const data = await getTotalDonations();
       if (data) {
-
-        
         setTotalDon(data);
-       }
+      }
     };
 
-   
-getTotalDonate()  }, []);
+    getTotalDonate();
+  }, []);
   return (
     <div
       className="bg-gray-500 h-[100vh] p-[20px] 
       flex flex-col
     "
     >
-      <div className="w-[100%] border-2 items-end justify-end flex  ">
+      <div className="w-[100%] border-2 items-end justify-end flex gap-[10px] ">
         <Link to="/shop">
           <CiShop color="white" size={30} className="" />
         </Link>
+        <RiLogoutCircleLine
+          color="white"
+          size={30}
+          onClick={() => {
+            localStorage.clear();
+            navigate("login");
+          }}
+        />
       </div>
 
       {/* Input Country + color + username */}
@@ -72,7 +82,9 @@ getTotalDonate()  }, []);
           </div>
         </Link>
       </div>
-      <span className="text-bold">{Math.floor(parseInt(totalDon)/2)}$ donated</span>
+      <span className="text-bold">
+        {Math.floor(parseInt(totalDon) / 2)}$ donated
+      </span>
     </div>
   );
 }

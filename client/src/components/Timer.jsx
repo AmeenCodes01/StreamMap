@@ -111,7 +111,7 @@ export default function Timer() {
     parseInt(localStorage.getItem(`${key}sessions`)) || 0
   );
 
-  const {socket} = useSocketContext();
+  const {socket, live} = useSocketContext();
 
   const toggle = mode === "break";
 
@@ -176,7 +176,7 @@ export default function Timer() {
     localStorage.removeItem(`${key}PausedTime`);
 
     setShowRating(false);
-    mode === "work" && secondsLeft !== workMinutes * 60
+    mode === "work" && secondsLeft !== workMinutes * 60 && live
       ? socket.emit("reset-session", {
           id: localStorage.getItem("sessionID"),
           room,
@@ -228,6 +228,7 @@ export default function Timer() {
     localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   }, [breakMinutes]);
   console.log(percentage);
+
   return (
     <div className="w-[100%] flex flex-col pl-[10px]">
       {/* This will become a timer. */}

@@ -1,9 +1,13 @@
 import React from "react";
 import {useGoogleLogin} from "@react-oauth/google";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import {Link, redirect} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+
 import toast from "react-hot-toast";
 function GoogleLogin({setProfile, setStatus, label, status, login}) {
+  const navigate = useNavigate();
+
   const googleAuthLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const userInfo = await axios
@@ -17,7 +21,10 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
         const email = userInfo.data.email;
 
         if (label === "login") {
-          login(email);
+          const userLog = await login(email);
+          if (userLog) {
+            navigate("/");
+          }
         } else {
           try {
             const res = await fetch("/api/auth/check", {
@@ -34,6 +41,7 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
             if (data?.exist === "true") {
               setStatus("exist");
               toast.error("User exists");
+              navigate("/signup");
             } else {
               setStatus("success");
             }
@@ -54,13 +62,15 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
     <div className=" flex flex-col">
       <button
         className="btn glass rounded-none px-16  w-[90%]    "
-        onClick={() => googleAuthLogin()}>
+        onClick={() => googleAuthLogin()}
+      >
         {label === "login" ? "Login with Google" : "Sign Up with Google"}
       </button>
 
       <Link
         to={label == "login" ? "/signup" : "/login"}
-        className="link link-infp text-xs mt-[50px] self-end mr-[5px]">
+        className="link link-infp text-xs mt-[50px] self-end mr-[5px]"
+      >
         {label === "login" ? "Don't" : "Already"} have an account ?{" "}
         {label === "login" ? "Sign Up" : "Login"}
       </Link>

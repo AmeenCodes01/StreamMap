@@ -6,6 +6,7 @@ import useGetUsers from "../hooks/useGetUsers";
 
 const UserTimes = memo((c) => {
   const [render, setRender] = useState(0);
+  console.log("rendeirng ");
   useEffect(() => {
     const intervalId = setInterval(() => {
       setRender((prev) => prev + 0.0001);
@@ -24,6 +25,7 @@ const UserTimes = memo((c) => {
     </>
   );
 });
+
 function getCurrentTimeInTimeZone(timeZone) {
   // Create a new Date object with the current time
   const currentTime = new Date();
@@ -57,7 +59,7 @@ function TimeTable({toggleVisible}) {
   const [sameUsers, setSameUsers] = useState([]);
 
   const {users, loading} = useGetUsers();
-
+  console.log(users, "users");
   if (loading) {
     return;
   }
@@ -108,6 +110,9 @@ function TimeTable({toggleVisible}) {
             </p>
             <div>
               {users[country].map((timeZone) => {
+                if (typeof timeZone[0] !== "object") {
+                  return;
+                }
                 return (
                   <>
                     <UserTimes time={timeZone[0].timeZone} />

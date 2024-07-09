@@ -28,7 +28,7 @@ export const sessions = {};
 const socketRooms = {};
 const userRooms = {};
 // io.sockets.clients("Shamsia")
-console.log(userRooms,"userRooms")
+console.log(userRooms, "userRooms");
 io.on("connection", async (socket) => {
   console.log("a user connected", socket.id);
 
@@ -40,14 +40,10 @@ io.on("connection", async (socket) => {
     // Check if user is already connected
     if (userSocketMap[userId]) {
       // Disconnect the previous socket
-<<<<<<< HEAD
       io.to(userSocketMap[userId]).emit(
         "forced_disconnect",
-        "You've been logged in from another tab or browser."
+        "You've been logged in from another tab or browser. Refresh to join"
       );
-=======
-      io.to(userSocketMap[userId]).emit("forced_disconnect", "You've been logged in from another tab or browser.");
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
       io.sockets.sockets.get(userSocketMap[userId])?.disconnect(true);
     }
 
@@ -59,31 +55,30 @@ io.on("connection", async (socket) => {
     console.log(`User ${userId} identified with socket ${socket.id}`);
   });
 
-
-  socket.on("join-room", ({ room: roomName }) => {
+  socket.on("join-room", ({room: roomName}) => {
     if (!socket.userId) {
       socket.emit("error", "User not identified");
       return;
     }
 
     console.log(`User ${socket.userId} joining room ${roomName}`);
-    
+
     // If user is already in a room, make them leave it first
     if (socketRooms[socket.id]) {
       leaveRoom(socket, socketRooms[socket.id]);
     }
-    
+
     socket.join(roomName);
     socketRooms[socket.id] = roomName;
-    
+
     if (!userRooms[roomName]) {
       userRooms[roomName] = [];
     }
-    
+
     if (!userRooms[roomName].includes(socket.userId)) {
       userRooms[roomName].push(socket.userId);
       io.to(roomName).emit("roomUsers", userRooms[roomName]);
-      
+
       if (liveTime[roomName]) {
         socket.emit("live-status", {
           status: true,
@@ -93,8 +88,6 @@ io.on("connection", async (socket) => {
     }
   });
 
-
-
   socket.on("live", async (e) => {
     io.to(e.room).emit("live-status", {status: e.live, link: e.link});
   });
@@ -103,7 +96,7 @@ io.on("connection", async (socket) => {
     socket.broadcast.to(e.room).emit("stream-message", e);
     console.log(e);
   });
-   
+
   socket.on("paused-session", ({id, room, pause}) => {
     if (pause !== undefined && sessions[room]) {
       const userSeshIndex = sessions[room].findIndex(
@@ -134,18 +127,13 @@ io.on("connection", async (socket) => {
       io.to(room).emit("reset-session", {id});
     }
   });
-<<<<<<< HEAD
 
   socket.on("leave-room", ({room: roomName}) => {
-=======
-  socket.on("leave-room", ({ room: roomName }) => {
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
     leaveRoom(socket, roomName);
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
-<<<<<<< HEAD
 
     if (socketRooms[socket.id]) {
       leaveRoom(socket, socketRooms[socket.id]);
@@ -155,17 +143,6 @@ io.on("connection", async (socket) => {
       delete userSocketMap[socket.userId];
     }
 
-=======
-    
-    if (socketRooms[socket.id]) {
-      leaveRoom(socket, socketRooms[socket.id]);
-    }
-    
-    if (socket.userId) {
-      delete userSocketMap[socket.userId];
-    }
-    
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
     delete socketRooms[socket.id];
   });
 });
@@ -173,36 +150,18 @@ export {app, io, server};
 
 function leaveRoom(socket, roomName) {
   socket.leave(roomName);
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
   if (userRooms[roomName]) {
     const index = userRooms[roomName].indexOf(socket.userId);
     if (index !== -1) {
       userRooms[roomName].splice(index, 1);
       io.to(roomName).emit("roomUsers", userRooms[roomName]);
     }
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
     if (userRooms[roomName].length === 0) {
       delete userRooms[roomName];
     }
   }
-<<<<<<< HEAD
 
   socketRooms[socket.id] = null;
 
   console.log(`User ${socket.userId} left room ${roomName}`);
 }
-=======
-  
-  socketRooms[socket.id] = null;
-  
-  console.log(`User ${socket.userId} left room ${roomName}`);
-}
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d

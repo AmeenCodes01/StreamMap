@@ -1,6 +1,5 @@
 import Countries from "../models/Countries.model.js";
 
-<<<<<<< HEAD
 export const checkCountry = async (req, res) => {
   //see if I can find the country
   try {
@@ -11,18 +10,6 @@ export const checkCountry = async (req, res) => {
       return res.status(201).json({exist: true});
     } else {
       return res.status(201).json({exist: false});
-=======
-
-export const checkCountry =async (req,res)=>{
-//see if I can find the country
-try{
-    const {country} = req.body
-    const Country = await Countries.findOne({country})
-    if(Country){
-        return res.status(201).json({exist:true})
-    }else{
-        return res.status(201).json({exist:false})
->>>>>>> d4e93928d9703004befcade9474dc9cd9669468d
     }
   } catch (e) {
     console.log(e);

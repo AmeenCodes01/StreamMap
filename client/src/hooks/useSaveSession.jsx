@@ -5,12 +5,13 @@ import useAuthId from "./useAuthId";
 const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
-  const {socket} = useSocketContext();
+  const {socket, live} = useSocketContext();
   const {authId} = useAuthId();
 
   const startSession = async (session) => {
     setLoading(true);
-
+    console.log(session, "sessionSTART ");
+    session.live = live;
     try {
       const res = await fetch("/api/sessions/start", {
         method: "POST",
@@ -22,7 +23,7 @@ const useSaveSession = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-
+      console.log(data, "new session data");
       setSessionID(data._id);
       localStorage.setItem("sessionID", data._id);
       session["sessionID"] = sessionID;
@@ -37,6 +38,7 @@ const useSaveSession = () => {
   };
 
   const saveSession = async (session) => {
+    session.live = live;
     const sessionID = localStorage.getItem("sessionID");
     session["sessionID"] = sessionID;
     console.log(session, "s e s s i o n ");

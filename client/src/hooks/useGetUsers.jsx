@@ -5,6 +5,7 @@ const useGetUsers = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const {onlineUsers} = useSocketContext();
+  console.log(onlineUsers, "onlineusers in getUsers");
   console.log;
   useEffect(() => {
     const getUsers = async () => {
@@ -19,6 +20,7 @@ const useGetUsers = () => {
         if (data.error) {
           throw new Error(data.error);
         }
+        console.log(data);
         setUsers(data);
       } catch (error) {
         // toast.error(error.message);
