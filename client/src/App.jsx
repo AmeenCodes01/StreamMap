@@ -37,7 +37,6 @@ function App() {
           <Route path="allUsers" element={<AllUsers />} />
         </Route>
       </Routes>
-<<<<<<< Updated upstream
       <Toaster
         containerClassName="z-[100000000000000000000]"
         toastOptions={{
@@ -47,18 +46,6 @@ function App() {
           },
         }}
       />
-=======
-      <Toaster toastOptions={{
-        
-        // style:{
-        //   zIndex: "111000000000000000000",
-        //   position:"absolute", 
-        //   top:"200px",
-        //   right: "150px"
-
-        // }
-      }} containerStyle={{ zIndex: "10000000"}} />
->>>>>>> Stashed changes
     </BrowserRouter>
   );
 }
