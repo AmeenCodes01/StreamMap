@@ -111,6 +111,7 @@ io.on("connection", async (socket) => {
     }
   });
 
+
   socket.on("reset-session", async ({id, room}) => {
     if (sessions[room] && id) {
       //Object ID is making the issue here, check
@@ -132,6 +133,7 @@ io.on("connection", async (socket) => {
     leaveRoom(socket, roomName);
   });
 
+
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
 
@@ -146,6 +148,10 @@ io.on("connection", async (socket) => {
     delete socketRooms[socket.id];
   });
 });
+
+
+
+
 export {app, io, server};
 
 function leaveRoom(socket, roomName) {
