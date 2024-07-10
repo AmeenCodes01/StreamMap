@@ -28,10 +28,9 @@ function App() {
           element={authUser ? <Shop /> : <Navigate to="/login" />}
         />
         <Route path="/login" element={<Login />} />
-
         <Route path="/:id" element={authUser ? <MyMap /> : <Login />}>
           {/* Wrap only User and LeaderBoard components with LeaderBoardContextProvider */}
-          <Route path="/:id" element={<Navigate to="/:id/user" replace />} />
+          <Route path="user" element={<User />} />
           <Route path="leaderboard" element={<LeaderBoard />} />
           {/* AllUsers component is not wrapped with LeaderBoardContextProvider */}
           <Route path="allUsers" element={<AllUsers />} />
