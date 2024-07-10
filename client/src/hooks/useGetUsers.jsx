@@ -5,8 +5,7 @@ const useGetUsers = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const {onlineUsers} = useSocketContext();
-  console.log(onlineUsers, "onlineusers in getUsers");
-  console.log;
+ 
   useEffect(() => {
     const getUsers = async () => {
       setLoading(true);

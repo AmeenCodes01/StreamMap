@@ -20,6 +20,10 @@ function User() {
   const {id} = useParams();
   const [showSepWindow, setShowSepWindow] = useState(false);
   const {authId} = useAuthId();
+
+
+
+
   useEffect(() => {
     const handlePopState = () => {
       navigate(`/${id}/user`, {replace: true});
@@ -35,10 +39,10 @@ function User() {
     return;
   }
   return (
-    <div className=" sm:mt-[30px] mt-[10px]">
+    <div className=" sm:mt-[30px] mt-[10px] flex flex-col gap-[20px]">
       {/* STREAM PLAYER */}
 
-      <div className="flex sm:flex-row flex-col ">
+      <div className="flex  flex-col gap-[20px] ">
         <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
           <StreamVid />
           <div className="flex ml-auto mr-auto">
@@ -46,31 +50,34 @@ function User() {
           </div>
         </div>
 
-        <div className="flex sm:mt-[30px] mt-[25px] ">
+        <div className="flex sm:mt-[30px] my-[50px]  ">
           <Timer />
 
           <SepWindow />
         </div>
-      </div>
+        <div className="flex mt-[30px]">
 
-      <div className="my-[20px] border-2 h-[40px] flex">
-        {/* <StreamTimer/> */}
-        {/* <DiamondTimer secondsLeft={600} /> */}
+        <Sessions />
+        </div>
+        <InSeshTimer />
       </div>
+{/* 
+      <div className="my-[20px] border-2 h-[40px] flex">
+       <StreamTimer/> 
+       <DiamondTimer secondsLeft={600} /> 
+      </div> */}
 
       <HealthContextProvider>
         <LeaderBoardContextProvider>
-          <Sessions />
         </LeaderBoardContextProvider>
-        <div className="md:flex md:flex-row-reverse  w-[100%] md:justify-between">
-          <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
+        <div className="md:flex md:flex-row-reverse  w-[100%] md:justify-between mt-[50px]">
+          {/* <div className="flex flex-row md:justify-end md:gap-[50px] w-[100%] min-h-[200px] justify-between pl-[25px] pr-[10px] my-[50px]">
             <MoodTracker />
             <SleepTracker />
-          </div>
+          </div> */}
           <UserSessions />
         </div>
       </HealthContextProvider>
-      <InSeshTimer />
       <div className=" h-[200px] flex w-[60px] overflow-hidden relative ">
         <div
           className="bg-base-200 w-full h-[00%] bottom-0 absolute"

@@ -23,6 +23,9 @@ function Rooms() {
 
     getTotalDonate();
   }, []);
+
+
+
   return (
     <div
       className="bg-gray-500 h-[100vh] p-[20px] 
@@ -55,9 +58,11 @@ function Rooms() {
           Join StreamMap
         </button> */}
       </div>
+
+      
       <div className="sm: sm: flex flex-row gap-[6px] sm:gap-[10px] ">
-        <Link to="/Shamsia">
-          <div
+        <Link to="/Shamsia/user">
+          <div 
             onClick={() => {
               // socket.emit("join", {room: "Shamsia", username: "Ameen"});
             }}
@@ -88,6 +93,8 @@ function Rooms() {
     </div>
   );
 }
-//get YT username first. then get list of all users from MongoDB. If already there, send data to the room they click. If none, create new and join room.
+
+//get YT username first. then get list of all users from MongoDB.
+// If already there, send data to the room they click. If none, create new and join room.
 
 export default Rooms;

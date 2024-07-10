@@ -30,15 +30,17 @@ const userRooms = {};
 // io.sockets.clients("Shamsia")
 console.log(userRooms, "userRooms");
 io.on("connection", async (socket) => {
-  console.log("a user connected", socket.id);
+  // console.log("a user connected", socket.id);
 
-  const req = socket.request;
-  const res = socket.request.res;
   // refreshToken(req,res)
 
   socket.on("identify", (userId) => {
+    console.log("render")
     // Check if user is already connected
+    console.log(userSocketMap,"userSocketMap")
     if (userSocketMap[userId]) {
+      console.log(userSocketMap,"userSocketMap")
+
       // Disconnect the previous socket
       io.to(userSocketMap[userId]).emit(
         "forced_disconnect",
@@ -52,7 +54,7 @@ io.on("connection", async (socket) => {
     userSocketMap[userId] = socket.id;
     socketRooms[socket.id] = null; // Initially not in any room
 
-    console.log(`User ${userId} identified with socket ${socket.id}`);
+    // console.log(`User ${userId} identified with socket ${socket.id}`);
   });
 
   socket.on("join-room", ({room: roomName}) => {
@@ -111,6 +113,7 @@ io.on("connection", async (socket) => {
     }
   });
 
+
   socket.on("reset-session", async ({id, room}) => {
     if (sessions[room] && id) {
       //Object ID is making the issue here, check
@@ -132,6 +135,7 @@ io.on("connection", async (socket) => {
     leaveRoom(socket, roomName);
   });
 
+
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
 
@@ -146,6 +150,10 @@ io.on("connection", async (socket) => {
     delete socketRooms[socket.id];
   });
 });
+
+
+
+
 export {app, io, server};
 
 function leaveRoom(socket, roomName) {

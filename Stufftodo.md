@@ -76,3 +76,5 @@ setTimeLeft when timeLeft paused
 --- condition on isCountDownActive
 
 persist. 
+
+// C O D E BREAKS IF A BAD LINK GIVEN 

@@ -6,7 +6,7 @@ const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
   const {socket, live} = useSocketContext();
-  const {authId} = useAuthId();
+  const {authId,name} = useAuthId();
 
   const startSession = async (session) => {
     setLoading(true);
@@ -16,12 +16,12 @@ const useSaveSession = () => {
       const res = await fetch("/api/sessions/start", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(session),
+        body: JSON.stringify({session, name,live}),
       });
 
       const data = await res.json();
       if (data.error) {
-        throw new Error(data.error);
+        throw new Error(data.error);    
       }
       console.log(data, "new session data");
       setSessionID(data._id);

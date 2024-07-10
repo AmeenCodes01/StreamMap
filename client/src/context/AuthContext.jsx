@@ -1,4 +1,4 @@
-import {createContext, useContext, useState, useEffect} from "react";
+import {createContext, useContext, useState, useMemo} from "react";
 export const AuthContext = createContext();
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -7,13 +7,20 @@ export const useAuthContext = () => {
 };
 
 export const AuthContextProvider = ({children}) => {
-  const [authUser, setAuthUser] = useState(
-    JSON.parse(localStorage.getItem("auth-user")) || null
-  );
+  const [authUser, setAuthUser] = useState(() => {
+    // This function will only run once on initial render
+    const storedUser = localStorage.getItem("auth-user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [room, setRoom] = useState();
-
+  const contextValue = useMemo(() => ({
+    authUser,
+    setAuthUser,
+    room,
+    setRoom
+  }), [authUser, room]);
   return (
-    <AuthContext.Provider value={{authUser, setAuthUser, room, setRoom}}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

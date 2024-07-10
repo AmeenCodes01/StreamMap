@@ -230,9 +230,9 @@ export default function Timer() {
   console.log(percentage);
 
   return (
-    <div className="w-[100%] flex flex-col pl-[10px]">
+    <div className="w-[100%] flex flex-col px-[10px]">
       {/* This will become a timer. */}
-      <div className="flex flex-row">
+      <div className="flex flex-col">
         <input
           value={sessions}
           onChange={(e) => {
@@ -247,10 +247,10 @@ export default function Timer() {
           className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
         />
 
-        <div className="w-[500px] mr-[10px] min-w-[100px]">
+        <div className=" mr-[10px] min-w-[100px] pt-[20px]">
           {/* <Progress value={19} className="w-56" /> */}
           <progress
-            className={`progress w-56 ${
+            className={`progress w-[100%]   ${
               mode === "work" ? "progress-success" : "progress-error"
             }`}
             value={100 - percentage}
@@ -260,23 +260,7 @@ export default function Timer() {
           {`${minutes < 10 ? "0" : ""}${minutes}:${
             seconds < 10 ? "0" : ""
           }${seconds}`}
-          {/* <CircularProgressbar
-            value={percentage}
-            strokeWidth={30}
-            text={`${minutes < 10 ? "0" : ""}${minutes}:${
-              seconds < 10 ? "0" : ""
-            }${seconds}`}
-            styles={buildStyles({
-              strokeLinecap: "butt",
-              textSize: "16px",
-              pathTransitionDuration: 0.5,
-              pathColor:
-                mode === "work" ? "oklch(var(--su))" : "oklch(var(--er))",
-              textColor: "oklch(var(--nc))",
-              trailColor: "#d6d6d6",
-              tailColor: red,
-            })}
-          /> */}
+        
         </div>
         <div className="flex items-center justify-items-center flex-col">
           <div className="flex flex-col p-[10px]">
@@ -293,7 +277,7 @@ export default function Timer() {
                           room,
                           duration: workMinutes,
                           goal: seshGoal,
-                          id: authId,
+                          userId: authId,
                         })
                       : start();
                   }}
@@ -406,6 +390,8 @@ export default function Timer() {
           please rate the session and stop the countdown/stopwatch
         </span>
       )}
+
+
     </div>
   );
 }

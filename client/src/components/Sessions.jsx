@@ -9,7 +9,6 @@ import {useSocketContext} from "../context/SocketContext";
 import useStore from "../context/TimeStore";
 import useSaveScore from "../hooks/useSaveScore";
 import {useHealthContext} from "../context/HealthContext";
-import {useLeaderBoardContext} from "../context/LeaderBoardContext";
 import {useShallow} from "zustand/react/shallow";
 import useAuthId from "../hooks/useAuthId";
 function Sessions() {
@@ -51,7 +50,7 @@ function Sessions() {
   );
 console.log(inSesh)
   const {socket} = useSocketContext();
-  const {mood} = useHealthContext();
+  // const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
   const {authId,key} = useAuthId();
   // const {rankings, setRankings} = useLeaderBoardContext()
@@ -100,7 +99,7 @@ console.log(inSesh)
       duration: workMinutes,
       room,
       timers: inSesh,
-      mood,
+      // mood,
       score,
     };
 
