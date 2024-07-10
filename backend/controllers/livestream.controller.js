@@ -9,7 +9,7 @@ async function startNewStream(room, link) {
 
 export const startLive = async (req, res) => {
   const {room, link} = req.body;
-  console.log(room, " startLive");
+  console.log(link, " startLive");
   try {
     // Find the latest livestream in the room
     const livestream = await Livestream.findOne({room: room}).sort({
@@ -30,7 +30,7 @@ export const startLive = async (req, res) => {
 
 export const checkStream = async (req, res) => {
   const {sentRoom: room} = req.body;
-
+console.log(room,"checkStream")
   try {
     const livestream = await Livestream.findOne({room: room}).sort({
       createdAt: -1,

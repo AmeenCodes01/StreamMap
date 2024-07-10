@@ -8,26 +8,28 @@ import {useSocketContext} from "../context/SocketContext";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import {useLiveStream} from "../hooks/useLiveStream";
 import {IoExit} from "react-icons/io5";
+import User from "./User";
 
-const MyMap = () => {
+const MyMap = ()=>{
   // myCountry saves user country
   const navigate = useNavigate();
 
   const {id: room} = useParams();
 
   const {authUser, setRoom} = useAuthContext();
+  console.log("render")
+  
   // write this into a useEffect.
-  const {checkLive} = useLiveStream();
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => {
     setVisible((visible) => !visible);
   }, []);
-  const {socket, setLive, setLiveLink, isConnected} = useSocketContext();
-  // get all users by room. get room name from params.
+  const {socket, isConnected} = useSocketContext();
+  // get all users by room. get room name from   params.
   const [tab, setTab] = useState("Timer");
 
   const joinRoom = useCallback(() => {
-    if (socket && isConnected && authUser && room) {
+    if ( isConnected && authUser && room) {
       console.log("Emitting join-room event", room, authUser._id);
       socket.emit("join-room", {room, userId: authUser._id});
     }
@@ -37,32 +39,21 @@ const MyMap = () => {
     joinRoom();
   }, [joinRoom]);
 
-  useEffect(() => {
-    navigate("user");
-  }, []);
+  // useEffect(() => {
+  //   navigate("user");
+  // }, []);
 
   const onLeaveRoom = () => {
     socket.emit("leave-room", {room, userId: authUser._id});
   };
 
-  useEffect(() => {
-    //check livestream.
-    const liveCheck = async () => {
-      const data = await checkLive(room);
-      if (data) {
-        setLive(data.live);
-        console.log(data, "liveDATA");
-        if (data.live) {
-          console.log(data.link);
-          setLiveLink(data.link);
-        }
-      }
-    };
-    liveCheck();
-  }, [room]);
 
+
+
+
+  
   return (
-    <div className="w-[100%]    flex flex-col  overflow-auto   relative   ">
+    <div className="w-[100%]    flex flex-col  overflow-hidden   relative mr-[10px]  ">
       {/* MAP */}
       <div className=" w-[100%] flex flex-row">
         <Map />
@@ -96,21 +87,7 @@ const MyMap = () => {
         ) : null}
       </div>
 
-      <div className="flex    gap-[10px] pt-[10px] self-end   ">
-        <label
-          className=" rounded-[6px] "
-          style={{backgroundColor: authUser.color, borderWidth: "0px"}}
-        >
-          <input
-            type="color"
-            value={authUser.color}
-            className="w-[15px] h-[15px]  border-[0px] self-center  block opacity-0"
-            style={{backgroundColor: authUser.color, borderWidth: "0px"}}
-            onChange={(e) => setColor(e.target.value)}
-          />
-        </label>
-        {/* <p className="mx-[5px] text-xs text-info"> {authUser.country}</p> */}
-      </div>
+      
       <div className="collapse ">
         <input type="checkbox" />
         <div className="collapse-title text-xl font-medium">
@@ -175,7 +152,25 @@ const MyMap = () => {
 </div> */}
       </div>
     </div>
-  );
+  )
 };
 
-export default MyMap;
+export default React.memo(MyMap);
+
+
+
+// <div className="flex    gap-[10px] pt-[10px] self-end   ">
+//         <label
+//           className=" rounded-[6px] "
+//           style={{backgroundColor: authUser.color, borderWidth: "0px"}}
+//         >
+//           <input
+//             type="color"
+//             value={authUser.color}
+//             className="w-[15px] h-[15px]  border-[0px] self-center  block opacity-0"
+//             style={{backgroundColor: authUser.color, borderWidth: "0px"}}
+//             onChange={(e) => setColor(e.target.value)}
+//           />
+//         </label>
+//         {/* <p className="mx-[5px] text-xs text-info"> {authUser.country}</p> */}
+//       </div>

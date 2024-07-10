@@ -1,12 +1,21 @@
 import React, {useState, useEffect, useRef} from "react";
 import {useLeaderBoardContext} from "../../context/LeaderBoardContext";
-import {useSocketContext} from "../../context/SocketContext";
-import {Table, Button} from "react-daisyui";
-import {TablePagination} from "react-pagination-table";
+import {Table, Pagination} from "react-daisyui";
 import useGetUsers from "../../hooks/useGetUsers";
 import RankingTimer from "./RankingTimer";
+import { IoIosArrowBack,IoIosArrowForward  } from "react-icons/io";
+
 function Rankings() {
   const {liveRanking} = useLeaderBoardContext();
+  const itemsPerPage = 1; // Number of items per page
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Calculate start and end indices for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = currentPage * itemsPerPage;
+
+  // Slice the data array based on the current page
+  const currentPageData = liveRanking.slice(startIndex, endIndex);
 
   const SessionTableRow = ({session}) => {
     const {users} = useGetUsers();
@@ -64,9 +73,9 @@ function Rankings() {
   // if (loading) {
   //   return <span className="loading loading-infinity loading-md"></span>;
   // }
-
+//if user go offline, then name disappears. so need to store. 
   return (
-    <div className="flex border-2 w-[80%] items-center self-center mt-[20px]">
+    <div className="flex  w-[80%] items-center self-center mt-[20px] flex-col">
       <Table className="table table-zebra table-xs  rounded-[12px] table-pin-rows  items-center">
         <thead>
           <tr>
@@ -79,8 +88,12 @@ function Rankings() {
           </tr>
         </thead>
         <tbody>
-          {liveRanking.map((session) => (
+          {currentPageData.map((session) => (
+            <>
             <SessionTableRow key={session._id} session={session} />
+           
+            </>
+
           ))}
         </tbody>
       </Table>
@@ -93,6 +106,13 @@ function Rankings() {
           ))}
         </tbody>
       </table> */}
+<div className="flex flex-end flex-row ">
+
+      <button className=" bg-white size-[20px]" onClick={() => setCurrentPage(currentPage - 1)}><IoIosArrowBack size={15} />
+      </button>
+      <button className="size-[20px] bg-white" onClick={() => setCurrentPage(currentPage + 1)}><IoIosArrowForward size={15} />
+      </button>
+</div>
     </div>
   );
 }

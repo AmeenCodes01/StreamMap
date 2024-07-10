@@ -81,23 +81,12 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
       <div style={{marginBottom: "10px"}}>
         <span>{`${minutes}:${seconds}`}</span>
       </div>
-      <div
-        style={{
-          height: "10px",
-          backgroundColor: "lightgray",
-          borderRadius: "5px",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: `${percentage}%`,
-            backgroundColor: "green",
-            borderRadius: "5px",
-          }}
-        ></div>
-      </div>
+      <progress
+            className={`progress w-[100%]   "progress-success" 
+            }`}
+            value={100 - percentage}
+            max="100"
+          ></progress>
     </div>
   );
 };

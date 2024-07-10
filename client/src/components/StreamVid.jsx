@@ -5,27 +5,25 @@ import toast from "react-hot-toast";
 import {useParams} from "react-router-dom";
 import DisplayMessage from "./DisplayMessage";
 import {useLiveStream} from "../hooks/useLiveStream";
-import {useAuthContext} from "../context/AuthContext";
 
 function StreamVid() {
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+  const [link, setLink] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const {socket, setLive, live, liveLink, setLiveLink} = useSocketContext();
+  const {socket, setLive, live, setLiveLink,liveLink} = useSocketContext();
   const {id: room} = useParams();
   const {startLive, endLive} = useLiveStream();
-  const {authUser} = useAuthContext();
 
-  console.log(room, "room");
 
   const onClick = () => {
+    console.log("clicked")
     //save to localstorage
+    setLiveLink(link)
     setVisible(true);
   };
 
@@ -39,7 +37,12 @@ function StreamVid() {
     }
   }, [liveLink]);
 
+
+
+
   const onLive = () => {
+
+    
     setLive((prevLive) => {
       const newLive = !prevLive;
       //on every refresh, it can just check if live or not through API.
@@ -57,7 +60,8 @@ function StreamVid() {
       } else {
         endLive(room);
         setVisible(false);
-        setLiveLink("");
+        setLink("");
+
         socket.emit("live", {live: newLive, room});
 
         return newLive;
@@ -119,11 +123,11 @@ function StreamVid() {
             <div className="flex flex-row gap-[15px] ">
               <input
                 type="text"
-                value={liveLink}
+                value={link}
                 placeholder='share>embed copy inside src="" '
                 className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
                 onChange={(e) => {
-                  setLiveLink(e.target.value);
+                  setLink(e.target.value);
                 }}
                 // send link to all in room.
               />
@@ -245,4 +249,4 @@ function StreamVid() {
   );
 }
 
-export default StreamVid;
+export default React.memo(StreamVid);

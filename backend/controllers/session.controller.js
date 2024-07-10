@@ -36,23 +36,22 @@ export const getSessionByID = async (req, res) => {
 
 export const startSession = async (req, res) => {
   try {
-    const {room, duration, goal, live} = req.body;
-    const {id: userId} = req.body;
-    const newSession = new Session({
-      userId,
-      room,
-      duration,
-      goal,
-    });
+    const {session,name,live} = req.body;
+    const newSession = new Session(session);
     await newSession.save();
-    console.log(newSession, "session start live");
-    if (live === "true") {
+
+    console.log(newSession, "session start NEW");
+    if (live) {
+      console.log(live,"startSession Live")
+      const room = session.room
       if (!sessions[room]) {
         sessions[room] = [];
       }
+      console.log(name,"name")
+      newSession.name = name
       // Check if the user already has a session in the room
       sessions[room].push(newSession.toObject());
-      //if already exist, update duration,goal & status.
+      //if already exist, update duration,goal & status.   
       io.to(room).emit("start-sessions", newSession);
     }
     console.log(newSession, " start Session, socket io");

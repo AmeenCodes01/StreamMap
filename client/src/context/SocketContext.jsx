@@ -1,8 +1,7 @@
-import {createContext, useState, useEffect, useContext} from "react";
-import {useAuthContext} from "./AuthContext";
+import { createContext, useMemo, useState, useEffect, useContext, useCallback } from "react";
+import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
-import {set} from "mongoose";
 
 const showLongErrorToast = (message, type = "error") => {
   const icons = {
@@ -20,7 +19,6 @@ const showLongErrorToast = (message, type = "error") => {
           flexDirection: "column",
           alignItems: "flex-end",
           gap: "12px",
-
           maxWidth: "300px",
           width: "100%",
         }}
@@ -72,96 +70,93 @@ const showLongErrorToast = (message, type = "error") => {
     }
   );
 };
+
 const SocketContext = createContext();
 
 export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
-export const SocketContextProvider = ({children}) => {
-  const [socket, setSocket] = useState(null);
+export const SocketContextProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const {authUser} = useAuthContext();
+  const { authUser } = useAuthContext();
   const [live, setLive] = useState(false);
   const [liveLink, setLiveLink] = useState("");
   const [isConnected, setIsConnected] = useState(false);
-  console.log(onlineUsers, "user");
-  console.log(authUser, "authUser");
-  useEffect(() => {
-    let newSocket;
+  console.log(liveLink)
+  const socket = useMemo(() => {
+    if (!authUser) return null;
+    
+    const newSocket = io("http://localhost:3000", {
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+    });
 
-    if (authUser) {
-      newSocket = io("http://localhost:3000", {
-        reconnectionAttempts: Infinity,
-        reconnectionDelay: 1000,
-        timeout: 10000,
-      });
+    newSocket.on("connect", () => {
+      console.log("Socket connected");
+      setIsConnected(true);
+      newSocket.emit("identify", authUser._id);
+    });
 
-      newSocket.on("connect", () => {
-        console.log("Socket connected");
-        setIsConnected(true);
-        newSocket.emit("identify", authUser._id);
-      });
+    newSocket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+      setIsConnected(false);
+    });
 
-      newSocket.on("disconnect", (reason) => {
-        console.log("Socket disconnected:", reason);
-        setIsConnected(false);
-      });
+    newSocket.on("connect_error", (error) => {
+      console.error("Connection error:", error);
+      setIsConnected(false);
+    });
 
-      newSocket.on("connect_error", (error) => {
-        console.error("Connection error:", error);
-        setIsConnected(false);
-      });
+    newSocket.on("live-status", (data) => {
+      console.log("Live status received:", data);
+      setLive(data.status);
+      if (data.status) setLiveLink(data.link);
+    });
 
-      newSocket.on("live-status", (data) => {
-        console.log("Live status received:", data);
-        setLive(data.status);
-        if (data.status) setLiveLink(data.newStream.link);
-      });
+    newSocket.on("roomUsers", (users) => {
+      console.log("Online users:", users);
+      setOnlineUsers(users);
+    });
 
-      newSocket.on("roomUsers", (users) => {
-        console.log("Online users:", users);
-        setOnlineUsers(users);
-      });
+    newSocket.on("forced_disconnect", (message) => {
+      showLongErrorToast(message);
+      setIsConnected(false);
+    });
 
-      newSocket.on("forced_disconnect", (message) => {
-        showLongErrorToast(message);
-        setIsConnected(false);
-        setSocket(null);
-      });
-
-      setSocket(newSocket);
-    }
-
-    return () => {
-      if (newSocket) {
-        newSocket.off("live-status");
-        newSocket.off("roomUsers");
-        newSocket.close();
-      }
-    };
+    return newSocket;
   }, [authUser]);
 
-  // Function to manually reconnect if needed
-  const reconnect = () => {
+  useEffect(() => {
+    return () => {
+      if (socket) {
+        socket.off("live-status");
+        socket.off("roomUsers");
+        socket.close();
+      }
+    };
+  }, [socket]);
+
+  const reconnect = useCallback(() => {
     if (socket) {
       socket.connect();
     }
-  };
+  }, [socket]);
+
+  const contextValue = useMemo(() => ({
+    socket,
+    onlineUsers,
+    live,
+    setLive,
+    liveLink,
+    setLiveLink,
+    isConnected,
+    reconnect,
+  }), [socket, onlineUsers, live, liveLink, isConnected, reconnect]);
 
   return (
-    <SocketContext.Provider
-      value={{
-        socket,
-        onlineUsers,
-        live,
-        setLive,
-        liveLink,
-        setLiveLink,
-        isConnected,
-        reconnect,
-      }}
-    >
+    <SocketContext.Provider value={contextValue}>
       {children}
     </SocketContext.Provider>
   );

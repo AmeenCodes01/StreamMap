@@ -8,7 +8,8 @@ const useAuthId = () =>{
     const {authUser } = useAuthContext()
     const key = `${authUser._id}${room}`
     const authId = authUser._id
-    return {authId, key, room}
+    const name = authUser.name
+    return {authId, key, room,name}
 }
 
 export default useAuthId
