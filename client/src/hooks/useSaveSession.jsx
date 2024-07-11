@@ -13,11 +13,14 @@ const useSaveSession = () => {
     console.log(session, "sessionSTART ");
     session.live = live;
     try {
-      const res = await fetch("/api/sessions/start", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({session, name, live}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/sessions/start",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({session, name, live}),
+        }
+      );
 
       const data = await res.json();
       if (data.error) {

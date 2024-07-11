@@ -27,11 +27,14 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
           }
         } else {
           try {
-            const res = await fetch("/api/auth/check", {
-              method: "POST",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({email}),
-            }).catch((e) => (e.response ? setStatus("fail") : null));
+            const res = await fetch(
+              "https://streammap.onrender.com/api/auth/check",
+              {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({email}),
+              }
+            ).catch((e) => (e.response ? setStatus("fail") : null));
 
             const data = await res.json();
             if (data.error) {

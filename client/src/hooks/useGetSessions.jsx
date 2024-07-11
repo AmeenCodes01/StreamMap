@@ -20,7 +20,7 @@ const useGetSessions = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/sessions", {
+      const res = await fetch("https://streammap.onrender.com/api/sessions", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({id: authId}),

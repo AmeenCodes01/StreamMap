@@ -25,11 +25,14 @@ function LoginModal({
 
       setProfile([userInfo.data]);
       try {
-        const res = await fetch("/api/auth/check", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({email: userInfo.data.email}),
-        });
+        const res = await fetch(
+          "https://streammap.onrender.com/api/auth/check",
+          {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: userInfo.data.email}),
+          }
+        );
         const data = await res.json();
         // if (data.error) {
         //   throw new Error(data.error);
@@ -60,7 +63,8 @@ function LoginModal({
         style={{
           height: profile.length == 0 ? "100px" : "0px",
           // transition: "height 1s",
-        }}>
+        }}
+      >
         <GoogleLogin
           onSuccess={googleLogin}
           text="signin_with"
@@ -91,12 +95,14 @@ function LoginModal({
           height: profile.length == 0 ? "0px" : "100px",
           transition: "height 1.5s",
           overflow: profile.length == 0 ? "hidden" : "visible",
-        }}>
+        }}
+      >
         <div
           className=" "
           style={{
             display: showJoin ? "flex" : " none",
-          }}>
+          }}
+        >
           <Select
             className="basic-single"
             classNamePrefix="select"
@@ -162,7 +168,8 @@ function LoginModal({
             {/* <p className="text-white self-center">color:</p> */}
             <label
               className=" rounded-[6px] "
-              style={{backgroundColor: primColor, borderWidth: "0px"}}>
+              style={{backgroundColor: primColor, borderWidth: "0px"}}
+            >
               <input
                 type="color"
                 value={primColor}
@@ -182,7 +189,8 @@ function LoginModal({
               onJoin();
             }
           }}
-          className="border-[1px] rounded-[6px] text-[black] flex bg-[white] self-end px-[10px] m-[5px]  ">
+          className="border-[1px] rounded-[6px] text-[black] flex bg-[white] self-end px-[10px] m-[5px]  "
+        >
           <span>Join</span>
           {/* <p className={styles.tw}> */}
           {/* {countries.length > 0 ? "Change" : "Join"} */}
