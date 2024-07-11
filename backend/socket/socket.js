@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://streammap-frontend1.onrender.com",
+    origin: "https://streammap-frontend.onrender.com",
     methods: ["GET", "POST"],
   },
 });
