@@ -51,9 +51,14 @@ function DisplayMessage() {
   }, [socket]); // Add socket to the dependency array
 
   return (
-    <div className=" ml-auto flex mr-auto text-md italic">
-      {title} : {message ? message : time ? time : null}{" "}
-    </div>
+    <>
+      {message ||
+        (time && (
+          <div className=" ml-auto flex mr-auto text-md italic">
+            {title} : {message ? message : time ? time : null}{" "}
+          </div>
+        ))}
+    </>
   );
 }
 

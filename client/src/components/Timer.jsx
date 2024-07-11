@@ -6,11 +6,11 @@ import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
 import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 import {useShallow} from "zustand/react/shallow";
-import {Progress} from "react-daisyui";
 import {setInterval, clearInterval} from "worker-timers";
 import useStore from "../context/TimeStore";
 import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
+import useSaveSession from "../hooks/useSaveSession";
 const red = "#f54e4e";
 export default function Timer() {
   const {
@@ -33,6 +33,8 @@ export default function Timer() {
     resetInSesh,
     rated,
     setRated,
+    seshCount,
+    setSeshCount,
   } = useStore(
     useShallow((state) => ({
       workMinutes: state.workMinutes,
@@ -56,6 +58,8 @@ export default function Timer() {
       resetInSesh: state.resetInSesh,
       rated: state.rated,
       setRated: state.setRated,
+      seshCount: state.seshCount,
+      setSeshCount: state.setSeshCount,
     }))
   );
 
@@ -64,7 +68,7 @@ export default function Timer() {
   const {start, pause} = usePomodoro();
   const audio = document.getElementById("audio_tag");
   const [play, setPlay] = useState(false);
-
+  const {resetSession} = useSaveSession();
   useEffect(() => {
     // Retrieve necessary localStorage values
 
@@ -85,6 +89,7 @@ export default function Timer() {
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
     setRated(localStorage.getItem(`${key}rated`) === "true" || false);
+    setSeshCount(localStorage.getItem(`${key}seshCount`) || 0);
     // if any ls value is null, set it to workMinutes
     // Calculate elapsedTime based on storedStartTime
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
@@ -107,9 +112,6 @@ export default function Timer() {
         : workMinutes * 60
     );
   }, []);
-  const [sessions, setSessions] = useState(
-    parseInt(localStorage.getItem(`${key}sessions`)) || 0
-  );
 
   const {socket, live} = useSocketContext();
 
@@ -133,9 +135,7 @@ export default function Timer() {
       }
       const nextSeconds =
         (nextMode === "work" ? workMinutes : breakMinutes) * 60;
-      setSessions((prevSessions) => {
-        return parseInt(prevSessions) + (mode === "work" ? 1 : 0);
-      });
+      mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
       setMode(nextMode);
       localStorage.setItem(`${key}mode`, nextMode);
 
@@ -167,6 +167,7 @@ export default function Timer() {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
+
   console.log(totalSeconds);
   console.log(isRunning, isPaused);
   console.log(secondsLeft);
@@ -176,12 +177,13 @@ export default function Timer() {
     localStorage.removeItem(`${key}PausedTime`);
 
     setShowRating(false);
-    mode === "work" && secondsLeft !== workMinutes * 60 && live
-      ? socket.emit("reset-session", {
-          id: localStorage.getItem("sessionID"),
-          room,
-        })
-      : null;
+    // mode === "work" && secondsLeft !== workMinutes * 60 && live
+    //   ? socket.emit("reset-session", {
+    //       id: localStorage.getItem("sessionID"),
+    //       room,
+    //     })
+    //   : null;
+    resetSession();
 
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
 
@@ -229,39 +231,42 @@ export default function Timer() {
   }, [breakMinutes]);
   console.log(percentage);
 
+  useEffect(() => {
+    localStorage.setItem(`${key}seshCount`, seshCount);
+  }, [seshCount]);
+
   return (
     <div className="w-[100%] flex flex-col px-[10px]">
       {/* This will become a timer. */}
       <div className="flex flex-col">
         <input
-          value={sessions}
+          value={seshCount}
           onChange={(e) => {
             const regex = /^[0-9\b]+$/;
             if (
               (e.target.value === "" || regex.test(e.target.value)) &&
               e.target.value <= 10
             ) {
-              setSessions(e.target.value);
+              setSeshCount(e.target.value);
             }
           }}
           className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
         />
 
         <div className=" mr-[10px] min-w-[100px] pt-[20px]">
-          {/* <Progress value={19} className="w-56" /> */}
           <progress
             className={`progress w-[100%]   ${
               mode === "work" ? "progress-success" : "progress-error"
             }`}
-            value={100 - percentage}
+            value={isNaN(percentage) ? 100 : 100 - percentage}
             max="100"
           ></progress>
 
           {`${minutes < 10 ? "0" : ""}${minutes}:${
             seconds < 10 ? "0" : ""
           }${seconds}`}
-        
         </div>
+
         <div className="flex items-center justify-items-center flex-col">
           <div className="flex flex-col p-[10px]">
             {/* //Play button */}
@@ -390,8 +395,6 @@ export default function Timer() {
           please rate the session and stop the countdown/stopwatch
         </span>
       )}
-
-
     </div>
   );
 }

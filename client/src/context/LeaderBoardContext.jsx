@@ -30,11 +30,12 @@ export const LeaderBoardContextProvider = ({children}) => {
   useEffect(() => {
     const getLiveRanking = async () => {
       const data = await getLiveRankings(room);
-if (data) {
-  // Create an array with 100 copies of the 'data' object
-  // Set the 'repeatedData' to the 'liveRanking'
-  setLiveRanking(data);
-}    };
+      if (data) {
+        // Create an array with 100 copies of the 'data' object
+        // Set the 'repeatedData' to the 'liveRanking'
+        setLiveRanking(data);
+      }
+    };
 
     if (live) {
       getLiveRanking();

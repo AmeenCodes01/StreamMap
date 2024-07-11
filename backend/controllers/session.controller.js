@@ -22,11 +22,12 @@ export const getSessions = async (req, res) => {
 export const getSessionByID = async (req, res) => {
   try {
     const {id} = req.body;
+    console.log("im in", id);
     const userSessions = await Session.find({
       userId: id,
-      //  "createdAt": { "$gt": new Date(Date.now - 24 * 60 * 60 * 1000)}
+      createdAt: {$gt: new Date(Date.now() - 24 * 60 * 60 * 1000)},
     });
-
+    console.log(userSessions, "user");
     res.status(200).json(userSessions);
   } catch (error) {
     console.error("Error in getUserSessions: ", error.message);
@@ -36,25 +37,31 @@ export const getSessionByID = async (req, res) => {
 
 export const startSession = async (req, res) => {
   try {
-    const {session,name,live} = req.body;
+    const {session, name, live} = req.body;
+
+    // Create and save the session without the name
     const newSession = new Session(session);
     await newSession.save();
 
-    console.log(newSession, "session start NEW");
     if (live) {
-      console.log(live,"startSession Live")
-      const room = session.room
+      const room = session.room;
       if (!sessions[room]) {
         sessions[room] = [];
       }
-      console.log(name,"name")
-      newSession.name = name
-      // Check if the user already has a session in the room
-      sessions[room].push(newSession.toObject());
-      //if already exist, update duration,goal & status.   
-      io.to(room).emit("start-sessions", newSession);
+
+      // Create a new object with session data and name for the live sessions array
+      const sessionWithName = {
+        ...newSession.toObject(),
+        name,
+      };
+
+      sessions[room].push(sessionWithName);
+      console.log(sessionWithName, "name");
+      // Emit the session with name for live updates
+      io.to(room).emit("start-sessions", sessionWithName);
     }
-    console.log(newSession, " start Session, socket io");
+
+    // Send the response without the name
     res.status(201).json(newSession);
   } catch (error) {
     console.log("Error in saveSession controller: ", error.message);
@@ -117,6 +124,33 @@ export const saveSession = async (req, res) => {
     return res.status(201).json(session);
   } catch (error) {
     console.error("Error in saveSession controller: ", error.message);
+    res.status(500).json({error: "Internal server error"});
+  }
+};
+
+export const resetSession = async (req, res) => {
+  try {
+    const {id, room, live} = req.body;
+    console.log(id, room, live, "resetSession");
+    await Session.deleteOne({_id: id});
+    // Create and save the session without the name
+
+    if (live) {
+      //Object ID is making the issue here, check
+      const userSeshIndex = sessions[room].findIndex(
+        (s) => s._id.toString() === id
+      );
+      if (userSeshIndex !== -1) {
+        sessions[room] = sessions[room].filter(
+          (s, index) => index !== userSeshIndex
+        );
+      }
+
+      io.to(room).emit("reset-session", {id});
+    }
+    res.status(201).json("successfly reset");
+  } catch (error) {
+    console.log("Error in resetSession controller: ", error.message);
     res.status(500).json({error: "Internal server error"});
   }
 };

@@ -8,7 +8,7 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
   const elapsedTime = (Date.now() - Date.parse(createdAt)) / 1000;
 
   // Calculate the remaining time
-  const remainingTime = duration - elapsedTime;
+  const remainingTime = duration * 60 - elapsedTime;
   const savedIsActive = JSON.parse(
     localStorage.getItem(`${timerKey}_isActive`)
   );
@@ -26,7 +26,7 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
 
   useEffect(() => {
     let interval;
-          
+
     if (isActive) {
       interval = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
@@ -73,20 +73,26 @@ const RankingTimer = ({duration, id: sessionID, createdAt}) => {
     seconds = "00";
   }
 
-  const percentage = Math.round((1 - remainingTime / duration) * 100);
-
-
+  const percentage = Math.round((1 - timeLeft / (duration * 60)) * 100);
+  console.log(percentage, "pec");
   return (
     <div style={{textAlign: "center"}}>
-      <div style={{marginBottom: "10px"}}>
-        <span>{`${minutes}:${seconds}`}</span>
-      </div>
-      <progress
-            className={`progress w-[100%]   "progress-success" 
+      {percentage !== 100 || isNaN(percentage) ? (
+        <>
+          <div style={{marginBottom: "10px"}}>
+            <span>{`${minutes}:${seconds}`}</span>
+          </div>
+          <progress
+            className={`progress w-[100%]  progress-primary 
             }`}
-            value={100 - percentage}
+            value={isNaN(percentage) ? 0 : parseInt(percentage)}
             max="100"
           ></progress>
+          <div className=" mt-[2px]">total: {duration}</div>
+        </>
+      ) : (
+        <span className="flex-start flex">break</span>
+      )}
     </div>
   );
 };

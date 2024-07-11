@@ -2,16 +2,18 @@ import {useEffect} from "react";
 
 import {useSocketContext} from "../context/SocketContext";
 import useStore from "../context/TimeStore";
+import {useShallow} from "zustand/react/shallow";
+
 // import notificationSound from "../assets/sounds/notification.mp3";
 import useAuthId from "./useAuthId";
 const useListenSessions = () => {
   const {allSessions, setAllSessions, seshInfo, setSeshInfo} = useStore(
-    (state) => ({
+    useShallow((state) => ({
       allSessions: state.allSessions,
       setAllSessions: state.setAllSessions,
       seshInfo: state.seshInfo,
       setSeshInfo: state.setSeshInfo,
-    })
+    }))
   );
   const {socket} = useSocketContext();
   const {authId} = useAuthId();

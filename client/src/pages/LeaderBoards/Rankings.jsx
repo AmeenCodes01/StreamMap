@@ -3,7 +3,7 @@ import {useLeaderBoardContext} from "../../context/LeaderBoardContext";
 import {Table, Pagination} from "react-daisyui";
 import useGetUsers from "../../hooks/useGetUsers";
 import RankingTimer from "./RankingTimer";
-import { IoIosArrowBack,IoIosArrowForward  } from "react-icons/io";
+import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
 
 function Rankings() {
   const {liveRanking} = useLeaderBoardContext();
@@ -26,7 +26,7 @@ function Rankings() {
       totalDuration,
       totalScore,
       rating,
-      _id,
+      name,
       createdAt,
     } = session;
 
@@ -49,12 +49,12 @@ function Rankings() {
     //find id from name & display
 
     return (
-      <tr className=" h-[50px]">
-        <td>{idToNameMap(userId)}</td>
+      <tr className=" ">
+        <td>{name}</td>
         <td>{goal}</td>
-        <td className="items-center ">
+        <td className="">
           <RankingTimer
-            duration={duration * 60}
+            duration={duration}
             onFinish={() => console.log("Timer finished")}
             id={session._id}
             createdAt={createdAt}
@@ -62,7 +62,6 @@ function Rankings() {
         </td>
         <td>{totalDuration}</td>
         <td>{totalScore}</td>
-        <td>3</td>
         <td>{rating ? rating : null}</td>
       </tr>
     );
@@ -73,10 +72,10 @@ function Rankings() {
   // if (loading) {
   //   return <span className="loading loading-infinity loading-md"></span>;
   // }
-//if user go offline, then name disappears. so need to store. 
+  //if user go offline, then name disappears. so need to store.
   return (
-    <div className="flex  w-[80%] items-center self-center mt-[20px] flex-col">
-      <Table className="table table-zebra table-xs  rounded-[12px] table-pin-rows  items-center">
+    <div className="   ">
+      <table className="table table-xs table-pin-rows table-pin-cols">
         <thead>
           <tr>
             <th>User ID</th>
@@ -90,13 +89,11 @@ function Rankings() {
         <tbody>
           {currentPageData.map((session) => (
             <>
-            <SessionTableRow key={session._id} session={session} />
-           
+              <SessionTableRow key={session._id} session={session} />
             </>
-
           ))}
         </tbody>
-      </Table>
+      </table>
 
       {/* <table>
        
@@ -106,13 +103,20 @@ function Rankings() {
           ))}
         </tbody>
       </table> */}
-<div className="flex flex-end flex-row ">
-
-      <button className=" bg-white size-[20px]" onClick={() => setCurrentPage(currentPage - 1)}><IoIosArrowBack size={15} />
-      </button>
-      <button className="size-[20px] bg-white" onClick={() => setCurrentPage(currentPage + 1)}><IoIosArrowForward size={15} />
-      </button>
-</div>
+      <div className="flex flex-end flex-row ">
+        <button
+          className=" bg-white size-[20px]"
+          onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          <IoIosArrowBack size={15} />
+        </button>
+        <button
+          className="size-[20px] bg-white"
+          onClick={() => setCurrentPage(currentPage + 1)}
+        >
+          <IoIosArrowForward size={15} />
+        </button>
+      </div>
     </div>
   );
 }

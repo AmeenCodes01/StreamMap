@@ -3,11 +3,13 @@ import {countryNames} from "../data/countryNames";
 import Select from "react-select";
 import useSignup from "../hooks/useSignUp";
 import useLogin from "../hooks/useLogin";
+import {useNavigate} from "react-router-dom";
 import GoogleLogin from "../components/GoogleLogin";
-import { addCountry } from "../../../backend/controllers/countries.controller";
+import {addCountry} from "../../../backend/controllers/countries.controller";
 function SignUp() {
+  const navigate = useNavigate();
   const [primColor, setColor] = useState("#4361ee");
-  const [showColour, setShowColor] = useState(false)
+  const [showColour, setShowColor] = useState(false);
   const [myCountry, setMyCountry] = useState();
   const [signUp, setsignup] = useState(null);
   const [profile, setProfile] = useState();
@@ -15,7 +17,7 @@ function SignUp() {
   const {login} = useLogin();
 
   const onSignIn = async () => {
-    if ( myCountry) {
+    if (myCountry) {
       const userInfo = {
         name: profile.given_name,
         profilePic: profile.picture,
@@ -23,21 +25,23 @@ function SignUp() {
         country: myCountry,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
-      console.log(primColor, "color")
-      addCountry(myCountry,primColor)
-      signup(userInfo);
+      console.log(primColor, "color");
+      addCountry(myCountry, primColor);
+      const data = await signup(userInfo);
+      if (data) {
+        navigate("/");
+      }
     }
   };
   //after taking country input, check if it country & its colour already exist by making a call to checkCountry.
-useEffect(()=>{
-  const checkCountry = async () =>{
-    const exist = await check(myCountry)
-    exist == false? setShowColor(true) : setShowColor(false)
-      console.log(exist, "exist")
-  }
-  checkCountry()
-}, [myCountry])
-
+  useEffect(() => {
+    const checkCountry = async () => {
+      const exist = await check(myCountry);
+      exist == false ? setShowColor(true) : setShowColor(false);
+      console.log(exist, "exist");
+    };
+    checkCountry();
+  }, [myCountry]);
 
   if (loading) {
     return (
@@ -46,8 +50,6 @@ useEffect(()=>{
       </div>
     );
   }
-
-
 
   return (
     <div className="w-[100%] h-[100vh]    overflow-auto flex justify-center  relative">
@@ -86,7 +88,8 @@ useEffect(()=>{
                 height: signUp === "success" ? "60px" : "0px",
                 transition: "height 1s",
                 transitionDelay: "2s",
-              }}>
+              }}
+            >
               <Select
                 className="basic-single"
                 classNamePrefix="select"
@@ -149,32 +152,32 @@ useEffect(()=>{
                 name="color"
                 options={countryNames}
               />
-{      showColour?        <div className="flex pl-[10px]  mt-[20px] space-between justify-between ">
-                <p className=" self-center">your favourite color:</p>
-                <label
-                  className=" rounded-[6px] ml-[10px] self-end "
-                  style={{backgroundColor: primColor, borderWidth: "0px"}}>
-
-                  <input
-                    type="color"
-                    value={primColor}
-                    className="w-[50px] h-[50px]  border-[0px] self-center  block opacity-0"
+              {showColour ? (
+                <div className="flex pl-[10px]  mt-[20px] space-between justify-between ">
+                  <p className=" self-center">your favourite color:</p>
+                  <label
+                    className=" rounded-[6px] ml-[10px] self-end "
                     style={{backgroundColor: primColor, borderWidth: "0px"}}
-                    onChange={(e) => setColor(e.target.value)}
-                  />
-                </label>
-              </div>
-            :null}
+                  >
+                    <input
+                      type="color"
+                      value={primColor}
+                      className="w-[50px] h-[50px]  border-[0px] self-center  block opacity-0"
+                      style={{backgroundColor: primColor, borderWidth: "0px"}}
+                      onChange={(e) => setColor(e.target.value)}
+                    />
+                  </label>
+                </div>
+              ) : null}
             </div>
-
-
 
             <div className=" flex   h-[100%] mt-[50px] justify-items-center justify-center align-bottom ">
               <button
                 onClick={() => {
                   onSignIn();
                 }}
-                className="btn btn-success btn-primary rounded-[12px] w-[80%] mt-[auto] mb-[30px] self-center ">
+                className="btn btn-success btn-primary rounded-[12px] w-[80%] mt-[auto] mb-[30px] self-center "
+              >
                 Join
               </button>
             </div>

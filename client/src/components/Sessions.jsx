@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {TiTick} from "react-icons/ti";
-import {SessionTable} from "./SessionTable";
+import SessionTable from "./SessionTable";
 import {useParams} from "react-router-dom";
 import useSaveSession from "../hooks/useSaveSession";
 import useGetSessions from "../hooks/useGetSessions";
@@ -14,10 +14,9 @@ import useAuthId from "../hooks/useAuthId";
 function Sessions() {
   // const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(``);
-  const [seshCount, setSeshCount] = useState(0);
   const {id: room} = useParams();
   const {saveSession, loading} = useSaveSession();
-  const {userSessions, loading: load} = useGetSessions();
+  const {loading: load} = useGetSessions();
   const {
     inSesh,
     setInSesh,
@@ -31,6 +30,8 @@ function Sessions() {
     workMinutes,
     isStopWatchActive,
     isCountDownActive,
+    seshCount,
+    setSeshCount,
   } = useStore(
     useShallow((state) => ({
       inSesh: state.inSesh,
@@ -46,32 +47,34 @@ function Sessions() {
       isStopWatchActive: state.isStopWatchActive,
       isCountDownActive: state.isCountDownActive,
       setRated: state.setRated,
+      seshCount: state.seshCount,
+      setSeshCount: state.setSeshCount,
     }))
   );
-console.log(inSesh)
   const {socket} = useSocketContext();
   // const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
-  const {authId,key} = useAuthId();
+  const {authId, key} = useAuthId();
+
   // const {rankings, setRankings} = useLeaderBoardContext()
 
-  useEffect(() => {
-    socket?.on("newSession", (newSession) => {
-      // newMessage.shouldShake = true;
-      // const sound = new Audio(notificationSound);
-      // sound.play();
+  // useEffect(() => {
+  //   socket?.on("newSession", (newSession) => {
+  //     // newMessage.shouldShake = true;
+  //     // const sound = new Audio(notificationSound);
+  //     // sound.play();
 
-      if (newSession.userId == authId) {
-        setSeshInfo([...seshInfo, newSession]);
-      }
-    });
+  //     if (newSession.userId == authId) {
+  //       setSeshInfo([...seshInfo, newSession]);
+  //     }
+  //   });
 
-    return () => socket?.off("newSession");
-  }, [socket, seshInfo, setSeshInfo]);
+  //   return () => socket?.off("newSession");
+  // }, [socket, seshInfo, setSeshInfo]);
 
-  useEffect(() => {
-    setSeshInfo(userSessions);
-  }, [userSessions]);
+  // useEffect(() => {
+  //   setSeshInfo(userSessions);
+  // }, [userSessions]);
 
   const onSession = () => {
     // calc session score based on rating & duration.
@@ -116,14 +119,13 @@ console.log(inSesh)
     setSeshCount(seshCount + 1);
   };
 
-  useListenSessions();
-  console.log();
+  //useListenSessions();
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
 
   return (
-    <div className="flex w-[100%] items-end flex-col justify-items-end mt-[20px] ">
+    <div className="flex  items-end flex-col justify-items-end mt-[20px] ">
       {/* <ListenSessions seshInfo={seshInfo} setSeshInfo={setSeshInfo} /> */}
       <div className="w-[100%] justify-items-end">
         <div className="flex flex-col mb-[20px]  ">

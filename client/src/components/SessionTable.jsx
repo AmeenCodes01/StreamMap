@@ -1,17 +1,14 @@
-import React,{useState} from 'react'
-import useGetUsers from '../hooks/useGetUsers';
-import PomodoroTimer from "../components/PomodoroTimer"
-import { Table, Button,  } from 'react-daisyui';
-import CountDown from '../components/CountDown';
-export const SessionTable = ({arr, table}) => {
+import React, {useState} from "react";
+import useGetUsers from "../hooks/useGetUsers";
+
+const SessionTable = ({arr, table}) => {
   const [openRows, setOpenRows] = useState({});
 
-  
-  const formatTime = (timeInSeconds) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  // const formatTime = (timeInSeconds) => {
+  //   const minutes = Math.floor(timeInSeconds / 60);
+  //   const seconds = timeInSeconds % 60;
+  //   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  // };
 
   const toggleRow = (index) => {
     setOpenRows((prevState) => ({
@@ -19,53 +16,58 @@ export const SessionTable = ({arr, table}) => {
       [index]: !prevState[index],
     }));
   };
+  function formatTime(timeString) {
+    const dateTime = new Date(timeString);
+    const formattedTime = dateTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }); // Format as HH:MM
+    return `${formattedTime}`;
+  }
 
-const {users} = useGetUsers()
-if(table=="all" && users.length==0){
-    return (
-        <span className="loading loading-infinity loading-md"></span>
+  const {users} = useGetUsers();
+  if (table == "all" && users.length == 0) {
+    return <span className="loading loading-infinity loading-md"></span>;
+  }
 
-    )
-}
-    return (
-      <div className="overflow-x-auto h-96 w-[500px] mb-[200px]">
+  return (
+    <div className="overflow-x-auto w-[100%]">
+      <table className="table  table-lg ">
+        <thead>
+          <tr>
+            {table == "all" ? <th>User</th> : null}
+            <th> #</th>
+            <th>start</th>
+            <th>goal</th>
+            <th>rating</th>
+          </tr>
+        </thead>
 
-      <Table className="table table-zebra table-xs rounded-[12px] table-pin-rows h-[300px]">
- <thead>
-       <tr>
-       {table=="all"? <th>User</th>:null}
-         <th> #</th>
-        <th>goal</th>
-        <th>rating</th>
-      </tr>
-    </thead>       
-        
-      <tbody>
-        {arr ? arr.map((e, index) => (
-          <React.Fragment key={index} >
-           <tr onClick={() => toggleRow(index)}>
-                  {table=="all"?   <td>
- {users.filter((u)=>  u._id===e.userId)[0].name}</td> :null}
-                 <th>{e.sessionNumber}</th>
-                 <td className=''>
-                   {/* <CountDown/> */}
-                   {e.goal}
+        <tbody>
+          {arr
+            ? arr.map((e, index) => (
+                <React.Fragment key={index}>
+                  <tr onClick={() => toggleRow(index)}>
+                    {table == "all" ? (
+                      <td>{users.filter((u) => u._id === e.userId)[0].name}</td>
+                    ) : null}
+                    <th>{e.sessionNumber}</th>
+                    <td>{formatTime(e.createdAt)}</td>
+                    <td className="">
+                      {/* <CountDown/> */}
+                      {e.goal}
                     </td>
-                
-                
-                   <td className='border-2 flex w-[100%] bg-base-200'>
-                     <span className='border-1 h-[10px] flex  bg-base-content ' style={{
-                        
-  
-                         width: `${e.rating}%`,
-                        
-                        
-                       }}>
 
-                     </span>
-                     {e.rating} %
-                     </td> 
-                 {/* <td> <div
+                    <td>
+                      <progress
+                        className="progress progress-success w-[100%]"
+                        value={e.rating * 10}
+                        max="100"
+                      ></progress>
+
+                      {e.rating}
+                    </td>
+                    {/* <td> <div
                        style={{
                          transition: "width 2s",
   
@@ -74,41 +76,44 @@ if(table=="all" && users.length==0){
                          backgroundColor: "white",
                        }}>
                      <p className="text-[14px] left-[4px] bottom-[2px] absolute w-[40px] sm:w-[80px]"> */}
-                         {/* <p className=' bg-success' >w</p> */}
-                       {/* </p> */}
-                     {/* </div> */}
-                    
-               </tr>
-               {openRows[index] && (
-  <tr key={`collapse-${index}`}>
-    <td colSpan="3" >
-      {/* Collapsible content goes here */}
-      {e.timers && e.timers.length !== 0 ? (
-        <span>
-          {e.timers.map((s, i) => (
-      <div key={`timer-${i}`} className=' p-[5px] border-2 mb-[10px]'>
-      <span className='badge'>
-        {formatTime(s.time)} - {s.desc}
-      </span>
+                    {/* <p className=' bg-success' >w</p> */}
+                    {/* </p> */}
+                    {/* </div> */}
+                  </tr>
+                  {openRows[index] && (
+                    <tr key={`collapse-${index}`}>
+                      <td colSpan="3">
+                        {/* Collapsible content goes here */}
+                        {e.timers && e.timers.length !== 0 ? (
+                          <span>
+                            {e.timers.map((s, i) => (
+                              <div
+                                key={`timer-${i}`}
+                                className=" p-[5px] border-2 mb-[10px]"
+                              >
+                                <span className="badge">
+                                  {formatTime(s.time)} - {s.desc}
+                                </span>
+                              </div>
+                            ))}
+                          </span>
+                        ) : (
+                          "No timers"
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))
+            : null}
+        </tbody>
+      </table>
     </div>
-          ))}
-        </span>
-      ) : (
-        "No timers"
-      )}
-    </td>
-  </tr>
-)}
-          </React.Fragment>
-        )): null}
-      </tbody>
-    </Table>
+  );
+};
 
-    </div>
-    );
-  };
-
-//countdown of all 
+export default React.memo(SessionTable);
+//countdown of all
 
 //       <div className="flex flex-col w-[100%] max-h-[500px] rounded-8  ">
 
@@ -141,20 +146,18 @@ if(table=="all" && users.length==0){
 //                 <td className=' '   >
 //                   <td className='border-2 flex w-[100%] bg-base-200'>
 //                     {/* <span className='border-1 h-[10px] flex  bg-base-content ' style={{
-                        
-  
+
 //                         width: `${e.rating}%`,
-                        
-                        
+
 //                       }}>
 
 //                     </span> */}
 //                     {/* {e.rating} % */}
-//                     </td> 
+//                     </td>
 //                 {/* <td> <div
 //                       style={{
 //                         transition: "width 2s",
-  
+
 //                         width: `${e[0].rating}%`,
 //                         height: "100%",
 //                         backgroundColor: "white",
@@ -170,7 +173,7 @@ if(table=="all" && users.length==0){
 
 //               </Collapse>
 //               )}):null }
-      
+
 //     </tbody>
 //   </table>
 // </div>
@@ -184,7 +187,7 @@ if(table=="all" && users.length==0){
 //           </div>
 //           <div
 //             className="border-[3px] px-[10px] border-white w-[600px] sm:w-[700px] flex py-[4px]
-          
+
 //           ">
 //             goal
 //           </div>
@@ -209,7 +212,7 @@ if(table=="all" && users.length==0){
 //                     <div
 //                       style={{
 //                         transition: "width 2s",
-  
+
 //                         width: `${e[0].rating}%`,
 //                         height: "100%",
 //                         backgroundColor: "white",

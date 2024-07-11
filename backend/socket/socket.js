@@ -35,11 +35,11 @@ io.on("connection", async (socket) => {
   // refreshToken(req,res)
 
   socket.on("identify", (userId) => {
-    console.log("render")
+    console.log("render");
     // Check if user is already connected
-    console.log(userSocketMap,"userSocketMap")
+    console.log(userSocketMap, "userSocketMap");
     if (userSocketMap[userId]) {
-      console.log(userSocketMap,"userSocketMap")
+      console.log(userSocketMap, "userSocketMap");
 
       // Disconnect the previous socket
       io.to(userSocketMap[userId]).emit(
@@ -113,28 +113,26 @@ io.on("connection", async (socket) => {
     }
   });
 
+  // socket.on("reset-session", async ({id, room}) => {
+  //   if (sessions[room] && id) {
+  //     //Object ID is making the issue here, check
+  //     await Session.deleteOne({_id: id});
+  //     const userSeshIndex = sessions[room].findIndex(
+  //       (s) => s._id.toString() === id
+  //     );
+  //     if (userSeshIndex !== -1) {
+  //       sessions[room] = sessions[room].filter(
+  //         (s, index) => index !== userSeshIndex
+  //       );
+  //     }
 
-  socket.on("reset-session", async ({id, room}) => {
-    if (sessions[room] && id) {
-      //Object ID is making the issue here, check
-      await Session.deleteOne({_id: id});
-      const userSeshIndex = sessions[room].findIndex(
-        (s) => s._id.toString() === id
-      );
-      if (userSeshIndex !== -1) {
-        sessions[room] = sessions[room].filter(
-          (s, index) => index !== userSeshIndex
-        );
-      }
-
-      io.to(room).emit("reset-session", {id});
-    }
-  });
+  //     io.to(room).emit("reset-session", {id});
+  //   }
+  // });
 
   socket.on("leave-room", ({room: roomName}) => {
     leaveRoom(socket, roomName);
   });
-
 
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
@@ -150,9 +148,6 @@ io.on("connection", async (socket) => {
     delete socketRooms[socket.id];
   });
 });
-
-
-
 
 export {app, io, server};
 

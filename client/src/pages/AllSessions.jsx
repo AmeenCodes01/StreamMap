@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import useGetSessions from "../hooks/useGetSessions";
-import {SessionTable} from "../components/SessionTable";
+import SessionTable from "../components/SessionTable";
 import {useSocketContext} from "../context/SocketContext";
 import useListenSessions from "../hooks/useListenSession";
 import {useParams} from "react-router-dom";

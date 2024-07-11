@@ -1,12 +1,17 @@
 import {useEffect, useState} from "react";
-import useAuthId from "../hooks/useAuthId"
-
+import useAuthId from "../hooks/useAuthId";
+import useStore from "../context/TimeStore";
+import {useShallow} from "zustand/react/shallow";
 const useGetSessions = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
-  const [userSessions, setUserSessions] = useState([]);
-
-  const {authId} = useAuthId()
+  const {seshInfo, setSeshInfo} = useStore(
+    useShallow((state) => ({
+      seshInfo: state.seshInfo,
+      setSeshInfo: state.setSeshInfo,
+    }))
+  );
+  const {authId} = useAuthId();
 
   // const {onlineUsers} = useSocketContext()
   const getSessions = async (room) => {
@@ -33,31 +38,29 @@ const useGetSessions = () => {
     }
   };
 
-  useEffect(() => {
-    const getUserSessions = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/sessions/user", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: authId}),
-        });
-        const data = await res.json();
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        setUserSessions(data);
-      } catch (error) {
-        // toast.error(error.message);
-      } finally {
-        setLoading(false);
+  const getUserSessions = async () => {
+    setLoading(true);
+    console.log("getting user sessions");
+    try {
+      const res = await fetch("/api/sessions/user", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId}),
+      });
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
       }
-    };
-    // getSessions();
-    getUserSessions();
-  }, []);
+      setSeshInfo(data.reverse());
+    } catch (error) {
+      // toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return {loading, sessions, userSessions, setSessions, getSessions};
+  // s
+
+  return {loading, setSessions, getSessions, getUserSessions};
 };
 export default useGetSessions;

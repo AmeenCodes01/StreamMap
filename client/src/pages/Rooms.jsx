@@ -4,9 +4,11 @@ import {CiShop} from "react-icons/ci";
 import usePromise from "../hooks/usePromise";
 import {RiLogoutCircleLine} from "react-icons/ri";
 import {useNavigate} from "react-router-dom";
+import RoomCard from "../components/Room/RoomCard";
 
 // sm:justify-items-center
 // sm:items-center sm:justify-center
+const rooms = ["Shamsia", "Test"];
 
 function Rooms() {
   const [totalDon, setTotalDon] = useState();
@@ -24,20 +26,19 @@ function Rooms() {
     getTotalDonate();
   }, []);
 
-
-
   return (
     <div
-      className="bg-gray-500 h-[100vh] p-[20px] 
-      flex flex-col
+      className="  p-[20px]  h-[100vh] 
+      flex flex-col 
     "
     >
-      <div className="w-[100%] border-2 items-end justify-end flex gap-[10px] ">
+      <div className="w-[100%]  items-end justify-end flex gap-[30px] ">
         <Link to="/shop">
           <CiShop color="white" size={30} className="" />
         </Link>
         <RiLogoutCircleLine
           color="white"
+          className="cursor-pointer"
           size={30}
           onClick={() => {
             localStorage.clear();
@@ -49,47 +50,28 @@ function Rooms() {
       {/* Input Country + color + username */}
       {/* <div className=" h-[100vh] border-2"></div> */}
       {/* <input onClick={(event) => setUsername(event.target.value)} /> */}
-      <div>
-        {/* <button
+
+      <div className="sm:flex-row  flex flex-col gap-[20px] sm:gap-[10px] self-center items-center justify-center justify-self-center mt-[auto] mb-[auto] ">
+        {rooms.map((admin) => (
+          <RoomCard name={admin} />
+        ))}
+      </div>
+
+      {/* <button
           onClick={() => {
             socket.emit("user-join", {username});
           }}>
           {" "}
           Join StreamMap
         </button> */}
+      <div className=" badge flex flex-end  items-end justify-end text-md ">
+        <span className="text-bold italic font-mono  rounded-[8px] p-[5px] text-white ">
+          <span className="bg-info badge text-white text-md">
+            Total {Math.floor(parseInt(totalDon) / 2)}$
+          </span>{" "}
+          promised to be donated to Palestine 🤍
+        </span>
       </div>
-
-      
-      <div className="sm: sm: flex flex-row gap-[6px] sm:gap-[10px] ">
-        <Link to="/Shamsia/user">
-          <div 
-            onClick={() => {
-              // socket.emit("join", {room: "Shamsia", username: "Ameen"});
-            }}
-            className="bg-black sm:h-[200px] sm:w-[200px] w-[50%] h-[50%] 
-       rounded-[13px] p-[8px] items-center justify-center justify-items-center flex flex-col gap-[12px] "
-          >
-            <div className="bg-white w-[70px] h-[70px] rounded-[100%] self-center "></div>
-            <p className="text-white text-center">SD's World</p>
-          </div>
-        </Link>
-        {/* //Khatira */}
-        <Link to="/Khatira">
-          <div
-            onClick={() => {
-              // socket.emit("join", {room: "3243", username});
-            }}
-            className="bg-black sm:h-[200px] sm:w-[200px] w-[50%] h-[50%] 
-       rounded-[13px] p-[8px] items-center justify-center justify-items-center flex flex-col gap-[12px] "
-          >
-            <div className="bg-white w-[70px] h-[70px] rounded-[100%] self-center "></div>
-            <p className="text-white text-center">KT's World</p>
-          </div>
-        </Link>
-      </div>
-      <span className="text-bold">
-        {Math.floor(parseInt(totalDon) / 2)}$ donated
-      </span>
     </div>
   );
 }

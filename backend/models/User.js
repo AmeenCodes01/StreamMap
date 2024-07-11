@@ -14,9 +14,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    adminRoom: {
+      type: String,
+      default: "",
+    },
     scores: [{score: Number, room: String}],
     p_id: {type: String, unique: true},
-    currentScore: {type:Number, default:0},
+    currentScore: {type: Number, default: 0},
     //name,country,pfp, timezone offset, country color, currentScore
   },
   {timestamps: true}

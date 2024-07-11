@@ -16,16 +16,18 @@ const Timer = ({animate}) => {
   const [desc, setDesc] = useState("");
   const [saved, setSaved] = useState(false);
   const {
-    setInSesh, 
+    setInSesh,
     isCountDownActive,
     setIsCountDownActive,
     isRunning,
+    setCountdownMinutes,
   } = useStore(
     useShallow((state) => ({
       setInSesh: state.setInSesh,
       isCountDownActive: state.isCountDownActive,
       setIsCountDownActive: state.setIsCountDownActive,
       isRunning: state.isRunning,
+      setCountdownMinutes: state.setCountdownMinutes,
     }))
   );
 
@@ -88,7 +90,7 @@ const Timer = ({animate}) => {
           </p>
         </div>
 
-        <div className="text-xs my-[10px] pl-[5px] flex flex-row justify-between  gap-[5px]">
+        <div className="text-xs my-[10px] pl-[5px] flex flex-row justify-between  gap-[35px]">
           {!isCountDownActive ? (
             <span>
               Set{"   "}
@@ -111,7 +113,7 @@ const Timer = ({animate}) => {
             onChange={(e) => setDesc(e.target.value)}
           />
         </div>
-        <div className="flex flex-row gap-[10px] self-center items-center my-[20px]">
+        <div className="flex flex-row gap-[10px] self-center  justify-center items-center my-[20px]">
           <button
             className="btn btn-xs btn-secondary"
             onClick={isCountDownActive ? pauseTimer : startTimer}
@@ -119,9 +121,6 @@ const Timer = ({animate}) => {
             {!isCountDownActive ? "Play" : "Pause"}
           </button>
 
-          {/* <button className="btn btn-xs btn-secondary" onClick={pauseTimer}>
-            Pause
-          </button> */}
           <button className="btn btn-xs btn-secondary" onClick={resetTimer}>
             Reset
           </button>

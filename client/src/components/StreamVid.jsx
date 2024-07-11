@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import {useParams} from "react-router-dom";
 import DisplayMessage from "./DisplayMessage";
 import {useLiveStream} from "../hooks/useLiveStream";
-
+import {AuthContext, useAuthContext} from "../context/AuthContext";
 function StreamVid() {
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState(true);
@@ -15,15 +15,14 @@ function StreamVid() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const {socket, setLive, live, setLiveLink,liveLink} = useSocketContext();
+  const {socket, setLive, live, setLiveLink, liveLink} = useSocketContext();
   const {id: room} = useParams();
   const {startLive, endLive} = useLiveStream();
-
-
+  const {authUser} = useAuthContext();
   const onClick = () => {
-    console.log("clicked")
+    console.log("clicked");
     //save to localstorage
-    setLiveLink(link)
+    setLiveLink(link);
     setVisible(true);
   };
 
@@ -37,12 +36,7 @@ function StreamVid() {
     }
   }, [liveLink]);
 
-
-
-
   const onLive = () => {
-
-    
     setLive((prevLive) => {
       const newLive = !prevLive;
       //on every refresh, it can just check if live or not through API.
@@ -60,7 +54,6 @@ function StreamVid() {
       } else {
         endLive(room);
         setVisible(false);
-        setLink("");
 
         socket.emit("live", {live: newLive, room});
 
@@ -97,7 +90,7 @@ function StreamVid() {
     }
     setShowMessage(false);
   };
-  console.log(date);
+
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
@@ -107,8 +100,9 @@ function StreamVid() {
           checked={live}
           className="toggle toggle-sm self-center"
           disabled={
-            false
-            // authUser.admin === true ? false : true
+            authUser.admin === true && authUser.adminRoom === room
+              ? false
+              : true
           }
           onChange={() => {
             onLive();
@@ -149,28 +143,27 @@ function StreamVid() {
       {visible && (
         <>
           <iframe
-            className="rounded-[20px] aspect-video	  "
+            className="rounded-[20px] aspect-video"
             src={liveLink}
             title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
           ></iframe>
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
             <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>
-            <button
-              className="btn btn-xs btn-accent w-[50px] flex self-end "
-              onClick={onChange}
-            >
-              change{" "}
-            </button>
+            {authUser.admin === true && authUser.room === room && (
+              <button
+                className="btn btn-xs btn-accent w-[50px] flex self-end "
+                onClick={onChange}
+              >
+                change{" "}
+              </button>
+            )}{" "}
           </div>
         </>
       )}
       {/* Show this time to all users.  */}
-      {showMessage ? (
+      {authUser.admin === true && authUser.room === room && showMessage ? (
         <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px] ">
           <input
             type="text"
@@ -193,28 +186,6 @@ function StreamVid() {
             </label>
           </div>
           {mode ? (
-            // <div className="flex flex-row gap-[8px] self-center">
-            //   <input
-            //     type="text"
-            //     value={hours}
-            //     onChange={(e) =>
-            //       /^\d*$/.test(e.target.value) ? setHours(e.target.value) : null
-            //     }
-            //     className="w-[30px] text-center bg-secondary    focus:outline-none"
-            //   />
-            //   <span>h</span>
-            //   <input
-            //     type="text"
-            //     value={minutes}
-            //     onChange={(e) =>
-            //       /^\d*$/.test(e.target.value)
-            //         ? setMinutes(e.target.value)
-            //         : null
-            //     }
-            //     className="w-[30px]  text-center bg-secondary   focus:outline-none"
-            //   />
-            //   <span>m</span>
-            // </div>
             <input
               aria-label="Date and time"
               type="datetime-local"
@@ -237,13 +208,14 @@ function StreamVid() {
           </button>
         </div>
       ) : null}
-      <button
-        className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
-        onClick={() => setShowMessage(!showMessage)}
-      >
-        {!showMessage ? "display message/time to all clients " : "hide"}{" "}
-      </button>
-
+      {authUser.admin === true && authUser.room === room && (
+        <button
+          className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
+          onClick={() => setShowMessage(!showMessage)}
+        >
+          {!showMessage ? "display message/time to all clients " : "hide"}{" "}
+        </button>
+      )}
       {<div className="w-full h-full z-[100000000]"></div>}
     </div>
   );

@@ -10,15 +10,15 @@ import {useLiveStream} from "../hooks/useLiveStream";
 import {IoExit} from "react-icons/io5";
 import User from "./User";
 
-const MyMap = ()=>{
+const MyMap = () => {
   // myCountry saves user country
   const navigate = useNavigate();
 
   const {id: room} = useParams();
 
-  const {authUser, setRoom} = useAuthContext();
-  console.log("render")
-  
+  const {authUser} = useAuthContext();
+  console.log("render");
+
   // write this into a useEffect.
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => {
@@ -26,10 +26,12 @@ const MyMap = ()=>{
   }, []);
   const {socket, isConnected} = useSocketContext();
   // get all users by room. get room name from   params.
-  const [tab, setTab] = useState("Timer");
+  const [tab, setTab] = useState(
+    localStorage.getItem(`${authUser.key}${room}tab`) || "Timer"
+  );
 
   const joinRoom = useCallback(() => {
-    if ( isConnected && authUser && room) {
+    if (isConnected && authUser && room) {
       console.log("Emitting join-room event", room, authUser._id);
       socket.emit("join-room", {room, userId: authUser._id});
     }
@@ -39,21 +41,16 @@ const MyMap = ()=>{
     joinRoom();
   }, [joinRoom]);
 
-  // useEffect(() => {
-  //   navigate("user");
-  // }, []);
+  useEffect(() => {
+    localStorage.setItem(`${authUser.key}${room}tab`, tab);
+  }, [tab]);
 
   const onLeaveRoom = () => {
     socket.emit("leave-room", {room, userId: authUser._id});
   };
 
-
-
-
-
-  
   return (
-    <div className="w-[100%]    flex flex-col  overflow-hidden   relative mr-[10px]  ">
+    <div className="w-[100%]    flex flex-col  overflow-hidden   relative mr-[10px] px-[10px] ">
       {/* MAP */}
       <div className=" w-[100%] flex flex-row">
         <Map />
@@ -87,7 +84,6 @@ const MyMap = ()=>{
         ) : null}
       </div>
 
-      
       <div className="collapse ">
         <input type="checkbox" />
         <div className="collapse-title text-xl font-medium">
@@ -98,11 +94,12 @@ const MyMap = ()=>{
         </div>
       </div>
       {/* <Tracker/> */}
-      <div className="px-[10px]">
+
+      <div className="mt-[10px] ">
         <div role="tablist" className="tabs tabs-boxed tabs-xs">
           <Link
             role="tab"
-            to="user"
+            to=""
             className={`tab ${tab == "Timer" ? "tab-active" : null} `}
             onClick={() => setTab("Timer")}
           >
@@ -118,15 +115,16 @@ const MyMap = ()=>{
           </Link>
           <Link
             role="tab"
-            to="allUsers"
+            to="sessions"
             className={`tab ${tab == "Study Buddies" ? "tab-active" : null} `}
             onClick={() => setTab("Study Buddies")}
           >
-            Study Buddies
+            Sessions
           </Link>
         </div>
 
         <Outlet />
+        {/* <User /> */}
 
         {/* CHANGE MAP COUNTRIES & COLOR */}
         {/* 
@@ -152,12 +150,10 @@ const MyMap = ()=>{
 </div> */}
       </div>
     </div>
-  )
+  );
 };
 
 export default React.memo(MyMap);
-
-
 
 // <div className="flex    gap-[10px] pt-[10px] self-end   ">
 //         <label

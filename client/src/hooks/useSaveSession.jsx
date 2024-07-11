@@ -6,7 +6,7 @@ const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
   const {socket, live} = useSocketContext();
-  const {authId,name} = useAuthId();
+  const {authId, name, room} = useAuthId();
 
   const startSession = async (session) => {
     setLoading(true);
@@ -16,12 +16,12 @@ const useSaveSession = () => {
       const res = await fetch("/api/sessions/start", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({session, name,live}),
+        body: JSON.stringify({session, name, live}),
       });
 
       const data = await res.json();
       if (data.error) {
-        throw new Error(data.error);    
+        throw new Error(data.error);
       }
       console.log(data, "new session data");
       setSessionID(data._id);
@@ -61,7 +61,28 @@ const useSaveSession = () => {
     }
   };
 
-  return {startSession, saveSession, loading, sessionID};
+  const resetSession = async () => {
+    setLoading(true);
+    try {
+      const sessionID = localStorage.getItem("sessionID");
+      const res = await fetch("/api/sessions/reset", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: sessionID, room, live}),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {startSession, saveSession, loading, sessionID, resetSession};
 };
 
 export default useSaveSession;

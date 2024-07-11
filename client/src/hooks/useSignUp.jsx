@@ -7,7 +7,6 @@ const useSignup = () => {
   const {setAuthUser} = useAuthContext();
 
   const signup = async ({name, email, timeZone, country, profilePic}) => {
-    
     const success = handleInputErrors({
       name,
       email,
@@ -22,7 +21,7 @@ const useSignup = () => {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name, email, timeZone, country,  profilePic}),
+        body: JSON.stringify({name, email, timeZone, country, profilePic}),
       });
 
       const data = await res.json();
@@ -31,60 +30,68 @@ const useSignup = () => {
       }
       localStorage.setItem("auth-user", JSON.stringify(data));
       setAuthUser(data);
+      return data._id;
     } catch (error) {
       toast.error(error.message);
     } finally {
       setLoading(false);
     }
   };
-const check = async(country)=>{
-  console.log(country,"red")
-  try {
-    const res = await fetch("/api/country/check", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({country})
-    });
+  const check = async (country) => {
+    console.log(country, "red");
+    try {
+      const res = await fetch("/api/country/check", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({country}),
+      });
 
-    const data = await res.json();
-    if (data.error) {
-      throw new Error(data.error);
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      return data?.exist;
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
-    return data?.exist
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-}
-const addCountry = async(country, color)=>{
-  console.log(country,color,"red")
-  try {
-    const res = await fetch("/api/country/add", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({country, color})
-    });
+  };
+  const addCountry = async (country, color) => {
+    console.log(country, color, "red");
+    try {
+      const res = await fetch("/api/country/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({country, color}),
+      });
 
-    const data = await res.json();
-    if (data.error) {
-      console.log("data",data)
-      throw new Error(data.error);
-      console.log(error)
+      const data = await res.json();
+      if (data.error) {
+        console.log("data", data);
+        throw new Error(data.error);
+        console.log(error);
+      }
+      console.log(data);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
-console.log(data)
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-}
+  };
 
   return {loading, signup, check, addCountry};
 };
 export default useSignup;
 
-function handleInputErrors({name, email, timeZone, country, color, profilePic}) {
+function handleInputErrors({
+  name,
+  email,
+  timeZone,
+  country,
+  color,
+  profilePic,
+}) {
   if (!country) {
     toast.error("Please fill in all fields");
     return false;
