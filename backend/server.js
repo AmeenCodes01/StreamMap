@@ -15,17 +15,22 @@ import sleepRoutes from "./routes/sleepRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import livestreamRoutes from "./routes/livestreamRoutes.js";
 import promisesRoutes from "./routes/promisesRoutes.js";
-import countryRoutes from "./routes/countryRoutes.js"
+import countryRoutes from "./routes/countryRoutes.js";
 dotenv.config();
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://streammap-frontend.onrender.com",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 const connectToMongoDB = () => {
   mongoose.connect(
     process.env.MONGO_URI,
     {useNewUrlParser: true, useUnifiedTopology: true},
-    () => {
-    }
+    () => {}
   );
   mongoose.set("strictQuery", true);
 };
@@ -37,8 +42,7 @@ app.use("/api/sleep", sleepRoutes);
 app.use("/api/score", scoreRoutes);
 app.use("/api/live", livestreamRoutes);
 app.use("/api/promise", promisesRoutes);
-app.use("/api/country", countryRoutes)
-
+app.use("/api/country", countryRoutes);
 
 const PORT = process.env.PORT || 3000;
 

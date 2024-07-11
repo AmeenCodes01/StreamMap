@@ -42,11 +42,14 @@ const useGetSessions = () => {
     setLoading(true);
     console.log("getting user sessions");
     try {
-      const res = await fetch("/api/sessions/user", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: authId}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/sessions/user",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({id: authId}),
+        }
+      );
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);

@@ -9,11 +9,14 @@ const useGetRoomRankings = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/score/ranking", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/score/ranking",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room}),
+        }
+      );
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
@@ -36,11 +39,14 @@ const useGetRoomRankings = () => {
 
     console.log("sending req");
     try {
-      const res = await fetch("/api/score/liveRanking", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/score/liveRanking",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room}),
+        }
+      );
       const data = await res.json();
       console.log(data, "data");
       if (data.error) {

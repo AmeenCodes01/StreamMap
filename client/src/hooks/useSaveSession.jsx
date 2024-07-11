@@ -44,11 +44,14 @@ const useSaveSession = () => {
     console.log(session, "s e s s i o n ");
     setLoading(true);
     try {
-      const res = await fetch("/api/sessions/save", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(session),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/sessions/save",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(session),
+        }
+      );
 
       const data = await res.json();
       if (data.error) {
@@ -65,11 +68,14 @@ const useSaveSession = () => {
     setLoading(true);
     try {
       const sessionID = localStorage.getItem("sessionID");
-      const res = await fetch("/api/sessions/reset", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({id: sessionID, room, live}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/sessions/reset",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({id: sessionID, room, live}),
+        }
+      );
 
       const data = await res.json();
       if (data.error) {

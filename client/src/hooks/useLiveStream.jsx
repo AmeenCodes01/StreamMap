@@ -1,20 +1,22 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import {useSocketContext} from "../context/SocketContext";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";  
-  
-  
-  export const useLiveStream = () => {
-  const{id:room} = useParams()
-  console.log(room)
+import {useParams} from "react-router-dom";
+
+export const useLiveStream = () => {
+  const {id: room} = useParams();
+  console.log(room);
   const {setLive, setLiveLink} = useSocketContext();
   const startLive = async (room, link) => {
     try {
-      const res = await fetch("/api/live/startLive", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room, link}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/live/startLive",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room, link}),
+        }
+      );
       const data = await res.json();
 
       if (data.error) {
@@ -31,11 +33,14 @@ import { useParams } from "react-router-dom";
     let ranking;
     try {
       //getLiveRanking first 3.
-      const rankingRes = await fetch("/api/score/liveRanking", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room}),
-      });
+      const rankingRes = await fetch(
+        "https://streammap.onrender.com/api/score/liveRanking",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room}),
+        }
+      );
 
       const rankingData = await rankingRes.json();
       if (rankingData.error) {
@@ -45,11 +50,14 @@ import { useParams } from "react-router-dom";
       ranking = rankingData.slice(0, 3);
 
       ///////////////////////
-      const res = await fetch("/api/live/endLive", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({room, ranking}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/live/endLive",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({room, ranking}),
+        }
+      );
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
@@ -63,31 +71,34 @@ import { useParams } from "react-router-dom";
 
   const checkLive = async (sentRoom) => {
     try {
-      const res = await fetch("/api/live/checkLive", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({sentRoom}),
-      });
+      const res = await fetch(
+        "https://streammap.onrender.com/api/live/checkLive",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({sentRoom}),
+        }
+      );
       const data = await res.json();
       setLive(data.live);
 
-      console.log(data,"check")
-      setLiveLink(data.link)
+      console.log(data, "check");
+      setLiveLink(data.link);
       if (data.error) {
         throw new Error(data.error);
       }
       // setSessions(data);
-      // console.log(data)  
+      // console.log(data)
       return data;
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  useEffect(()=>{
-    console.log("checking for live")
-    if(room) checkLive(room)
-  },[room])
+  useEffect(() => {
+    console.log("checking for live");
+    if (room) checkLive(room);
+  }, [room]);
 
   return {startLive, endLive, checkLive};
 };

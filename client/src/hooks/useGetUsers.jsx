@@ -5,16 +5,19 @@ const useGetUsers = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const {onlineUsers} = useSocketContext();
- 
+
   useEffect(() => {
     const getUsers = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/users/onlineUsers", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ids: onlineUsers}),
-        });
+        const res = await fetch(
+          "https://streammap.onrender.com/api/users/onlineUsers",
+          {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ids: onlineUsers}),
+          }
+        );
         const data = await res.json();
         if (data.error) {
           throw new Error(data.error);
