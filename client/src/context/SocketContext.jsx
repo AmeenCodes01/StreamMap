@@ -87,7 +87,7 @@ export const SocketContextProvider = ({ children }) => {
   const socket = useMemo(() => {
     if (!authUser) return null;
     
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io("https://streammap.onrender.com", {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       timeout: 10000,
