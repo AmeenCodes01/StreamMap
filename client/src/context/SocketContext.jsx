@@ -6,7 +6,8 @@ import {
   useContext,
   useCallback,
 } from "react";
-import useAuthId from "../hooks/useAuthId";
+// import useAuthId from "../hooks/useAuthId";
+import { useAuthContext } from "../context/AuthContext";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
 import {config} from "../config";
@@ -86,13 +87,13 @@ export const useSocketContext = () => {
 
 export const SocketContextProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const {authId} = useAuthId();
+  // const {authId} = useAuthId();
   const [live, setLive] = useState(false);
   const [liveLink, setLiveLink] = useState("");
   const [isConnected, setIsConnected] = useState(false);
-
+  const {authUser} = useAuthContext()
   const socket = useMemo(() => {
-    if (!authId) return null;
+    if (authUser === null) return null;
 
     const newSocket = io(`${config.API_URL}`, {
       reconnectionAttempts: Infinity,
@@ -103,7 +104,7 @@ export const SocketContextProvider = ({children}) => {
     newSocket.on("connect", () => {
       console.log("Socket connected");
       setIsConnected(true);
-      newSocket.emit("identify", authId);
+      newSocket.emit("identify", authUser);
     });
 
     newSocket.on("disconnect", (reason) => {
@@ -133,7 +134,7 @@ export const SocketContextProvider = ({children}) => {
     });
 
     return newSocket;
-  }, [authId]);
+  }, [authUser]);
 
   useEffect(() => {
     return () => {
