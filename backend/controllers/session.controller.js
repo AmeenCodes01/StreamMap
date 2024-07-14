@@ -38,7 +38,7 @@ export const getSessionByID = async (req, res) => {
 export const startSession = async (req, res) => {
   try {
     const {session, name, live} = req.body;
-
+    session.status = "start";
     // Create and save the session without the name
     const newSession = new Session(session);
     await newSession.save();
@@ -83,7 +83,8 @@ export const saveSession = async (req, res) => {
       timers,
       live,
     } = req.body;
-    console.log(live, "session lives");
+
+    console.log(live, "session lives IN SAVECONTORLLER  ");
     // Find the session by ID
     console.log(sessionID, "SESSIONID  ");
     const session = await Session.findById(sessionID);
@@ -101,13 +102,14 @@ export const saveSession = async (req, res) => {
     session.score = score;
     session.endedAt = Date.now();
     session.timers = timers;
+    session.status = "end";
 
     // Save the updated session
     await session.save();
 
     //Find the existing session in the sessions object
-    if (live === "true") {
-      const userSeshIndex = sessions[room].findIndex(
+    if (live) {
+      const userSeshIndex = sessions[room]?.findIndex(
         (s) => s._id.toString() === sessionID
       );
       if (userSeshIndex !== -1) {
@@ -137,11 +139,11 @@ export const resetSession = async (req, res) => {
 
     if (live) {
       //Object ID is making the issue here, check
-      const userSeshIndex = sessions[room].findIndex(
+      const userSeshIndex = sessions[room]?.findIndex(
         (s) => s._id.toString() === id
       );
       if (userSeshIndex !== -1) {
-        sessions[room] = sessions[room].filter(
+        sessions[room] = sessions[room]?.filter(
           (s, index) => index !== userSeshIndex
         );
       }

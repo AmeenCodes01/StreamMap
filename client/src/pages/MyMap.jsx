@@ -26,9 +26,7 @@ const MyMap = () => {
   }, []);
   const {socket, isConnected} = useSocketContext();
   // get all users by room. get room name from   params.
-  const [tab, setTab] = useState(
-    localStorage.getItem(`${authUser.key}${room}tab`) || "Timer"
-  );
+  const [tab, setTab] = useState("Timer");
 
   const joinRoom = useCallback(() => {
     if (isConnected && authUser && room) {
@@ -41,16 +39,12 @@ const MyMap = () => {
     joinRoom();
   }, [joinRoom]);
 
-  useEffect(() => {
-    localStorage.setItem(`${authUser.key}${room}tab`, tab);
-  }, [tab]);
-
   const onLeaveRoom = () => {
     socket.emit("leave-room", {room, userId: authUser._id});
   };
 
   return (
-    <div className="w-[100%]    flex flex-col  overflow-hidden   relative mr-[10px] px-[10px] ">
+    <div className="w-[100%] mr-[20px]   flex flex-col  overflow-hidden   relative  px-[10px] ">
       {/* MAP */}
       <div className=" w-[100%] flex flex-row">
         <Map />

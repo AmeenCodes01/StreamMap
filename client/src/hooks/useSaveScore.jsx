@@ -1,6 +1,8 @@
 import toast from "react-hot-toast";
 import {useState} from "react";
 import useAuthId from "./useAuthId";
+import {config} from "../config";
+
 const useSaveScore = () => {
   const [loading, setLoading] = useState(false);
   const {authId} = useAuthId();
@@ -8,14 +10,11 @@ const useSaveScore = () => {
     console.log(authId);
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/score/saveScore",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({score, room, authId}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/score/saveScore`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({score, room, authId}),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -30,14 +29,11 @@ const useSaveScore = () => {
   };
   const getScore = async () => {
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/score/getScore",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: authId}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/score/getScore`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId}),
+      });
 
       const data = await res.json();
       console.log(data, " DATA USESAVESCORE");

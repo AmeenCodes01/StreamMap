@@ -58,7 +58,7 @@ const SessionTable = ({arr, table}) => {
                       {e.goal}
                     </td>
 
-                    <td>
+                    <td className="text-center">
                       <progress
                         className="progress progress-success w-[100%]"
                         value={e.rating * 10}

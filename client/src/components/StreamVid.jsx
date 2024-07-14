@@ -151,7 +151,7 @@ function StreamVid() {
             <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>
-            {authUser.admin === true && authUser.room === room && (
+            {authUser.admin === true && authUser.adminRoom === room && (
               <button
                 className="btn btn-xs btn-accent w-[50px] flex self-end "
                 onClick={onChange}
@@ -163,7 +163,7 @@ function StreamVid() {
         </>
       )}
       {/* Show this time to all users.  */}
-      {authUser.admin === true && authUser.room === room && showMessage ? (
+      {authUser.admin === true && authUser.adminRoom === room && showMessage ? (
         <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px] ">
           <input
             type="text"
@@ -208,7 +208,7 @@ function StreamVid() {
           </button>
         </div>
       ) : null}
-      {authUser.admin === true && authUser.room === room && (
+      {authUser.admin === true && authUser.adminRoom === room && (
         <button
           className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
           onClick={() => setShowMessage(!showMessage)}

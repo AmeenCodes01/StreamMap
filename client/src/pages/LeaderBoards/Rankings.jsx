@@ -7,46 +7,42 @@ import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io";
 
 function Rankings() {
   const {liveRanking} = useLeaderBoardContext();
-  const itemsPerPage = 1; // Number of items per page
+  const itemsPerPage = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(1);
-
+  console.log("ranking render");
   // Calculate start and end indices for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
 
   // Slice the data array based on the current page
-  const currentPageData = liveRanking.slice(startIndex, endIndex);
+  const currentPageData = liveRanking?.slice(startIndex, endIndex);
 
   const SessionTableRow = ({session}) => {
-    const {users} = useGetUsers();
+    //const {users} = useGetUsers();
     const {
       userId,
       goal,
       duration,
       totalDuration,
       totalScore,
-      rating,
+      ratings,
       name,
       createdAt,
     } = session;
 
-    const idToNameMap = (userId) => {
-      let foundName = null; // Initialize with a default value
-
-      for (const country in users) {
-        users[country].forEach((users) => {
-          users.forEach((user) => {
-            if (userId === user._id) {
-              foundName = user.name; // Store the found name
-            }
-          });
-        });
-      }
-
-      return foundName; // Return the name (or null if not found)
+    const convertArrtoString = (arr) => {
+      let ratingString = "";
+      arr.map((r, i) => {
+        ratingString = ratingString.concat(r.toString());
+        i !== arr.length - 1 ? (ratingString = ratingString.concat(" ")) : null;
+      });
+      return ratingString;
     };
 
     //find id from name & display
+    if (liveRanking === undefined) {
+      return;
+    }
 
     return (
       <tr className=" ">
@@ -57,12 +53,20 @@ function Rankings() {
             duration={duration}
             onFinish={() => console.log("Timer finished")}
             id={session._id}
-            createdAt={createdAt}
+            isPaused={session.isPaused}
+            status={session.status}
+            ratings={ratings}
+            key={session._id}
+            //  createdAt={createdAt}
           />
         </td>
         <td>{totalDuration}</td>
         <td>{totalScore}</td>
-        <td>{rating ? rating : null}</td>
+        <td>
+          {ratings && ratings?.length !== 0
+            ? convertArrtoString(ratings)
+            : null}
+        </td>
       </tr>
     );
   };
@@ -80,18 +84,20 @@ function Rankings() {
           <tr>
             <th>User ID</th>
             <th>Goal</th>
-            <th>Countdown</th>
+            <th>Status</th>
             <th>Total Duration</th>
             <th>Total Score</th>
-            <th>Rating</th>
+            <th>Ratings</th>
           </tr>
         </thead>
         <tbody>
-          {currentPageData.map((session) => (
-            <>
-              <SessionTableRow key={session._id} session={session} />
-            </>
-          ))}
+          {liveRanking
+            ? currentPageData?.map((session) => (
+                <>
+                  <SessionTableRow key={session?._id} session={session} />
+                </>
+              ))
+            : null}
         </tbody>
       </table>
 

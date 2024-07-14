@@ -1,5 +1,5 @@
 import {useState} from "react";
-
+import {config} from "../config";
 const useGetRoomRankings = () => {
   const [loading, setLoading] = useState(false);
   // const {onlineUsers} = useSocketContext()
@@ -9,14 +9,11 @@ const useGetRoomRankings = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/score/ranking",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({room}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/score/ranking`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({room}),
+      });
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
@@ -39,14 +36,11 @@ const useGetRoomRankings = () => {
 
     console.log("sending req");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/score/liveRanking",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({room}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/score/liveRanking`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({room}),
+      });
       const data = await res.json();
       console.log(data, "data");
       if (data.error) {
@@ -62,29 +56,6 @@ const useGetRoomRankings = () => {
       setLoading(false);
     }
   };
-
-  //   useEffect(() => {
-
-  //     const getUserSessions = async () => {
-  //       setLoading(true);
-  //       try {
-  //         const res = await fetch("/api/sessions/id");
-  //         const data = await res.json();
-
-  //         if (data.error) {
-  //           throw new Error(data.error);
-  //         }
-
-  //         setUserSessions(data);
-  //       } catch (error) {
-  //         // toast.error(error.message);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-  //     // getSessions();
-  //     getUserSessions()
-  //   }, []);
 
   return {loading, getRankings, getLiveRankings};
 };

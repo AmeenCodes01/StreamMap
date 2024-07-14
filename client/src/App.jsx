@@ -11,7 +11,7 @@ import LeaderBoard from "./pages/LeaderBoards/LeaderBoard.jsx";
 import AllUsers from "./pages/AllUsers.jsx";
 import Shop from "./pages/Shop.jsx";
 import {QueryClient, QueryClientProvider} from "react-query";
-
+import RedirectOnRefresh from "./RedirectOnRefresh.jsx";
 const queryClient = new QueryClient();
 
 function App() {
@@ -20,26 +20,26 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={authUser ? <Rooms /> : <Navigate to="/login" />}
-            exact
-          />
-          <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/shop"
-            element={authUser ? <Shop /> : <Navigate to="/login" />}
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/:id" element={authUser ? <MyMap /> : <Login />}>
-            {/* Wrap only User and LeaderBoard components with LeaderBoardContextProvider */}
-            <Route path="" element={<User />} />
-            <Route path="leaderboard" element={<LeaderBoard />} />
-            {/* AllUsers component is not wrapped with LeaderBoardContextProvider */}
-            <Route path="sessions" element={<AllUsers />} />
-          </Route>
-        </Routes>
+        <RedirectOnRefresh>
+          <Routes>
+            <Route
+              path="/"
+              element={authUser ? <Rooms /> : <Navigate to="/login" />}
+              exact
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/shop"
+              element={authUser ? <Shop /> : <Navigate to="/login" />}
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/:id" element={authUser ? <MyMap /> : <Login />}>
+              <Route index element={<User />} />
+              <Route path="leaderboard" element={<LeaderBoard />} />
+              <Route path="sessions" element={<AllUsers />} />
+            </Route>
+          </Routes>
+        </RedirectOnRefresh>
         <Toaster
           containerClassName="z-[100000000000000000000]"
           toastOptions={{

@@ -34,7 +34,11 @@ function Rooms() {
     >
       <div className="w-[100%]  items-end justify-end flex gap-[30px] ">
         <Link to="/shop">
-          <CiShop color="white" size={30} className="" />
+          <CiShop
+            color="white"
+            size={35}
+            className="border-dashed border-1 rounded-lg p-[5px]"
+          />
         </Link>
         <RiLogoutCircleLine
           color="white"

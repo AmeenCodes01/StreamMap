@@ -1,6 +1,7 @@
 import {useState} from "react";
 import toast from "react-hot-toast";
 import useAuthId from "./useAuthId";
+import {config} from "../config";
 
 const usePromise = () => {
   const [loading, setLoading] = useState(false);
@@ -10,14 +11,11 @@ const usePromise = () => {
     setLoading(true);
     console.log(authId, "auth Id");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/get",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: authId}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/get`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId}),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -34,14 +32,11 @@ const usePromise = () => {
   const newPromise = async (promise, coins) => {
     console.log(promise, coins, "uuu");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/new",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: authId, promise, coins}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/new`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId, promise, coins}),
+      });
 
       const data = await res.json();
 
@@ -58,14 +53,11 @@ const usePromise = () => {
 
   const editPromise = async (id, promise) => {
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/edit",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id, promise}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/edit`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id, promise}),
+      });
 
       const data = await res.json();
 
@@ -82,14 +74,11 @@ const usePromise = () => {
   const deletePromise = async (id) => {
     console.log("DELid", id);
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/delete",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/delete`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id}),
+      });
       const data = await res.json();
       if (data.error) {
         console.log(data.error);
@@ -104,14 +93,11 @@ const usePromise = () => {
 
   const updatePromise = async (id, coins) => {
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/update",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id, coins, authId}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/update`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id, coins, authId}),
+      });
 
       const data = await res.json();
 
@@ -129,14 +115,11 @@ const usePromise = () => {
     setLoading(true);
     console.log("E");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/promise/total",
-        {
-          method: "GET",
-          // headers: {"Content-Type": "application/json"},
-          // body: JSON.stringify({id, coins}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/promise/total`, {
+        method: "GET",
+        // headers: {"Content-Type": "application/json"},
+        // body: JSON.stringify({id, coins}),
+      });
 
       const data = await res.json();
       console.log(data);

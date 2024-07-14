@@ -3,7 +3,6 @@ import {CircularProgressbar, buildStyles} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import {LuTimerReset} from "react-icons/lu";
 import {FaPlayCircle, FaPauseCircle} from "react-icons/fa";
-import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "../hooks/useAuthId";
 import {useShallow} from "zustand/react/shallow";
 import {setInterval, clearInterval} from "worker-timers";
@@ -77,6 +76,7 @@ export default function Timer() {
 
     const storedStartTime = localStorage.getItem(`${key}startTime`);
     const storedIsRunning = localStorage.getItem(`${key}isRunning`) === "true";
+
     const workMinutes =
       parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
     const breakMinutes =
@@ -98,11 +98,16 @@ export default function Timer() {
     let remainingTime =
       (mode == "work" ? workMinutes : breakMinutes) * 60 - elapsedTime;
 
+    setIsPaused(
+      remainingTime > 0
+        ? localStorage.getItem(`${key}isPaused`) === "true"
+        : true
+    );
+
     if (storedStartTime == null) {
       remainingTime = workMinutes * 60;
     }
 
-    setIsPaused(localStorage.getItem(`${key}isPaused`) === "true");
     // Update state with the correct values
     setSecondsLeft(
       localStorage.getItem(`${key}isPaused`) === "true"
@@ -112,8 +117,6 @@ export default function Timer() {
         : workMinutes * 60
     );
   }, []);
-
-  const {socket, live} = useSocketContext();
 
   const toggle = mode === "break";
 
@@ -177,15 +180,10 @@ export default function Timer() {
     localStorage.removeItem(`${key}PausedTime`);
 
     setShowRating(false);
-    // mode === "work" && secondsLeft !== workMinutes * 60 && live
-    //   ? socket.emit("reset-session", {
-    //       id: localStorage.getItem("sessionID"),
-    //       room,
-    //     })
-    //   : null;
-    resetSession();
 
     const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+
+    secondsLeft !== resetSeconds && mode == "work" ? resetSession() : null;
 
     setSecondsLeft(resetSeconds);
     resetInSesh();
@@ -234,6 +232,8 @@ export default function Timer() {
   useEffect(() => {
     localStorage.setItem(`${key}seshCount`, seshCount);
   }, [seshCount]);
+
+  console.log(isPaused);
 
   return (
     <div className="w-[100%] flex flex-col px-[10px]">

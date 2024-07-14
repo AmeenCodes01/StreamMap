@@ -10,7 +10,7 @@ import {useShallow} from "zustand/react/shallow";
 const Timer = ({animate}) => {
   const {key} = useAuthId();
   const [timeLeft, setTimeLeft] = useState(
-    parseInt(localStorage.getItem(`${key}countdownTimeLeft`)) || 10
+    parseInt(localStorage.getItem(`${key}countdownTimeLeft`)) || 10 * 60
   );
   const [time, setTime] = useState(10);
   const [desc, setDesc] = useState("");

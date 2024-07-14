@@ -1,14 +1,14 @@
 import {Server} from "socket.io";
 import http from "http";
 import express from "express";
+import config from "../config.js";
 import Session from "../models/Session.model.js";
-
 const app = express();
-
+console.log(config);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://streammap-frontend.onrender.com",
+    origin: config.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -17,25 +17,17 @@ export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
 };
 
-const users = {};
-
 //room Users
 const userSocketMap = {}; // {userId: socketId}
-let chatRoom = ""; // E.g. javascript, node,...
-let allUsers = []; // All users in current chat room
-let liveTime = {};
+const displayMessage = {};
 export const sessions = {};
 const socketRooms = {};
 const userRooms = {};
-// io.sockets.clients("Shamsia")
 console.log(userRooms, "userRooms");
 io.on("connection", async (socket) => {
   // console.log("a user connected", socket.id);
 
-  // refreshToken(req,res)
-
   socket.on("identify", (userId) => {
-    console.log("render");
     // Check if user is already connected
     console.log(userSocketMap, "userSocketMap");
     if (userSocketMap[userId]) {
@@ -80,12 +72,9 @@ io.on("connection", async (socket) => {
     if (!userRooms[roomName].includes(socket.userId)) {
       userRooms[roomName].push(socket.userId);
       io.to(roomName).emit("roomUsers", userRooms[roomName]);
-
-      if (liveTime[roomName]) {
-        socket.emit("live-status", {
-          status: true,
-          livestreamID: liveTime[roomName],
-        });
+      console.log(displayMessage, "displayMessage");
+      if (displayMessage[roomName]) {
+        socket.emit("stream-message", displayMessage[roomName]);
       }
     }
   });
@@ -97,22 +86,38 @@ io.on("connection", async (socket) => {
   socket.on("display-message", (e) => {
     socket.broadcast.to(e.room).emit("stream-message", e);
     console.log(e);
+    displayMessage[e.room] = e;
   });
 
-  socket.on("paused-session", ({id, room, pause}) => {
+  socket.on("paused-session", async ({id, room, pause}) => {
+    console.log(id, room, pause, "socket PAUSED");
     if (pause !== undefined && sessions[room]) {
-      const userSeshIndex = sessions[room].findIndex(
-        (s) => s._id.toString() === id
-      );
-      sessions[room][userSeshIndex] = {
-        ...sessions[room][userSeshIndex],
-        pause,
-        pauseTime: Date.now(),
-      };
-      io.to(room).emit("paused-session", {id, pause});
+      try {
+        const sesh = await Session.findByIdAndUpdate(
+          id,
+          {status: pause ? "pause" : "start"},
+          {new: true}
+        );
+
+        console.log(sesh, "SESH SAVE");
+
+        const userSeshIndex = sessions[room].findIndex(
+          (s) => s._id.toString() === id
+        );
+
+        if (userSeshIndex !== -1) {
+          sessions[room][userSeshIndex] = {
+            ...sessions[room][userSeshIndex],
+            status: pause ? "pause" : "start",
+          };
+        }
+
+        io.to(room).emit("paused-session", {id, pause});
+      } catch (error) {
+        console.error("Error updating session status:", error);
+      }
     }
   });
-
   // socket.on("reset-session", async ({id, room}) => {
   //   if (sessions[room] && id) {
   //     //Object ID is making the issue here, check

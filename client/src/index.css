@@ -7,7 +7,6 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   font-synthesis: none;
@@ -24,20 +23,12 @@ a {
 a:hover {
   color: #535bf2;
 }
-/* Apply the "blink" animation to  
-elements with class "blinking-effect" */
 
 body {
   margin: 0;
-
-  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* min-width: 320px; */
-  /* min-height: 100vh; */
+  overflow-y: scroll; /* Allow vertical scrolling */
 }
 
 h1 {
@@ -47,40 +38,21 @@ h1 {
 
 button {
   padding: 2px 4px;
-  /* font-size: 1em;
-  font-weight: 500; */
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
 }
 
-/* width */
+/* Hide scrollbars for Webkit browsers (Chrome, Safari, newer versions of Opera) */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  @apply fill-primary;
+/* Hide scrollbars for IE, Edge, and Firefox */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  @apply rounded-full;
-  border-radius: 5px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-/* button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
 
 @media (prefers-color-scheme: light) {
   :root {

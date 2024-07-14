@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import useAuthId from "../hooks/useAuthId";
 import useStore from "../context/TimeStore";
 import {useShallow} from "zustand/react/shallow";
+import {config} from "../config";
 const useGetSessions = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
@@ -20,7 +21,7 @@ const useGetSessions = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("https://streammap.onrender.com/api/sessions", {
+      const res = await fetch(`${config.API_URL}/api/sessions`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({id: authId}),
@@ -42,14 +43,11 @@ const useGetSessions = () => {
     setLoading(true);
     console.log("getting user sessions");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/sessions/user",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: authId}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/sessions/user`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: authId}),
+      });
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);

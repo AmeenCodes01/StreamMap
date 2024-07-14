@@ -12,27 +12,33 @@ function InSeshTimer() {
     localStorage.setItem("InSeshmode", JSON.stringify(mode));
   }, [mode]);
   return (
-    <div className="flex flex-col bg-base-300 rounded-[10px] p-[5px] ">
-      <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px]">
-        <span className="text-xs self-center text-cente font-semibold">
-          Countdown
-        </span>
-        <input
-          type="checkbox"
-          className="toggle  toggle-xs"
-          checked={mode}
-          onChange={() => setMode(!mode)}
-        />
-        <span className="text-xs self-center text-center font-semibold">
-          StopWatch
-        </span>
-      </div>
-      {mode ? <Stopwatch /> : <Countdown />}
-      {/* <span className="text-xs italic text-warning">
+    <div className="flex flex-col">
+      <div className="flex flex-col bg-base-300 rounded-[10px] p-[15px] border-1">
+        <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px]">
+          <span className="text-xs self-center text-cente font-semibold">
+            Countdown
+          </span>
+          <input
+            type="checkbox"
+            className="toggle  toggle-xs"
+            checked={mode}
+            onChange={() => setMode(!mode)}
+          />
+          <span className="text-xs self-center text-center font-semibold">
+            StopWatch
+          </span>
+        </div>
+        {mode ? <Stopwatch /> : <Countdown />}
+        {/* <span className="text-xs italic text-warning">
       these timers will auto terminate when session ends. 
-
+      
       </span>
      */}
+      </div>
+      <span className="text-sm italic text-info mt-[10px] ">
+        In-session timers, to help you time questions.<br></br> Press red to
+        save.
+      </span>
     </div>
   );
 }

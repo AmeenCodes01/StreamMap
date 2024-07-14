@@ -2,21 +2,18 @@ import {useEffect} from "react";
 import {useSocketContext} from "../context/SocketContext";
 import toast from "react-hot-toast";
 import {useParams} from "react-router-dom";
-
+import {config} from "../config";
 export const useLiveStream = () => {
   const {id: room} = useParams();
   console.log(room);
   const {setLive, setLiveLink} = useSocketContext();
   const startLive = async (room, link) => {
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/live/startLive",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({room, link}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/live/startLive`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({room, link}),
+      });
       const data = await res.json();
 
       if (data.error) {
@@ -34,7 +31,7 @@ export const useLiveStream = () => {
     try {
       //getLiveRanking first 3.
       const rankingRes = await fetch(
-        "https://streammap.onrender.com/api/score/liveRanking",
+        `${config.API_URL}/api/score/liveRanking`,
         {
           method: "POST",
           headers: {"Content-Type": "application/json"},
@@ -50,14 +47,11 @@ export const useLiveStream = () => {
       ranking = rankingData.slice(0, 3);
 
       ///////////////////////
-      const res = await fetch(
-        "https://streammap.onrender.com/api/live/endLive",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({room, ranking}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/live/endLive`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({room, ranking}),
+      });
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
@@ -71,14 +65,11 @@ export const useLiveStream = () => {
 
   const checkLive = async (sentRoom) => {
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/live/checkLive",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({sentRoom}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/live/checkLive`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({sentRoom}),
+      });
       const data = await res.json();
       setLive(data.live);
 

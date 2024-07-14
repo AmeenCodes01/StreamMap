@@ -12,9 +12,11 @@ import {Link} from "react-router-dom";
 import Promise from "../components/Shop/Promise";
 import ModalInput from "../components/Shop/ModalInput";
 import {PiCoin} from "react-icons/pi";
+import {CiCircleInfo} from "react-icons/ci";
 
 function Shop() {
   //these things should be in authUser because this s
+
   const [score, setScore] = useState(0);
   const [promises, setPromises] = useState([]);
   const [currentProm, setcurrentProm] = useState([]); //focused promise, can be changed, if finalised, change made to promises <---
@@ -195,20 +197,32 @@ function Shop() {
     }
   });
 
+  //because we are not just stu
+
   return (
     <div
       className="  h-[100vh]  flex p-[20px]  flex-col  gap-[30px] "
-      data-theme="forest"
+      data-theme="luxury"
     >
       <Link to="/">
         <IoMdArrowRoundBack size={25} />
       </Link>
 
       {/* get score */}
-      <div className="border-2 ml-[auto] p-[5px] flex flex-row items-center gap-[5px]   rounded-lg ">
-        <PiCoin size={20} />
+      <div className="flex flex-row gap-4 items-center ">
+        <CiCircleInfo
+          size={30}
+          className="ml-[auto]"
+          onClick={() => {
+            setMode("info");
+            toggleVisible();
+          }}
+        />
+        <div className="border-2 p-[5px] flex flex-row items-center gap-[5px]   rounded-lg ">
+          <PiCoin size={20} />
 
-        {score}
+          {score}
+        </div>
       </div>
       <div className="  ">
         <div className=" flex flex-row justify-between w-[100%] items-center ">
@@ -267,7 +281,7 @@ function Shop() {
           </>
         ))}
       </div>
-      {currentProm || mode === "new" ? (
+      {currentProm || mode === "new" || mode === "info" ? (
         <div>
           <Modal.Legacy
             className=" max-w-[90%] sm:max-w-[50%]
@@ -303,8 +317,43 @@ function Shop() {
                   mode={mode}
                   onChangeC={onChangeCoins}
                 />
-              ) : (
+              ) : mode === "delete" ? (
                 <ModalInput mode={mode} valueP={currentProm.promise} />
+              ) : (
+                <div className="flex flex-col ">
+                  <span className="italic pb-[5px]">
+                    To add visible worth to the promises,goals in our head
+                  </span>
+                  <span className="py-2 flex flex-col gap-[5px] italic ">
+                    <span>
+                      because we don't just study for our grades, our career.{" "}
+                      <br />
+                    </span>
+                    <span>
+                      like we promise ourselves to study x hours before watching
+                      something. <br /> like we used to put coins in a money box
+                      with a single purpose pasted on it.
+                    </span>
+                  </span>
+                  <span>
+                    Earn coins by studying & then invest them into your
+                    promises. I'll setup a email feature to remind the future
+                    you.( & how hard you worked, so you don't just dismiss them.
+                    )
+                  </span>
+                  <span>
+                    <h2 className=" py-[5px] font-semibold">
+                      Donate to Palestine <br />
+                    </h2>
+                    as students, we can't do much now but we can promise
+                    ourselves to help.We'll all collectively try to donate the
+                    total amount so please keep adding points!
+                  </span>
+                  <span className="pt-[8px]">
+                    <span className="font-bold">p.s</span> I won't be taking any
+                    money from you, just your word. :)
+                  </span>
+                </div>
               )}
             </Modal.Body>
             <form
@@ -332,7 +381,7 @@ function Shop() {
 
       <div className="flex flex-end  mt-[auto] justify-end italic">
         <p>
-          <span className="badge bg-primary">
+          <span className="badge bg-accent text-white">
             {" "}
             ${Math.floor(PalestineCoins[0] / 2)}
           </span>{" "}

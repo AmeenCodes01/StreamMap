@@ -10,8 +10,8 @@ export const getTotalScore = async (req, res) => {
   try {
     const {id} = req.body;
     console.log(id, "idTotalScore");
-    const user = await User.findById(id)
-    console.log
+    const user = await User.findById(id);
+    console.log;
     res.status(200).json(user.currentScore);
 
     console.log(user, "scores");
@@ -52,7 +52,7 @@ export const updateScore = async (req, res) => {
       (partialSum, a) => partialSum + a.score,
       0
     );
-    user.currentScore = total
+    user.currentScore = total;
     // Save the updated user document
     await user.save();
     res.status(200).json(`Score for room ${room} updated to ${s}`);
@@ -115,19 +115,17 @@ export const getRanking = async (req, res) => {
     throw error;
   }
 };
-
 export const getLiveRanking = async (req, res) => {
-  let {room} = req.body;
-
-  const live = await Livestream.findOne({room: room}).sort({createdAt: -1}); // Ensure to await the result
-  if (!live) {
-    //return no livestream.
-    throw new Error("no livestream");
-  }
-
-  const livestreamStartTime = live.createdAt;
   try {
-    // Aggregate pipeline to filter sessions since livestream start time
+    let {room} = req.body;
+
+    const live = await Livestream.findOne({room: room}).sort({createdAt: -1});
+    if (!live) {
+      return res.status(404).json({error: "No livestream found"});
+    }
+
+    const livestreamStartTime = live.createdAt;
+
     const pipeline = [
       {
         $match: {
@@ -138,67 +136,90 @@ export const getLiveRanking = async (req, res) => {
       {
         $group: {
           _id: "$userId",
-          totalScore: {$sum: "$score"},
-          totalDuration: {$sum: "$duration"},
+          totalScore: {$sum: {$ifNull: ["$score", 0]}},
+          totalDuration: {$sum: {$ifNull: ["$duration", 0]}},
+          latestSession: {$first: "$$ROOT"},
+          ratings: {$push: {$ifNull: ["$rating", 0]}},
         },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
       },
       {
         $project: {
           userId: "$_id",
           totalScore: 1,
           totalDuration: 1,
-          _id: 0, // Exclude the original _id field
+          status: "$latestSession.status",
+          _id: "$latestSession._id",
+          name: "$user.name",
+          ratings: 1,
         },
       },
       {$sort: {totalScore: -1}},
     ];
 
-    // Execute the aggregation query
-    const userSessions = await Session.aggregate(pipeline);
+    let userSessions = await Session.aggregate(pipeline);
 
+    // Merge with in-memory sessions
     if (sessions[room]) {
-      for (let sesh of sessions[room]) {
-        // Check if the session already exists in userSessions
-        let existingSessionIndex = userSessions.findIndex(
-          (session) => session.userId.toString() === sesh.userId.toString()
-        );
-        // If it exists, update the existing session
-        if (existingSessionIndex !== -1) {
-          userSessions[existingSessionIndex] = {
-            ...userSessions[existingSessionIndex],
-            ...sesh,
+      const memorySessionMap = new Map(
+        sessions[room].map((s) => [s.userId.toString(), s])
+      );
+
+      userSessions = userSessions.map((dbSession) => {
+        const memorySession = memorySessionMap.get(dbSession.userId.toString());
+        if (memorySession) {
+          return {
+            ...dbSession,
+            status: memorySession.status,
+            totalScore:
+              (dbSession.totalScore || 0) + (memorySession.score || 0),
+            totalDuration:
+              (dbSession.totalDuration || 0) + (memorySession.duration || 0),
+            _id: memorySession._id, // Use the latest session ID
+            ratings: [...dbSession.ratings, memorySession.rating || 0],
           };
-        } else {
-          // If it doesn't exist, add the new session
-          userSessions.push(sesh);
+        }
+        return dbSession;
+      });
+
+      // Add any users that are only in memory
+      for (const memorySession of sessions[room]) {
+        if (
+          !userSessions.some(
+            (s) => s.userId.toString() === memorySession.userId.toString()
+          )
+        ) {
+          const user = await User.findById(memorySession.userId);
+          userSessions.push({
+            userId: memorySession.userId,
+            totalScore: memorySession.score || 0,
+            totalDuration: memorySession.duration || 0,
+            status: memorySession.status,
+            _id: memorySession._id,
+            name: user ? user.name : "Unknown User",
+            ratings: [memorySession.rating || 0],
+          });
         }
       }
     }
 
-    console.log(userSessions, "userSessions");
+    // Re-sort after merging
+    userSessions.sort((a, b) => b.totalScore - a.totalScore);
+
+    console.log("Final userSessions:", userSessions);
     res.status(200).json(userSessions);
-    //cant we try to merge the sessions in here ? same logic as front end.
-    //so I have to pull in sessions object.
-    // userSessions.forEach((sesh) => {
-    //   // Find the session in liveRanking
-    //   let session = sessions.find((session) => session.userId === sesh.userId);
-
-    //   if (session) {
-    //     // If the session exists in liveRanking, update it
-    //     session.totalScore = (session.totalScore || 0) + sesh.score;
-    //     session.totalDuration = (session.totalDuration || 0) + sesh.duration;
-    //     session.rating = sesh.rating;
-    //   } else {
-    //     // If the session doesn't exist in liveRanking, add it
-    //     sessions.push(sesh);
-    //   }
-    // });
-
-    // Sort the liveRanking array by score in descending order
-    userSessions.sort((a, b) => (b.score || 0) - (a.score || 0));
-    //return userSessions;
   } catch (error) {
     console.error("Error getting sessions since livestream start:", error);
-    throw error;
+    res.status(500).json({error: "Internal server error"});
   }
 };

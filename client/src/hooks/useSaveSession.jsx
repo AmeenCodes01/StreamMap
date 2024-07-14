@@ -2,6 +2,8 @@ import toast from "react-hot-toast";
 import {useState} from "react";
 import {useSocketContext} from "../context/SocketContext";
 import useAuthId from "./useAuthId";
+import {config} from "../config";
+
 const useSaveSession = () => {
   const [loading, setLoading] = useState(false);
   const [sessionID, setSessionID] = useState(localStorage.getItem("sessionID"));
@@ -13,14 +15,11 @@ const useSaveSession = () => {
     console.log(session, "sessionSTART ");
     session.live = live;
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/sessions/start",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({session, name, live}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/sessions/start`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({session, name, live}),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -47,14 +46,11 @@ const useSaveSession = () => {
     console.log(session, "s e s s i o n ");
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/sessions/save",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(session),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/sessions/save`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(session),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -71,14 +67,11 @@ const useSaveSession = () => {
     setLoading(true);
     try {
       const sessionID = localStorage.getItem("sessionID");
-      const res = await fetch(
-        "https://streammap.onrender.com/api/sessions/reset",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({id: sessionID, room, live}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/sessions/reset`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: sessionID, room, live}),
+      });
 
       const data = await res.json();
       if (data.error) {

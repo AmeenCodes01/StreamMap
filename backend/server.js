@@ -15,12 +15,13 @@ import scoreRoutes from "./routes/scoreRoutes.js";
 import livestreamRoutes from "./routes/livestreamRoutes.js";
 import promisesRoutes from "./routes/promisesRoutes.js";
 import countryRoutes from "./routes/countryRoutes.js";
+import config from "./config.js";
 
 dotenv.config();
 
 app.use(
   cors({
-    origin: "https://streammap-frontend.onrender.com",
+    origin: config.FRONTEND_URL,
     methods: ["GET", "POST"],
     credentials: true,
   })

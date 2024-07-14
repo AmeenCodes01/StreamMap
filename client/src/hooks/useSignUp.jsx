@@ -1,7 +1,7 @@
 import {useState} from "react";
 import toast from "react-hot-toast";
 import {useAuthContext} from "../context/AuthContext";
-
+import {config} from "../config";
 const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const {setAuthUser} = useAuthContext();
@@ -18,14 +18,11 @@ const useSignup = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/auth/signup",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({name, email, timeZone, country, profilePic}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name, email, timeZone, country, profilePic}),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -43,14 +40,11 @@ const useSignup = () => {
   const check = async (country) => {
     console.log(country, "red");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/country/check",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({country}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/country/check`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({country}),
+      });
 
       const data = await res.json();
       if (data.error) {
@@ -66,14 +60,11 @@ const useSignup = () => {
   const addCountry = async (country, color) => {
     console.log(country, color, "red");
     try {
-      const res = await fetch(
-        "https://streammap.onrender.com/api/country/add",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({country, color}),
-        }
-      );
+      const res = await fetch(`${config.API_URL}/api/country/add`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({country, color}),
+      });
 
       const data = await res.json();
       if (data.error) {

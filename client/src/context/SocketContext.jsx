@@ -1,8 +1,15 @@
-import { createContext, useMemo, useState, useEffect, useContext, useCallback } from "react";
-import { useAuthContext } from "./AuthContext";
+import {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
+import useAuthId from "../hooks/useAuthId";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
-
+import {config} from "../config";
 const showLongErrorToast = (message, type = "error") => {
   const icons = {
     info: "❗️",
@@ -77,17 +84,17 @@ export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
-export const SocketContextProvider = ({ children }) => {
+export const SocketContextProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const { authUser } = useAuthContext();
+  const {authId} = useAuthId();
   const [live, setLive] = useState(false);
   const [liveLink, setLiveLink] = useState("");
   const [isConnected, setIsConnected] = useState(false);
-  console.log(liveLink)
+
   const socket = useMemo(() => {
-    if (!authUser) return null;
-    
-    const newSocket = io("https://streammap.onrender.com", {
+    if (!authId) return null;
+
+    const newSocket = io(`${config.API_URL}`, {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       timeout: 10000,
@@ -96,7 +103,7 @@ export const SocketContextProvider = ({ children }) => {
     newSocket.on("connect", () => {
       console.log("Socket connected");
       setIsConnected(true);
-      newSocket.emit("identify", authUser._id);
+      newSocket.emit("identify", authId);
     });
 
     newSocket.on("disconnect", (reason) => {
@@ -126,7 +133,7 @@ export const SocketContextProvider = ({ children }) => {
     });
 
     return newSocket;
-  }, [authUser]);
+  }, [authId]);
 
   useEffect(() => {
     return () => {
@@ -144,16 +151,19 @@ export const SocketContextProvider = ({ children }) => {
     }
   }, [socket]);
 
-  const contextValue = useMemo(() => ({
-    socket,
-    onlineUsers,
-    live,
-    setLive,
-    liveLink,
-    setLiveLink,
-    isConnected,
-    reconnect,
-  }), [socket, onlineUsers, live, liveLink, isConnected, reconnect]);
+  const contextValue = useMemo(
+    () => ({
+      socket,
+      onlineUsers,
+      live,
+      setLive,
+      liveLink,
+      setLiveLink,
+      isConnected,
+      reconnect,
+    }),
+    [socket, onlineUsers, live, liveLink, isConnected, reconnect]
+  );
 
   return (
     <SocketContext.Provider value={contextValue}>

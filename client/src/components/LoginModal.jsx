@@ -25,14 +25,11 @@ function LoginModal({
 
       setProfile([userInfo.data]);
       try {
-        const res = await fetch(
-          "https://streammap.onrender.com/api/auth/check",
-          {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email: userInfo.data.email}),
-          }
-        );
+        const res = await fetch(`{config.API_URL}/api/auth/check`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email: userInfo.data.email}),
+        });
         const data = await res.json();
         // if (data.error) {
         //   throw new Error(data.error);
@@ -49,12 +46,6 @@ function LoginModal({
     },
     onError: (errorResponse) => console.log(errorResponse),
   });
-
-  // log out function to log the user out of google and set the profile array to null
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-  };
 
   return (
     <div className="text-white p-[8px]   max-h-[200px] min-h-[150px]       ">
