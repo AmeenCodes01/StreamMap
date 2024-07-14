@@ -49,15 +49,15 @@ app.use("/api/promise", promisesRoutes);
 app.use("/api/country", countryRoutes);
 
 // Serve static files from the React app
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "../client/build")));
+//const __filename = fileURLToPath(import.meta.url);
+//const __dirname = path.dirname(__filename);
+//app.use(express.static(path.join(__dirname, "../client/build")));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
-});
+//app.get("*", (req, res) => {
+//  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+//});
 
 const PORT = process.env.PORT || 3000;
 
