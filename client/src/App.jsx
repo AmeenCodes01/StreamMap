@@ -4,7 +4,6 @@ import Rooms from "./pages/Rooms";
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import SignUp from "./pages/SignUp.jsx";
 import Login from "./pages/Login";
-import {useAuthContext} from "./context/AuthContext";
 import {Toaster} from "react-hot-toast";
 import User from "./pages/User.jsx";
 import LeaderBoard from "./pages/LeaderBoards/LeaderBoard.jsx";
@@ -12,11 +11,12 @@ import AllUsers from "./pages/AllUsers.jsx";
 import Shop from "./pages/Shop.jsx";
 import {QueryClient, QueryClientProvider} from "react-query";
 import RedirectOnRefresh from "./RedirectOnRefresh.jsx";
+import useAuthId from "./hooks/useAuthId.jsx";
 const queryClient = new QueryClient();
 
 function App() {
-  const {authUser} = useAuthContext();
-  console.log(authUser, "authUser");
+  const {authId} = useAuthId();
+  console.log(authId, "authUser");
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -24,16 +24,16 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={authUser ? <Rooms /> : <Navigate to="/login" />}
+              element={authId ? <Rooms /> : <Navigate to="/login" />}
               exact
             />
             <Route path="/signup" element={<SignUp />} />
             <Route
               path="/shop"
-              element={authUser ? <Shop /> : <Navigate to="/login" />}
+              element={authId ? <Shop /> : <Navigate to="/login" />}
             />
             <Route path="/login" element={<Login />} />
-            <Route path="/:id" element={authUser ? <MyMap /> : <Login />}>
+            <Route path="/:id" element={authId ? <MyMap /> : <Login />}>
               <Route index element={<User />} />
               <Route path="leaderboard" element={<LeaderBoard />} />
               <Route path="sessions" element={<AllUsers />} />
