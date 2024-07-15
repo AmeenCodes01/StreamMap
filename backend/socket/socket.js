@@ -38,6 +38,7 @@ io.on("connection", async (socket) => {
         "forced_disconnect",
         "You've been logged in from another tab or browser. Refresh to join"
       );
+      console.log(userId, userSocketMap, "disconnecting");
       io.sockets.sockets.get(userSocketMap[userId])?.disconnect(true);
     }
 
