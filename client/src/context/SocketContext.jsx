@@ -134,7 +134,6 @@ export const SocketContextProvider = ({children}) => {
 
     return newSocket;
   }, [authUser]);
-  }, [authUser]);
 
   useEffect(() => {
     return () => {

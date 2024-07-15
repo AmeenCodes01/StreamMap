@@ -171,6 +171,4 @@ function leaveRoom(socket, roomName) {
   }
 
   socketRooms[socket.id] = null;
-
-  console.log(`User ${socket.userId} left room ${roomName}`);
 }
