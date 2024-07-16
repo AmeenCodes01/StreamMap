@@ -69,7 +69,7 @@ export default function Timer() {
   const [play, setPlay] = useState(false);
   const {resetSession} = useSaveSession();
   // console.log(localStorage.getItem(`${key}isPaused`) === "true", "pasussed");
-
+  // check for sessionID, if exist, set true.
   useEffect(() => {
     // Retrieve necessary localStorage values
 
@@ -113,6 +113,10 @@ export default function Timer() {
         : true,
       "isPaused State"
     );
+    console.log(remainingTime, "remainingTIME");
+    localStorage.getItem("sessionID") && remainingTime < 0
+      ? setShowRating(true)
+      : null;
 
     if (storedStartTime == null) {
       remainingTime = workMinutes * 60;

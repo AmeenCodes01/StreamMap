@@ -45,6 +45,7 @@ const useSaveSession = () => {
     session["sessionID"] = sessionID;
     console.log(session, "s e s s i o n ");
     setLoading(true);
+
     try {
       const res = await fetch(`${config.API_URL}/api/sessions/save`, {
         method: "POST",
@@ -56,6 +57,8 @@ const useSaveSession = () => {
       if (data.error) {
         throw new Error(data.error);
       }
+
+      localStorage.removeItem("sessionID");
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -77,6 +80,7 @@ const useSaveSession = () => {
       if (data.error) {
         throw new Error(data.error);
       }
+      localStorage.removeItem("sessionID");
     } catch (e) {
       toast.error(e.message);
     } finally {
