@@ -68,6 +68,8 @@ export default function Timer() {
   const audio = document.getElementById("audio_tag");
   const [play, setPlay] = useState(false);
   const {resetSession} = useSaveSession();
+  // console.log(localStorage.getItem(`${key}isPaused`) === "true", "pasussed");
+
   useEffect(() => {
     // Retrieve necessary localStorage values
 
@@ -102,6 +104,14 @@ export default function Timer() {
       remainingTime > 0
         ? localStorage.getItem(`${key}isPaused`) === "true"
         : true
+    );
+    setIsRunning(localStorage.getItem(`${key}isRunning`) === "true");
+
+    console.log(
+      remainingTime > 0
+        ? localStorage.getItem(`${key}isPaused`) === "true"
+        : true,
+      "isPaused State"
     );
 
     if (storedStartTime == null) {
@@ -171,9 +181,7 @@ export default function Timer() {
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
-  console.log(totalSeconds);
-  console.log(isRunning, isPaused);
-  console.log(secondsLeft);
+  console.log(isRunning, isPaused, "running, paused");
 
   const onResetTimer = () => {
     localStorage.removeItem(`${key}startTime`);
