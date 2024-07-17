@@ -22,7 +22,7 @@ function LoginModal({
         "https://www.googleapis.com/oauth2/v3/userinfo",
         {headers: {Authorization: `Bearer ${tokenResponse.access_token}`}}
       );
-
+      console.log(userInfo.data, "USERINFO DATA  ");
       setProfile([userInfo.data]);
       try {
         const res = await fetch(`{config.API_URL}/api/auth/check`, {

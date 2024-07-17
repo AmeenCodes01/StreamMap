@@ -107,13 +107,6 @@ export default function Timer() {
     );
     setIsRunning(localStorage.getItem(`${key}isRunning`) === "true");
 
-    console.log(
-      remainingTime > 0
-        ? localStorage.getItem(`${key}isPaused`) === "true"
-        : true,
-      "isPaused State"
-    );
-    console.log(remainingTime, "remainingTIME");
     localStorage.getItem("sessionID") && remainingTime < 0
       ? setShowRating(true)
       : null;
@@ -185,8 +178,6 @@ export default function Timer() {
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
-  console.log(isRunning, isPaused, "running, paused");
-
   const onResetTimer = () => {
     localStorage.removeItem(`${key}startTime`);
     localStorage.removeItem(`${key}PausedTime`);
@@ -239,13 +230,10 @@ export default function Timer() {
   useEffect(() => {
     localStorage.setItem(`${key}breakMinutes`, breakMinutes);
   }, [breakMinutes]);
-  console.log(percentage);
 
   useEffect(() => {
     localStorage.setItem(`${key}seshCount`, seshCount);
   }, [seshCount]);
-
-  console.log(isPaused);
 
   return (
     <div className="w-[100%] flex flex-col px-[10px]">

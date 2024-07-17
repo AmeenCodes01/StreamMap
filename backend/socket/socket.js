@@ -25,22 +25,23 @@ const socketRooms = {};
 const userRooms = {};
 console.log(userRooms, "userRooms");
 io.on("connection", async (socket) => {
-  // console.log("a user connected", socket.id);
+  console.log("a user connected", socket.id);
 
   socket.on("identify", (userId) => {
     // Check if user is already connected
-    console.log(userSocketMap, "userSocketMap");
-    if (userSocketMap[userId]) {
-      console.log(userSocketMap, "userSocketMap");
+    console.log(userId, "userSocketMap");
 
-      // Disconnect the previous socket
-      io.to(userSocketMap[userId]).emit(
-        "forced_disconnect",
-        "You've been logged in from another tab or browser. Refresh to join"
-      );
-      console.log(userId, userSocketMap, "disconnecting");
-      io.sockets.sockets.get(userSocketMap[userId])?.disconnect(true);
-    }
+    // if (userSocketMap[userId]) {
+    //   console.log(userSocketMap, "userSocketMap");
+
+    //   // Disconnect the previous socket
+    //   io.to(userSocketMap[userId]).emit(
+    //     "forced_disconnect",
+    //     "You've been logged in from another tab or browser. Refresh to join"
+    //   );
+    //   console.log(userId, userSocketMap, "disconnecting");
+    //   io.sockets.sockets.get(userSocketMap[userId])?.disconnect(true);
+    // }
 
     socket.join(userId);
     socket.userId = userId;
@@ -49,6 +50,7 @@ io.on("connection", async (socket) => {
 
     // console.log(`User ${userId} identified with socket ${socket.id}`);
   });
+  //add multiple socket ids ?
 
   socket.on("join-room", ({room: roomName}) => {
     if (!socket.userId) {

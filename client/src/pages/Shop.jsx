@@ -212,7 +212,7 @@ function Shop() {
       <div className="flex flex-row gap-4 items-center ">
         <CiCircleInfo
           size={30}
-          className="ml-[auto]"
+          className="ml-[auto] cursor-pointer"
           onClick={() => {
             setMode("info");
             toggleVisible();

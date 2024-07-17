@@ -12,6 +12,7 @@ import Shop from "./pages/Shop.jsx";
 import {QueryClient, QueryClientProvider} from "react-query";
 import RedirectOnRefresh from "./RedirectOnRefresh.jsx";
 import useAuthId from "./hooks/useAuthId.jsx";
+import AuthForm from "./components/Auth/AuthForm.jsx";
 const queryClient = new QueryClient();
 
 function App() {

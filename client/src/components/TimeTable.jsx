@@ -115,28 +115,31 @@ function TimeTable({toggleVisible}) {
                 }
                 return (
                   <>
-                    <UserTimes time={timeZone[0].timeZone} />
-
+                    {country !== "Antarctica" && (
+                      <UserTimes time={timeZone[0].timeZone} />
+                    )}
                     {timeZone.map((user) => {
                       if (typeof user !== "object") {
                         return;
                       }
-
+                      console.log(user.displayName, "displayName");
                       return (
                         <li className="flex flex-col gap-[12px] ">
                           <ul className="  flex flex-row px-[10px] py-[15px]">
-                            <div className="avatar">
+                            {/* <div className="avatar">
                               <div className="w-8 rounded-full ring ring-primary  ring-offset-base-100 ring-offset-1">
-                                <img
+                                 <img
                                   src={user.profilePic}
                                   className=" w-[40px] h-[40px]   "
-                                />
+                                /> 
                               </div>
-                              <p className="prose prose-md self-center ml-[10px] ">
-                                {user.name}
-                              </p>
-                              {/* <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" /> */}
-                            </div>
+                             
+                            </div> */}
+                            <p className="prose prose-md self-center ml-[10px] ">
+                              {user.displayName !== null
+                                ? user.displayName
+                                : user.name}
+                            </p>
                           </ul>
                         </li>
                       );

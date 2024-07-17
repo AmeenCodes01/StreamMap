@@ -7,12 +7,9 @@ export const getUsers = async (req, res) => {
     const {ids} = req.body;
 
     const users = await User.find({_id: {$in: ids}})
-      .select("name _id country profilePic timeZone ")   
+      .select("name _id country profilePic timeZone displayName ")
       .exec();
     // Step 2: Group users by country
-
-
-
 
     const groupedUsers = users.reduce((acc, user) => {
       const country = user.country;
@@ -25,7 +22,7 @@ export const getUsers = async (req, res) => {
     // Step 3: Join color information for each country
     for (const country in groupedUsers) {
       const colorInfo = await Countries.findOne({country}).exec();
-      groupedUsers[country].unshift(colorInfo.color)
+      groupedUsers[country].unshift(colorInfo.color);
     }
 
     for (const country in groupedUsers) {

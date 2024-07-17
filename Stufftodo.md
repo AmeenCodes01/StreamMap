@@ -53,28 +53,30 @@ rating weight 1.5
 
 60x + 10y = 11 , 90x + 10y = 14
 
-
-~STOPWATCH 
+~STOPWATCH
 
 (why does timer start running along it ?)
 
--check isRunnign & isPaused. 
-(persist timer. call & set from stopwatch.jsx)
-~
+-check isRunnign & isPaused. (persist timer. call & set from stopwatch.jsx) ~
 
+---------T I M E R---------- when reset, then isPaused time should not be
+considered. //if isPaused time, set to
 
+COUNTDOWN
 
----------T I M E R----------
-when reset, then isPaused time should not be considered. 
-//if isPaused time, set to 
+timeLeft. setTimeLeft when timeLeft paused --- condition on isCountDownActive
 
+persist.
 
-COUNTDOWN 
+// C O D E BREAKS IF A BAD LINK GIVEN
 
-timeLeft.
-setTimeLeft when timeLeft paused 
---- condition on isCountDownActive
+//LOGIN & SIGNUP
 
-persist. 
+AuthForm will be on same page but different component, making it easier. Google
+login will hide.
 
-// C O D E BREAKS IF A BAD LINK GIVEN 
+SignUP -- name, pass, country, color will show --
+
+=---------------------------------------- NOT STOPPING UNTIL I AM DONE WITH YOU.
+
+---

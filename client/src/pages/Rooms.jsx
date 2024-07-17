@@ -46,7 +46,8 @@ function Rooms() {
           size={30}
           onClick={() => {
             localStorage.clear();
-            navigate("login");
+            window.history.replaceState(null, "", "/login");
+            window.location.reload();
           }}
         />
       </div>
