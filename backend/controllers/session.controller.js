@@ -112,8 +112,8 @@ export const saveSession = async (req, res) => {
       const userSeshIndex = sessions[room]?.findIndex(
         (s) => s._id.toString() === sessionID
       );
-      if (userSeshIndex !== -1) {
-        sessions[room] = sessions[room].filter(
+      if (userSeshIndex !== -1 && sessions[room]) {
+        sessions[room] = sessions[room]?.filter(
           (s, index) => index !== userSeshIndex
         );
       }
