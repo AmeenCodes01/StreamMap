@@ -93,7 +93,7 @@ function SignUp() {
         <img className="" src="/Banner.png" alt="Banner" />{" "}
       </div>
 
-      <div className="flex  flex-col justify-self-center sm:w-[50%] p-[50px] w-[100%] self-center items-center  mb-[100px] sm:mb-[30px] border-1 space-between gap-[15px]  ">
+      <div className="flex  flex-col justify-self-center sm:w-[50%] p-[50px] w-[100%] self-center items-center  mb-[100px] sm:mb-[30px]  space-between gap-[15px]  ">
         <div>
           <h1 className="text-center ">StreamMap</h1>
           {!profile ? (
@@ -245,7 +245,7 @@ function SignUp() {
             </>
           ) : null}
 
-          {!localAuth && profile === "" ? (
+          {!localAuth || profile === "" ? (
             <button
               onClick={() => setLocalAuth(true)}
               className="btn btn-success rounded-none px-16  w-[100%] mt-[25px]   "

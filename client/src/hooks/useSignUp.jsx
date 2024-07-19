@@ -47,6 +47,7 @@ const useSignup = () => {
       }
       localStorage.setItem("auth-user", JSON.stringify(data));
       setAuthUser(data);
+      console.log(data);
       return data._id;
     } catch (error) {
       toast.error(error.message);
