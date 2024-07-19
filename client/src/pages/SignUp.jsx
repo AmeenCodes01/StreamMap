@@ -49,6 +49,7 @@ function SignUp() {
       }
 
       if (data) {
+        console.log(data, "data");
         navigate("/");
       }
     } else {
@@ -89,7 +90,7 @@ function SignUp() {
   return (
     <div className="w-[100%] h-[100vh]  overflow-auto flex p-[5px]  relative sm:flex-row flex-col mb-[100px] sm:mb-0 space-between gap-[5px] ">
       <div className="flex   w-[100%] sm:w-[50%] h-[100%] ">
-        <img className="" src={"../../public/Banner.png"} />
+        <img className="" src="/Banner.png" alt="Banner" />{" "}
       </div>
 
       <div className="flex  flex-col justify-self-center sm:w-[50%] p-[50px] w-[100%] self-center items-center  mb-[100px] sm:mb-[30px] border-1 space-between gap-[15px]  ">

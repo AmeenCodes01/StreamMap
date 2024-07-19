@@ -42,7 +42,7 @@ function Login() {
   return (
     <div className="w-[100%] h-[100vh]  overflow-auto flex p-[5px]  relative sm:flex-row flex-col mb-[100px] sm:mb-0 ">
       <div className="flex  w-[100%] sm:w-[50%]  h-[100%] ">
-        <img className=" " src={"../../public/Banner.png"} />
+        <img className="" src="/Banner.png" alt="Banner" />{" "}
       </div>
       <div className="flex  flex-col justify-self-center sm:w-[50%] p-[50px] w-[100%] self-center items-center  mb-[100px]  ">
         <h1 className="text-center mb-[100px]  ">StreamMap</h1>
