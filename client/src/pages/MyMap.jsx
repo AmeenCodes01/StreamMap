@@ -5,20 +5,25 @@ import Map from "../components/Map";
 import {useParams} from "react-router-dom";
 import {useAuthContext} from "../context/AuthContext";
 import {useSocketContext} from "../context/SocketContext";
-import {Link, Outlet, useNavigate} from "react-router-dom";
-import {useLiveStream} from "../hooks/useLiveStream";
+import {Link, Outlet} from "react-router-dom";
+import {useShallow} from "zustand/react/shallow";
+
 import {IoExit} from "react-icons/io5";
-import User from "./User";
+import useStore from "../context/TimeStore";
 
 const MyMap = () => {
   // myCountry saves user country
-  const navigate = useNavigate();
 
   const {id: room} = useParams();
 
   const {authUser} = useAuthContext();
   console.log("render");
-
+  const {isRunning, mode} = useStore(
+    useShallow((state) => ({
+      isRunning: state.isRunning,
+      mode: state.mode,
+    }))
+  );
   // write this into a useEffect.
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => {
@@ -99,22 +104,28 @@ const MyMap = () => {
           >
             Timer
           </Link>
-          <Link
-            role="tab"
-            to="leaderboard"
-            className={`tab ${tab == "Leaderboard" ? "tab-active" : null} `}
-            onClick={() => setTab("Leaderboard")}
-          >
-            Leaderboard
-          </Link>
-          <Link
-            role="tab"
-            to="sessions"
-            className={`tab ${tab == "Study Buddies" ? "tab-active" : null} `}
-            onClick={() => setTab("Study Buddies")}
-          >
-            Sessions
-          </Link>
+          {!isRunning || mode !== "work" ? (
+            <>
+              <Link
+                role="tab"
+                to="leaderboard"
+                className={`tab ${tab == "Leaderboard" ? "tab-active" : null} `}
+                onClick={() => setTab("Leaderboard")}
+              >
+                Leaderboard
+              </Link>
+              <Link
+                role="tab"
+                to="sessions"
+                className={`tab ${
+                  tab == "Study Buddies" ? "tab-active" : null
+                } `}
+                onClick={() => setTab("Study Buddies")}
+              >
+                Sessions
+              </Link>
+            </>
+          ) : null}
         </div>
 
         <Outlet />

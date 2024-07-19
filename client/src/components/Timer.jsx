@@ -66,7 +66,6 @@ export default function Timer() {
   const [disabled, setDisabled] = useState(false);
   const {start, pause} = usePomodoro();
   const audio = document.getElementById("audio_tag");
-  const [play, setPlay] = useState(false);
   const {resetSession} = useSaveSession();
   // console.log(localStorage.getItem(`${key}isPaused`) === "true", "pasussed");
   // check for sessionID, if exist, set true.
@@ -77,7 +76,6 @@ export default function Timer() {
     setBreakMinutes(parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10);
 
     const storedStartTime = localStorage.getItem(`${key}startTime`);
-    const storedIsRunning = localStorage.getItem(`${key}isRunning`) === "true";
 
     const workMinutes =
       parseInt(localStorage.getItem(`${key}workMinutes`)) || 60;
@@ -92,8 +90,7 @@ export default function Timer() {
     setBreakMinutes(breakMinutes);
     setRated(localStorage.getItem(`${key}rated`) === "true" || false);
     setSeshCount(localStorage.getItem(`${key}seshCount`) || 0);
-    // if any ls value is null, set it to workMinutes
-    // Calculate elapsedTime based on storedStartTime
+
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
 
     // Calculate remainingTime using the correct values
@@ -105,9 +102,10 @@ export default function Timer() {
         ? localStorage.getItem(`${key}isPaused`) === "true"
         : true
     );
-    setIsRunning(localStorage.getItem(`${key}isRunning`) === "true");
 
-    localStorage.getItem("sessionID") && remainingTime < 0
+    setIsRunning(localStorage.getItem(`${key}isRunning`) === "true");
+    console.log(localStorage.getItem("sessionID"), remainingTime, "check ID");
+    localStorage.getItem("sessionID") && mode === "break"
       ? setShowRating(true)
       : null;
 
@@ -181,6 +179,7 @@ export default function Timer() {
   const onResetTimer = () => {
     localStorage.removeItem(`${key}startTime`);
     localStorage.removeItem(`${key}PausedTime`);
+    localStorage.removeItem(`${key}sessionID`);
 
     setShowRating(false);
 
@@ -253,7 +252,7 @@ export default function Timer() {
           className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
         />
 
-        <div className=" mr-[10px] min-w-[100px] pt-[20px]">
+        <div className=" mr-[10px] min-w-[100px] pt-[20px] ">
           <progress
             className={`progress w-[100%]   ${
               mode === "work" ? "progress-success" : "progress-error"
@@ -261,135 +260,155 @@ export default function Timer() {
             value={isNaN(percentage) ? 100 : 100 - percentage}
             max="100"
           ></progress>
-
-          {`${minutes < 10 ? "0" : ""}${minutes}:${
-            seconds < 10 ? "0" : ""
-          }${seconds}`}
         </div>
-
-        <div className="flex items-center justify-items-center flex-col">
-          <div className="flex flex-col p-[10px]">
-            {/* //Play button */}
-            {isPaused === true || isRunning === false ? (
-              <div className="flex flex-row gap-[10px]">
-                <button
-                  disabled={disabled}
-                  className="btn btn-success items-center justify-center"
-                  //so I will start(room, workMinutes, )
-                  onClick={() => {
-                    secondsLeft === workMinutes * 60
-                      ? start({
-                          room,
-                          duration: workMinutes,
-                          goal: seshGoal,
-                          userId: authId,
-                        })
-                      : start();
-                  }}
-                >
-                  <FaPlayCircle size={15} />
-                </button>{" "}
-                <button className="btn btn-primary" onClick={onResetTimer}>
-                  <LuTimerReset size={15} />
-                </button>
-              </div>
-            ) : null}
-            {isPaused == false && isRunning == true ? (
-              <button
-                className="btn btn-warning items-center justify-center"
-                onClick={() => {
-                  pause();
-                  // setIsPaused(true);
-                  // setIsRunning(true);
-                  // localStorage.setItem(`${key}PausedTime`, secondsLeft);
-                  // localStorage.setItem(`${key}isRunning`, "true");
-
-                  // secondsLeft !== workMinutes * 60 && mode === "work"
-                  //   ? socket.emit("paused-session", {
-                  //       id: localStorage.getItem(`${key}sessionID`),
-                  //       room,
-                  //       pause: true,
-                  //     })
-                  //   : null;
-                }}
-              >
-                <FaPauseCircle size={15} />
-              </button>
-            ) : null}
+        <div className="flex flex-row-reverse space-between justify-between">
+          <div className="mt-[5px]">
+            <span className="text-bold text-[50px] font-black ">
+              {`${minutes < 10 ? "0" : ""}${minutes}:${
+                seconds < 10 ? "0" : ""
+              }${seconds}`}
+            </span>
           </div>
-          <div className="flex flex-col">
+          <div className=" mt-[5px]">
+            <div>
+              <div className="flex items-start justify-items-start flex-col ">
+                <div className="flex flex-col p-[10px]">
+                  {/* //Play button */}
+                  {isPaused === true || isRunning === false ? (
+                    <div className="flex flex-row gap-[10px]">
+                      <button
+                        disabled={disabled}
+                        className="btn btn-success items-center justify-center"
+                        //so I will start(room, workMinutes, )
+                        onClick={() => {
+                          secondsLeft === workMinutes * 60
+                            ? start({
+                                room,
+                                duration: workMinutes,
+                                goal: seshGoal,
+                                userId: authId,
+                              })
+                            : start();
+                        }}
+                      >
+                        <FaPlayCircle size={15} />
+                      </button>{" "}
+                      <button
+                        className="btn btn-primary"
+                        onClick={onResetTimer}
+                      >
+                        <LuTimerReset size={15} />
+                      </button>
+                    </div>
+                  ) : null}
+                  {isPaused == false && isRunning == true ? (
+                    <button
+                      className="btn btn-warning items-center justify-center"
+                      onClick={() => {
+                        pause();
+                        // setIsPaused(true);
+                        // setIsRunning(true);
+                        // localStorage.setItem(`${key}PausedTime`, secondsLeft);
+                        // localStorage.setItem(`${key}isRunning`, "true");
+
+                        // secondsLeft !== workMinutes * 60 && mode === "work"
+                        //   ? socket.emit("paused-session", {
+                        //       id: localStorage.getItem(`${key}sessionID`),
+                        //       room,
+                        //       pause: true,
+                        //     })
+                        //   : null;
+                      }}
+                    >
+                      <FaPauseCircle size={15} />
+                    </button>
+                  ) : null}
+                </div>
+                <div className="flex flex-col">
+                  {isPaused && (
+                    <>
+                      <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
+                        <input
+                          type="range"
+                          value={workMinutes}
+                          onChange={(e) => {
+                            if (e.target.value > 0) {
+                              setWorkMinutes(e.target.value);
+                              mode === "work" &&
+                                setSecondsLeft(e.target.value * 60);
+                              localStorage.setItem(
+                                `${key}workMinutes`,
+                                e.target.value
+                              );
+                            }
+                          }}
+                          max={120}
+                          min={0}
+                          // step={5}
+                          height={"10px"}
+                          className="range range-success range-sm"
+                        />
+                        <span className="prose text-xs ">
+                          Work :{" "}
+                          <span className="text-info prose-lg ">
+                            {workMinutes} min
+                          </span>{" "}
+                        </span>
+                      </div>
+                      <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
+                        <input
+                          type="range"
+                          min={0}
+                          value={breakMinutes}
+                          onChange={(e) => {
+                            if (e.target.value > 0) {
+                              setBreakMinutes(e.target.value);
+                              mode === "break" &&
+                                setSecondsLeft(e.target.value * 60);
+                              localStorage.setItem(
+                                `${key}breakMinutes`,
+                                e.target.value
+                              );
+                            }
+                          }}
+                          max={120}
+                          // step={5}
+                          className="range range-error range-sm"
+                          height={"10px"}
+                        />
+                        <span className="prose text-xs">
+                          Break :{" "}
+                          <span className="text-error prose-lg ">
+                            {breakMinutes} min
+                          </span>{" "}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <audio id="audio_tag" src={timerEnd} />
             {isPaused && (
-              <>
-                <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
-                  <input
-                    type="range"
-                    value={workMinutes}
-                    onChange={(e) => {
-                      setWorkMinutes(e.target.value);
-                      mode === "work" && setSecondsLeft(e.target.value * 60);
-                      localStorage.setItem(`${key}workMinutes`, e.target.value);
-                    }}
-                    max={120}
-                    min={0}
-                    // step={5}
-                    height={"10px"}
-                    className="range range-success range-sm"
-                  />
-                  <span className="prose text-xs ">
-                    Work :{" "}
-                    <span className="text-info prose-lg ">
-                      {workMinutes} min
-                    </span>{" "}
-                  </span>
-                </div>
-                <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
-                  <input
-                    type="range"
-                    min={0}
-                    value={breakMinutes}
-                    onChange={(e) => {
-                      setBreakMinutes(e.target.value);
-                      mode === "break" && setSecondsLeft(e.target.value * 60);
-                      localStorage.setItem(
-                        `${key}breakMinutes`,
-                        e.target.value
-                      );
-                    }}
-                    max={120}
-                    // step={5}
-                    className="range range-error range-sm"
-                    height={"10px"}
-                  />
-                  <span className="prose text-xs">
-                    Break :{" "}
-                    <span className="text-error prose-lg ">
-                      {breakMinutes} min
-                    </span>{" "}
-                  </span>
-                </div>
-              </>
+              <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
+                <span className="text-xs self-center text-cente font-semibold">
+                  Work
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle toggle-xs"
+                  checked={toggle}
+                  onChange={onToggle}
+                />
+                <span className="text-xs self-center text-center font-semibold">
+                  Break
+                </span>
+              </div>
             )}
           </div>
         </div>
       </div>
-      <audio id="audio_tag" src={timerEnd} />
 
-      {isPaused && (
-        <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px] rotate-360">
-          <span className="text-xs self-center text-cente font-semibold">
-            Work
-          </span>
-          <input
-            type="checkbox"
-            className="toggle toggle-xs"
-            checked={toggle}
-            onChange={onToggle}
-          />
-          <span className="text-xs self-center text-center font-semibold">
-            Break
-          </span>
-        </div>
-      )}
       {disabled && (
         <span className="text-xs italic text-warning">
           please rate the session and stop the countdown/stopwatch

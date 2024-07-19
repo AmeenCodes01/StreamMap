@@ -54,6 +54,7 @@ const useSignup = () => {
       setLoading(false);
     }
   };
+
   const check = async (country) => {
     console.log(country, "red");
     try {
@@ -74,6 +75,7 @@ const useSignup = () => {
       setLoading(false);
     }
   };
+
   const addCountry = async (country, color) => {
     console.log(country, color, "red");
     try {

@@ -5,6 +5,8 @@ import LinkComp from "../components/Auth/LinkComp";
 import AuthForm from "../components/Auth/AuthForm";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import DonationInfo from "../components/Auth/DonationInfo";
+
 function Login() {
   const [login, setLogin] = useState(null);
   const [profile, setProfile] = useState();
@@ -21,26 +23,29 @@ function Login() {
 
   if (loading) {
     return (
-      <div className="flex self-center justify-self-center justify-center h-[100vh]">
+      <div className="flex  self-center justify-self-center justify-center h-[100vh]">
         <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
   }
-  console.log(localStorage.getItem("authUser"), "authUser");
+
   const onLocalLogin = async () => {
     if (name !== "" && pass.length > 3) {
       const tryLogin = await logging({name, pass});
 
       if (tryLogin) navigate("/", {replace: true});
     } else {
-      toast.error("Please fill in the fields.");
+      toast.error("Please enter the correct details.");
     }
   };
 
   return (
-    <div className="w-[100%] h-[100vh]    overflow-auto flex justify-center  relative">
-      <div className="flex self-center flex-col justify-self-center  w-[300px] h-[500px] md:h-[700px] border-[1px]  ">
-        <h1 className="text-center mb-[100px] ">StreamMap</h1>
+    <div className="w-[100%] h-[100vh]  overflow-auto flex p-[5px]  relative sm:flex-row flex-col mb-[100px] sm:mb-0 ">
+      <div className="flex  w-[100%] sm:w-[50%]  h-[100%] ">
+        <img className=" " src={"../../public/Banner.png"} />
+      </div>
+      <div className="flex  flex-col justify-self-center sm:w-[50%] p-[50px] w-[100%] self-center items-center  mb-[100px]  ">
+        <h1 className="text-center mb-[100px]  ">StreamMap</h1>
         {!localAuth && (
           <GoogleLogin
             setProfile={setProfile}
@@ -65,7 +70,7 @@ function Login() {
               showPass={true}
             />
             <button
-              className="btn glass rounded-none px-16  w-[90%]  mt-[25px]   "
+              className="btn btn-success rounded-none px-16  w-[100%] mt-[25px]    "
               onClick={onLocalLogin}
             >
               Login
@@ -76,12 +81,15 @@ function Login() {
         {!localAuth && (
           <button
             onClick={() => setLocalAuth(true)}
-            className="btn glass rounded-none px-16  w-[90%] mt-[25px]    "
+            className="btn btn-success rounded-none px-16  w-[100%] mt-[25px]    "
           >
             Login
           </button>
         )}
         <LinkComp label="login" />
+        {/* <div className="s flex items-end justify-end justify-self-end mt-[auto]    ">
+          <DonationInfo />
+        </div> */}
       </div>
     </div>
   );

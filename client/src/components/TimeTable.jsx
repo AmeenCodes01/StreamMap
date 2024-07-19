@@ -101,9 +101,9 @@ function TimeTable({toggleVisible}) {
             </div>
             {/* what if same */}
             <p className=" flex flex-row     ">
-              <p className="badge  badge-md badge-primary rounded-[0.2px] ">
-                {/* {getCurrentTimeInTimeZone(c.timeZone)} */}
-              </p>
+              {/* <p className="badge  badge-md badge-primary rounded-[0.2px] ">
+                {getCurrentTimeInTimeZone(c.timeZone)}
+              </p> */}
               {/* <span className="ml-[auto] badge  rounded-[2px] badge-md ">
                 {timeDiff(authUser.offset, c.offset)}
                   </span> */}

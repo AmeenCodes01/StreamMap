@@ -60,7 +60,7 @@ function GoogleLogin({setProfile, setStatus, label, status, login}) {
   return (
     <div className=" flex flex-col ">
       <button
-        className="btn glass rounded-none px-16  w-[90%]    "
+        className="btn  btn-success  rounded-none px-16  w-full    "
         onClick={() => googleAuthLogin()}
       >
         {label === "login" ? "Login with Google" : "Sign Up with Google"}

@@ -12,7 +12,6 @@ const Timer = ({animate}) => {
   const [timeLeft, setTimeLeft] = useState(
     parseInt(localStorage.getItem(`${key}countdownTimeLeft`)) || 10 * 60
   );
-  const [time, setTime] = useState(10);
   const [desc, setDesc] = useState("");
   const [saved, setSaved] = useState(false);
   const {
@@ -21,6 +20,7 @@ const Timer = ({animate}) => {
     setIsCountDownActive,
     isRunning,
     setCountdownMinutes,
+    countdownMinutes,
   } = useStore(
     useShallow((state) => ({
       setInSesh: state.setInSesh,
@@ -28,6 +28,7 @@ const Timer = ({animate}) => {
       setIsCountDownActive: state.setIsCountDownActive,
       isRunning: state.isRunning,
       setCountdownMinutes: state.setCountdownMinutes,
+      countdownMinutes: state.countdownMinutes,
     }))
   );
 
@@ -69,15 +70,19 @@ const Timer = ({animate}) => {
   const resetTimer = () => {
     setIsCountDownActive(false);
     setSaved(false);
-    setTimeLeft(time * 60 || 10 * 60);
+    setTimeLeft(countdownMinutes * 60 || 10 * 60);
   };
 
   const saveCountdown = () => {
-    timeLeft != 0 ? setInSesh({time: time * 60 - timeLeft, desc}) : null;
+    timeLeft != 0
+      ? setInSesh({time: countdownMinutes * 60 - timeLeft, desc})
+      : null;
     setSaved(true);
   };
+  console.log(timeLeft, countdownMinutes * 60, "timer");
 
-  const progress = ((time * 60 - timeLeft * 60) / (time * 60)) * 100;
+  const progress =
+    ((countdownMinutes * 60 - timeLeft * 60) / (countdownMinutes * 60)) * 100;
   //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
   return animate ? (
     <ProgressTimer time={timeLeft} progress={progress} />
@@ -125,7 +130,7 @@ const Timer = ({animate}) => {
             Reset
           </button>
           {isCountDownActive === false &&
-          timeLeft !== time * 60 &&
+          timeLeft !== countdownMinutes * 60 &&
           isRunning ? (
             !saved ? (
               <button className=" items-center bg-0" onClick={saveCountdown}>

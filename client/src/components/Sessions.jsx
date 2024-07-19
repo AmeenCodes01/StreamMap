@@ -51,6 +51,7 @@ function Sessions() {
       setSeshCount: state.setSeshCount,
     }))
   );
+
   const {socket} = useSocketContext();
   // const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
@@ -133,7 +134,7 @@ function Sessions() {
           <div className=" ml-auto">
             <div className="flex md:flex-row flex-col ml-auto  ">
               <p className="flex flex-row w-[300px] text-end self-center justify-self-end  tracking-wide font-serif font-[16px]">
-                In these {workMinutes} min, I will
+                In these {workMinutes} min, I
               </p>
               <input
                 className="w-[100%] self-start  placeholder:text-md h-auto border-bottom border-1px px-[5px] py-[2px] md:ml-[15px] mt-[10px]  border-secondary focus:outline-none "

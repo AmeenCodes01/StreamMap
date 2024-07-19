@@ -4,7 +4,6 @@ import {useParams} from "react-router-dom";
 const useAuthId = () => {
   const {id: room} = useParams();
   const {authUser} = useAuthContext();
-  console.log(authUser);
   // Check if authUser exists before accessing its properties
   if (!authUser) {
     return {authId: null, key: null, room, name: null};

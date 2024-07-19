@@ -138,8 +138,16 @@ export const getLiveRanking = async (req, res) => {
           _id: "$userId",
           totalScore: {$sum: {$ifNull: ["$score", 0]}},
           totalDuration: {$sum: {$ifNull: ["$duration", 0]}},
-          latestSession: {$first: "$$ROOT"},
-          ratings: {$push: {$ifNull: ["$rating", 0]}},
+          latestSession: {$last: "$$ROOT"},
+          ratings: {
+            $push: {
+              $cond: {
+                if: {$gt: ["$rating", null]},
+                then: "$rating",
+                else: "$$REMOVE",
+              },
+            },
+          },
         },
       },
       {
@@ -169,6 +177,8 @@ export const getLiveRanking = async (req, res) => {
 
     let userSessions = await Session.aggregate(pipeline);
 
+    console.log(userSessions, "userSessions");
+
     // Merge with in-memory sessions
     if (sessions[room]) {
       const memorySessionMap = new Map(
@@ -178,15 +188,27 @@ export const getLiveRanking = async (req, res) => {
       userSessions = userSessions.map((dbSession) => {
         const memorySession = memorySessionMap.get(dbSession.userId.toString());
         if (memorySession) {
+          // Check if the memory session is newer than the latest DB session
+          const isMemorySessionNewer =
+            memorySession._id.toString() !== dbSession._id.toString();
           return {
             ...dbSession,
             status: memorySession.status,
-            totalScore:
-              (dbSession.totalScore || 0) + (memorySession.score || 0),
-            totalDuration:
-              (dbSession.totalDuration || 0) + (memorySession.duration || 0),
+            totalScore: isMemorySessionNewer
+              ? dbSession.totalScore + (memorySession.score || 0)
+              : dbSession.totalScore,
+            totalDuration: isMemorySessionNewer
+              ? dbSession.totalDuration + (memorySession.duration || 0)
+              : dbSession.totalDuration,
             _id: memorySession._id, // Use the latest session ID
-            ratings: [...dbSession.ratings, memorySession.rating || 0],
+            ratings: [
+              ...dbSession.ratings,
+              ...(isMemorySessionNewer &&
+              memorySession.rating !== null &&
+              memorySession.rating !== undefined
+                ? [memorySession.rating]
+                : []),
+            ],
           };
         }
         return dbSession;
@@ -207,7 +229,11 @@ export const getLiveRanking = async (req, res) => {
             status: memorySession.status,
             _id: memorySession._id,
             name: user ? user.name : "Unknown User",
-            ratings: [memorySession.rating || 0],
+            ratings:
+              memorySession.rating !== null &&
+              memorySession.rating !== undefined
+                ? [memorySession.rating]
+                : [],
           });
         }
       }

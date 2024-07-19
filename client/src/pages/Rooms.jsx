@@ -1,30 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {CiShop} from "react-icons/ci";
-import usePromise from "../hooks/usePromise";
 import {RiLogoutCircleLine} from "react-icons/ri";
 import {useNavigate} from "react-router-dom";
 import RoomCard from "../components/Room/RoomCard";
-
+import DonationInfo from "../components/Auth/DonationInfo";
 // sm:justify-items-center
 // sm:items-center sm:justify-center
 const rooms = ["Shamsia", "Test"];
 
 function Rooms() {
-  const [totalDon, setTotalDon] = useState();
-  const {getTotalDonations} = usePromise();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getTotalDonate = async () => {
-      const data = await getTotalDonations();
-      if (data) {
-        setTotalDon(data);
-      }
-    };
-
-    getTotalDonate();
-  }, []);
 
   return (
     <div
@@ -61,7 +47,6 @@ function Rooms() {
           <RoomCard name={admin} />
         ))}
       </div>
-
       {/* <button
           onClick={() => {
             socket.emit("user-join", {username});
@@ -69,14 +54,7 @@ function Rooms() {
           {" "}
           Join StreamMap
         </button> */}
-      <div className=" badge flex flex-end  items-end justify-end text-md ">
-        <span className="text-bold italic font-mono  rounded-[8px] p-[5px] text-white ">
-          <span className="bg-info badge text-white text-md">
-            Total {Math.floor(parseInt(totalDon) / 2)}$
-          </span>{" "}
-          promised to be donated to Palestine 🤍
-        </span>
-      </div>
+      <DonationInfo />
     </div>
   );
 }

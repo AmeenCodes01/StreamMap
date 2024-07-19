@@ -6,13 +6,12 @@ export const signup = async (req, res) => {
     const {name, email, timeZone, country, profilePic, password, displayName} =
       req.body;
     let user;
-
     if (email !== null) {
       user = await User.findOne({email});
     } else {
       user = await User.findOne({name});
     }
-
+    console.log(user, "user");
     if (user) {
       return res.status(400).json({error: "User already exists"});
       //send data through sessions. if user, then use userId here ? , else add him up.
