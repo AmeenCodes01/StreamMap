@@ -11,6 +11,7 @@ import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
 import useSaveSession from "../hooks/useSaveSession";
 const red = "#f54e4e";
+
 export default function Timer() {
   const {
     workMinutes,
@@ -105,7 +106,8 @@ export default function Timer() {
 
     setIsRunning(localStorage.getItem(`${key}isRunning`) === "true");
     console.log(localStorage.getItem("sessionID"), remainingTime, "check ID");
-    localStorage.getItem("sessionID") && mode === "break"
+    console.log(localStorage.getItem("sessionID"), "sessionID");
+    localStorage.getItem("sessionID") !== null && mode === "break"
       ? setShowRating(true)
       : null;
 

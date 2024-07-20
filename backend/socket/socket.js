@@ -69,16 +69,18 @@ io.on("connection", async (socket) => {
     socketRooms[socket.id] = roomName;
 
     if (!userRooms[roomName]) {
-      userRooms[roomName] = [];
+      userRooms[roomName] = new Set();
     }
 
-    if (!userRooms[roomName].includes(socket.userId)) {
-      userRooms[roomName].push(socket.userId);
-      io.to(roomName).emit("roomUsers", userRooms[roomName]);
-      console.log(displayMessage, "displayMessage");
-      if (displayMessage[roomName]) {
-        socket.emit("stream-message", displayMessage[roomName]);
-      }
+    userRooms[roomName].add(socket.userId);
+
+    const roomUsers = Array.from(userRooms[roomName]);
+    io.to(roomName).emit("roomUsers", roomUsers);
+
+    console.log(`Users in ${roomName}:`, roomUsers);
+
+    if (displayMessage[roomName]) {
+      socket.emit("stream-message", displayMessage[roomName]);
     }
   });
 
@@ -158,16 +160,16 @@ io.on("connection", async (socket) => {
 });
 
 export {app, io, server};
-
 function leaveRoom(socket, roomName) {
   socket.leave(roomName);
   if (userRooms[roomName]) {
-    const index = userRooms[roomName].indexOf(socket.userId);
-    if (index !== -1) {
-      userRooms[roomName].splice(index, 1);
-      io.to(roomName).emit("roomUsers", userRooms[roomName]);
-    }
-    if (userRooms[roomName].length === 0) {
+    userRooms[roomName].delete(socket.userId);
+    const roomUsers = Array.from(userRooms[roomName]);
+    io.to(roomName).emit("roomUsers", roomUsers);
+
+    console.log(`Users in ${roomName} after leave:`, roomUsers);
+
+    if (userRooms[roomName].size === 0) {
       delete userRooms[roomName];
     }
   }

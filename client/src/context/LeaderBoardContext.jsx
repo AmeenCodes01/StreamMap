@@ -17,17 +17,17 @@ export const LeaderBoardContextProvider = ({children}) => {
   const {getRankings, loading, getLiveRankings} = useGetRoomRankings();
   const {live} = useSocketContext();
   console.log(liveRanking, "live ranking");
+
   useEffect(() => {
     const getRanking = async () => {
       const data = await getRankings(room);
       if (data) setRankings(data);
     };
 
-    getRanking();
+    //getRanking();
   }, [room]); // Added room to dependency array
 
   useEffect(() => {
-    console.log("live ranking useEffect");
     const getLiveRanking = async () => {
       const data = await getLiveRankings(room);
       if (data) {

@@ -80,3 +80,6 @@ SignUP -- name, pass, country, color will show --
 =---------------------------------------- NOT STOPPING UNTIL I AM DONE WITH YOU.
 
 ---
+
+ON TOGGLE, RESET SESSION (IF NOT COMPLETE, ASK FIRST)--or just hide toggle until
+session ends/reset.

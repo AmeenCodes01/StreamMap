@@ -125,7 +125,7 @@ export const saveSession = async (req, res) => {
 
     // Save the updated session
     await session.save();
-
+    console.log("Saved Session", session);
     //Find the existing session in the sessions object
     if (live) {
       const userSeshIndex = sessions[room]?.findIndex(
