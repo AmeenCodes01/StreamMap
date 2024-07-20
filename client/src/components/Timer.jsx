@@ -391,7 +391,7 @@ export default function Timer() {
               </div>
             </div>
             <audio id="audio_tag" src={timerEnd} />
-            {isPaused && (
+            {mode ==="break" || secondsLeft === workMinutes*60 ? (
               <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
                 <span className="text-xs self-center text-cente font-semibold">
                   Work
@@ -406,7 +406,7 @@ export default function Timer() {
                   Break
                 </span>
               </div>
-            )}
+            ):null}
           </div>
         </div>
       </div>
