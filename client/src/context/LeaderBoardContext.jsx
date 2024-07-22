@@ -37,10 +37,8 @@ export const LeaderBoardContextProvider = ({children}) => {
         setLiveRanking(data);
       }
     };
-    console.log(live, "liveLIVE");
     if (live) {
       getLiveRanking();
-      console.log(liveRanking, "got liveRanking");
     }
   }, [live, room]);
 
@@ -48,7 +46,7 @@ export const LeaderBoardContextProvider = ({children}) => {
     const handler = (sesh) => {
       console.log("socket io sessions received");
       setLiveRanking((prevLiveRanking) => {
-        console.log(prevLiveRanking, "PrevLiveRanking");
+        prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
         // Check if the session already exists in the state
         const existingSessionIndex = prevLiveRanking?.findIndex(
           (session) => session.userId === sesh.userId
@@ -56,7 +54,7 @@ export const LeaderBoardContextProvider = ({children}) => {
         sesh.end = false;
         console.log("sesh ", sesh);
         // If it exists, update the existing session
-        if (existingSessionIndex !== -1) {
+        if (existingSessionIndex !== -1 && prevLiveRanking) {
           const updatedRanking = [...prevLiveRanking];
           updatedRanking[existingSessionIndex] = {
             ...updatedRanking[existingSessionIndex],
@@ -83,8 +81,9 @@ export const LeaderBoardContextProvider = ({children}) => {
 
   useEffect(() => {
     const handler = ({id, pause}) => {
-      console.log("paused session", id, pause);
       setLiveRanking((prevLiveRanking) => {
+        prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
+
         const updatedRanking = prevLiveRanking?.map((sesh) => {
           if (sesh._id === id) {
             return {
@@ -111,6 +110,8 @@ export const LeaderBoardContextProvider = ({children}) => {
       setLiveRanking((prevLiveRanking) => {
         // Check if the session already exists in the state
         //but it already should.
+        prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
+
         const existingSessionIndex = prevLiveRanking?.findIndex(
           (session) => session?._id === id
         );
@@ -154,9 +155,17 @@ export const LeaderBoardContextProvider = ({children}) => {
     const handler = (sesh) => {
       console.log(sesh, "ended session");
       setLiveRanking((prevLiveRanking) => {
+        prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
+
         const updatedRanking = prevLiveRanking?.map((session) => {
           if (session?.userId === sesh?.userId) {
-            const newRatings = [...session.ratings, sesh.rating];
+            let newRatings;
+            if(session.ratings){
+
+               newRatings = [ sesh.rating,...session.ratings];
+            }else{
+               newRatings = [sesh.rating]
+            }
             return {
               ...session,
               //   goal: session.goal == "" ? sesh.goal : session.goal,
@@ -186,7 +195,8 @@ export const LeaderBoardContextProvider = ({children}) => {
 
   return (
     <LeaderBoardContext.Provider
-      value={{rankings, setRankings, liveRanking, setLiveRanking}}
+      value={{rankings, setRankings,     liveRanking: liveRanking || []
+        , setLiveRanking}}
     >
       {children}
     </LeaderBoardContext.Provider>

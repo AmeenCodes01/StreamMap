@@ -3,24 +3,24 @@ import Session from "../models/Session.model.js";
 import {io} from "../socket/socket.js";
 import {sessions} from "../socket/socket.js";
 
-// export const deleteIncompleteessions = async (res) => {
-//   try {
-//     // Find and delete all sessions where endedAt is either null, undefined, or doesn't exist
-//     const result = await Session.deleteMany({
-//       $or: [{endedAt: {$exists: false}}, {endedAt: null}],
-//     });
+ const deleteIncompleteessions = async (res) => {
+  try {
+    // Find and delete all sessions where endedAt is either null, undefined, or doesn't exist
+    const result = await Session.deleteMany({
+      $or: [{endedAt: {$exists: false}}, {endedAt: null}],
+    });
 
-//     console.log(`Deleted ${result.deletedCount} incomplete sessions`);
+    console.log(`Deleted ${result.deletedCount} incomplete sessions`);
 
-//     res.status(200).json({
-//       message: `Successfully deleted ${result.deletedCount} incomplete sessions`,
-//       deletedCount: result.deletedCount,
-//     });
-//   } catch (error) {
-//     console.error("Error deleting incomplete sessions:", error);
-//     res.status(500).json({error: "Internal server error"});
-//   }
-// };
+    res.status(200).json({
+      message: `Successfully deleted ${result.deletedCount} incomplete sessions`,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error("Error deleting incomplete sessions:", error);
+    res.status(500).json({error: "Internal server error"});
+  }
+};
 
 export const getSessions = async (req, res) => {
   try {
@@ -54,6 +54,8 @@ export const getSessionByID = async (req, res) => {
   }
 };
 
+
+
 export const startSession = async (req, res) => {
   try {
     const {session, name, live} = req.body;
@@ -61,7 +63,11 @@ export const startSession = async (req, res) => {
     // Create and save the session without the name
     const newSession = new Session(session);
     await newSession.save();
-    //deleteIncompleteessions();
+
+    // const result = await Session.deleteMany({
+    //   $or: [{endedAt: {$exists: false}}, {endedAt: null}],
+    // });
+
     if (live) {
       const room = session.room;
       if (!sessions[room]) {

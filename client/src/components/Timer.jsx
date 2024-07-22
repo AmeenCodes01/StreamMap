@@ -11,7 +11,7 @@ import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
 import useSaveSession from "../hooks/useSaveSession";
 const red = "#f54e4e";
-
+console.log(localStorage.getItem("sessionID     "),"SESSION ID  ")
 export default function Timer() {
   const {
     workMinutes,
@@ -58,11 +58,11 @@ export default function Timer() {
       resetInSesh: state.resetInSesh,
       rated: state.rated,
       setRated: state.setRated,
+
       seshCount: state.seshCount,
       setSeshCount: state.setSeshCount,
     }))
   );
-
   const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
   const {start, pause} = usePomodoro();
@@ -90,7 +90,8 @@ export default function Timer() {
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
     setRated(localStorage.getItem(`${key}rated`) === "true" || false);
-    setSeshCount(localStorage.getItem(`${key}seshCount`) || 0);
+    setSeshCount(parseInt(localStorage.getItem(`${key}seshCount`) )|| 0);
+    setDisabled(localStorage.getItem(`${key}disabled`) === "true" || false)
 
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
 
@@ -114,6 +115,11 @@ export default function Timer() {
     if (storedStartTime == null) {
       remainingTime = workMinutes * 60;
     }
+    if(remainingTime<0 && localStorage.getItem("sessionID")!==null){
+setShowRating(true)
+setDisabled(true)
+setRated(false)
+    }
 
     // Update state with the correct values
     setSecondsLeft(
@@ -132,31 +138,33 @@ export default function Timer() {
   }
 
   //get createdAt time.
+  function switchMode() {
+    audio.play();
+    const nextMode = mode === "work" ? "break" : "work";
+    console.log(nextMode, "mextMODE");
+    nextMode === "break" ? setShowRating(true) : null;
+    if (nextMode === "work" && rated === false) {
+      setIsPaused(true);
+      setDisabled(true);
+    }
+    const nextSeconds =
+      (nextMode === "work" ? workMinutes : breakMinutes) * 60;
+    mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
+    setMode(nextMode);
+    localStorage.setItem(`${key}mode`, nextMode);
+
+    setSecondsLeft(nextSeconds);
+    localStorage.setItem(`${key}startTime`, Date.now());
+    if ((isStopWatchActive || isCountDownActive) && nextMode == "break") {
+      setIsPaused(true);
+      setDisabled(true);
+      localStorage.setItem(`${key}PausedTime`, nextSeconds);
+    }
+  }
+
 
   useEffect(() => {
-    function switchMode() {
-      audio.play();
-      const nextMode = mode === "work" ? "break" : "work";
-      console.log(nextMode, "mextMODE");
-      nextMode === "break" ? setShowRating(true) : null;
-      if (nextMode === "work" && rated === false) {
-        setIsPaused(true);
-        setDisabled(true);
-      }
-      const nextSeconds =
-        (nextMode === "work" ? workMinutes : breakMinutes) * 60;
-      mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
-      setMode(nextMode);
-      localStorage.setItem(`${key}mode`, nextMode);
-
-      setSecondsLeft(nextSeconds);
-      localStorage.setItem(`${key}startTime`, Date.now());
-      if ((isStopWatchActive || isCountDownActive) && nextMode == "break") {
-        setIsPaused(true);
-        setDisabled(true);
-        localStorage.setItem(`${key}PausedTime`, nextSeconds);
-      }
-    }
+  
 
     if (isRunning) {
       const interval = setInterval(() => {
@@ -194,15 +202,20 @@ export default function Timer() {
     setIsRunning(false);
     setIsPaused(true);
     setRated(false);
+    setDisabled(false)
   };
 
   const onToggle = () => {
+    mode ==="break" && rated===false && workMinutes*60 == secondsLeft ? setDisabled(true): null
     setMode(mode === "work" ? "break" : "work");
     localStorage.setItem(`${key}startTime`, Date.now());
     const resetSeconds = (mode === "work" ? breakMinutes : workMinutes) * 60;
     setSecondsLeft(resetSeconds);
+    setIsPaused(true)
+    setIsRunning(false)
+    
   };
-
+console.log(rated,"rated")
   useEffect(() => {
     if (!isCountDownActive && !isStopWatchActive && rated) {
       setDisabled(false);
@@ -235,6 +248,15 @@ export default function Timer() {
   useEffect(() => {
     localStorage.setItem(`${key}seshCount`, seshCount);
   }, [seshCount]);
+
+  useEffect(() => {
+    localStorage.setItem(`${key}rated`, rated);
+  }, [seshCount]);
+
+  useEffect(() => {
+    localStorage.setItem(`${key}disabled`, disabled);
+  }, [seshCount]);
+
 
   return (
     <div className="w-[100%] flex flex-col px-[10px]">
@@ -303,6 +325,10 @@ export default function Timer() {
                       </button>
                     </div>
                   ) : null}
+
+
+
+                  
                   {isPaused == false && isRunning == true ? (
                     <button
                       className="btn btn-warning items-center justify-center"
@@ -391,7 +417,7 @@ export default function Timer() {
               </div>
             </div>
             <audio id="audio_tag" src={timerEnd} />
-            {mode ==="break" || secondsLeft === workMinutes*60 ? (
+            {mode ==="break"  || secondsLeft === workMinutes*60 ? (
               <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
                 <span className="text-xs self-center text-cente font-semibold">
                   Work

@@ -115,6 +115,11 @@ export const getRanking = async (req, res) => {
     throw error;
   }
 };
+
+
+
+
+
 export const getLiveRanking = async (req, res) => {
   try {
     let {room} = req.body;
@@ -129,21 +134,27 @@ export const getLiveRanking = async (req, res) => {
     const pipeline = [
       {
         $match: {
-          createdAt: {$gte: livestreamStartTime},
-          room: room,
+          createdAt: { $gte: livestreamStartTime },
+          // room: room,
         },
+      },
+      {
+        $sort: { createdAt: -1 }  // Sort by createdAt in descending order
       },
       {
         $group: {
           _id: "$userId",
-          totalScore: {$sum: {$ifNull: ["$score", 0]}},
-          totalDuration: {$sum: {$ifNull: ["$duration", 0]}},
-          latestSession: {$last: "$$ROOT"},
+          totalScore: { $sum: { $ifNull: ["$score", 0] } },
+          totalDuration: { $sum: { $ifNull: ["$duration", 0] } },
+          latestSession: { $first: "$$ROOT" },
           ratings: {
             $push: {
               $cond: {
-                if: {$gt: ["$rating", null]},
-                then: "$rating",
+                if: { $ne: ["$rating", null] },
+                then: {
+                  rating: "$rating",
+                  createdAt: "$createdAt"
+                },
                 else: "$$REMOVE",
               },
             },
@@ -169,10 +180,26 @@ export const getLiveRanking = async (req, res) => {
           status: "$latestSession.status",
           _id: "$latestSession._id",
           name: "$user.name",
-          ratings: 1,
+          ratings: {
+            $sortArray: {
+              input: "$ratings",
+              sortBy: { createdAt: -1 }
+            }
+          },
         },
       },
-      {$sort: {totalScore: -1}},
+      {
+        $project: {
+          userId: 1,
+          totalScore: 1,
+          totalDuration: 1,
+          status: 1,
+          _id: 1,
+          name: 1,
+          ratings: "$ratings.rating",
+        }
+      },
+      { $sort: { totalScore: -1 } },
     ];
 
     let userSessions = await Session.aggregate(pipeline);

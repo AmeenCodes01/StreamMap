@@ -104,7 +104,7 @@ const MyMap = () => {
           >
             Timer
           </Link>
-          {!isRunning || mode !== "work" ? (
+          {/* {!isRunning || mode !== "work" ? ( */}
             <>
               <Link
                 role="tab"
@@ -125,7 +125,7 @@ const MyMap = () => {
                 Sessions
               </Link>
             </>
-          ) : null}
+          {/* // ) : null} */}
         </div>
 
         <Outlet />

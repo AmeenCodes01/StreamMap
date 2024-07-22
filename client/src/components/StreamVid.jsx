@@ -91,6 +91,21 @@ function StreamVid() {
     setShowMessage(false);
   };
 
+
+  function convertYouTubeLinkToEmbed(linke) {
+    const link = toString(linke)
+    // Extract the video ID from the YouTube URL
+    const videoId = link.match(/(?:youtube\.com\/watch\?v=|youtu.be\/)([^&]+)/)[1];
+  
+    // Construct the embed URL
+    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+  
+    // Create the iframe embed code
+    const embedCode = `<iframe width="560" height="315" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+  
+    return embedUrl;
+  }
+console.log(room)
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
@@ -117,12 +132,12 @@ function StreamVid() {
             <div className="flex flex-row gap-[15px] ">
               <input
                 type="text"
-                value={link}
+                value={link }
                 placeholder='share>embed copy inside src="" '
                 className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
                 onChange={(e) => {
                   setLink(e.target.value);
-                }}
+                }} 
                 // send link to all in room.
               />
               <IoCheckmarkDone
@@ -144,21 +159,21 @@ function StreamVid() {
         <>
           <iframe
             className="rounded-[20px] aspect-video"
-            src={liveLink}
+            src={(liveLink)}
             title="YouTube video player"
           ></iframe>
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
             <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>
-            {authUser.admin === true && authUser.adminRoom === room && (
+            {authUser.admin === true && authUser.adminRoom === room  || room==="Test" ? (
               <button
                 className="btn btn-xs btn-accent w-[50px] flex self-end "
                 onClick={onChange}
               >
                 change{" "}
               </button>
-            )}{" "}
+            ):null}{" "}
           </div>
         </>
       )}
@@ -170,7 +185,7 @@ function StreamVid() {
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className=" text-center bg-secondary w-full    self-center focus:outline-none"
+            className=" text-center bg-secondary w-full self-center focus:outline-none"
           />{" "}
           <div className="flex flex-row gap-[10px]">
             <span className="text-xs">click to change mode </span>
@@ -208,14 +223,14 @@ function StreamVid() {
           </button>
         </div>
       ) : null}
-      {authUser.admin === true && authUser.adminRoom === room && (
+      {authUser.admin === true && authUser.adminRoom === room ? (
         <button
           className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
           onClick={() => setShowMessage(!showMessage)}
         >
           {!showMessage ? "display message/time to all clients " : "hide"}{" "}
         </button>
-      )}
+      ):null}
       {<div className="w-full h-full z-[100000000]"></div>}
     </div>
   );

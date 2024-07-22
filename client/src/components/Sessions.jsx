@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {TiTick} from "react-icons/ti";
-import SessionTable from "./SessionTable";
 import {useParams} from "react-router-dom";
 import useSaveSession from "../hooks/useSaveSession";
 import useGetSessions from "../hooks/useGetSessions";
-import useListenSessions from "../hooks/useListenSession";
-import {useSocketContext} from "../context/SocketContext";
 import useStore from "../context/TimeStore";
 import useSaveScore from "../hooks/useSaveScore";
-import {useHealthContext} from "../context/HealthContext";
 import {useShallow} from "zustand/react/shallow";
 import useAuthId from "../hooks/useAuthId";
 function Sessions() {
+  
   // const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(``);
   const {id: room} = useParams();
@@ -51,46 +48,23 @@ function Sessions() {
       setSeshCount: state.setSeshCount,
     }))
   );
-
-  const {socket} = useSocketContext();
+  console.log(showRating,"showRating")
   // const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
-  const {authId, key} = useAuthId();
+  const { key} = useAuthId();
 
-  // const {rankings, setRankings} = useLeaderBoardContext()
-
-  // useEffect(() => {
-  //   socket?.on("newSession", (newSession) => {
-  //     // newMessage.shouldShake = true;
-  //     // const sound = new Audio(notificationSound);
-  //     // sound.play();
-
-  //     if (newSession.userId == authId) {
-  //       setSeshInfo([...seshInfo, newSession]);
-  //     }
-  //   });
-
-  //   return () => socket?.off("newSession");
-  // }, [socket, seshInfo, setSeshInfo]);
-
-  // useEffect(() => {
-  //   setSeshInfo(userSessions);
-  // }, [userSessions]);
+  
 
   const onSession = () => {
     // calc session score based on rating & duration.
 
     const calculateSessionScore = (duration, rating) => {
-      // Define weights for duration and rating
-      const durationWeight = 0.1; // Adjust as needed
-      const ratingWeight = 0.5; // Adjust as needed
+      const durationWeight = 0.1; 
+      const ratingWeight = 0.5; 
 
-      // Calculate the score
 
-      // Combine duration and rating scores
       const totalScore = duration * durationWeight + ratingWeight * rating;
 
-      // Round the total score to the nearest integer
       return Math.round(totalScore);
     };
 

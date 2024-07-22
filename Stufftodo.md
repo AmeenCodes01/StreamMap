@@ -83,3 +83,27 @@ SignUP -- name, pass, country, color will show --
 
 ON TOGGLE, RESET SESSION (IF NOT COMPLETE, ASK FIRST)--or just hide toggle until
 session ends/reset.
+
+
+E R R O R S
+
+- session not showing up, even in the sessions table 
+- session not showing up in the leaderboard
+- sessions exist but without endedAt or rating.
+- session number not working properly. 
+
+edge cases: 
+
+rating not given & new session started. 
+switched to work mode while rating required which auto started a new sesh.
+
+next session should not be playable unless the prev session is rated. I can give a prompt telling they need to or reset if forgotten. an info button telling how the timer will play even when tab closes. 
+
+Features to add 
+
+- create room
+- able to change video (check function)
+- roomRanking
+- globalRanking
+- change timer
+- add info about timer.
