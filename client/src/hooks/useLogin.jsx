@@ -12,7 +12,6 @@ const useLogin = () => {
     // const success = handleInputErrors(username, password);
     // if (!success) return;
     // setLoading(true);
-    console.log(pass, "PASSWORD", email);
     try {
       const res = await fetch(`${config.API_URL}/api/auth/login`, {
         method: "POST",

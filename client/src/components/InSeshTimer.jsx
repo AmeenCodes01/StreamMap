@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 import Stopwatch from "./StopWatch";
 import Countdown from "./CountDown";
+import InfoIcon from "./InfoIcon";
 function InSeshTimer() {
   const [mode, setMode] = useState(
     localStorage.getItem("InSeshmode")
@@ -35,10 +36,8 @@ function InSeshTimer() {
       </span>
      */}
       </div>
-      <span className="text-sm italic text-info mt-[10px] ">
-        In-session timers, to help you time questions.<br></br> Press red to
-        save.
-      </span>
+      <InfoIcon info={" Mini timers so you can time your questions within session. Press red icon to save."}/>
+      
     </div>
   );
 }

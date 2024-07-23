@@ -91,6 +91,8 @@ export const SocketContextProvider = ({children}) => {
   const [liveLink, setLiveLink] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const {authUser} = useAuthContext();
+
+  
   const socket = useMemo(() => {
     if (!authUser) return null;
 
@@ -119,7 +121,7 @@ export const SocketContextProvider = ({children}) => {
     newSocket.on("live-status", (data) => {
       console.log("Live status received:", data);
       setLive(data.status);
-      if (data.status) setLiveLink(data.link);
+      if (data.status)setLiveLink(data.link)
     });
 
     newSocket.on("roomUsers", (users) => {

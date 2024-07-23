@@ -20,7 +20,6 @@ function SignUp() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const {loading, signup, check, addCountry} = useSignup();
-  console.log(showColour, "showColor", myCountry);
 
   const onSignIn = async () => {
     console.log(myCountry, "country");

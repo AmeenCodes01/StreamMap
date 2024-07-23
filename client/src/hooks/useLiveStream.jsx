@@ -1,12 +1,10 @@
 import {useEffect} from "react";
-import {useSocketContext} from "../context/SocketContext";
 import toast from "react-hot-toast";
 import {useParams} from "react-router-dom";
 import {config} from "../config";
 export const useLiveStream = () => {
   const {id: room} = useParams();
-  console.log(room);
-  const {setLive, setLiveLink} = useSocketContext();
+  
   const startLive = async (room, link) => {
     try {
       const res = await fetch(`${config.API_URL}/api/live/startLive`, {
@@ -19,7 +17,6 @@ export const useLiveStream = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-      console.log(data, "LIVE api");
       return data;
     } catch (error) {
       toast.error(error.message);
@@ -71,10 +68,10 @@ export const useLiveStream = () => {
         body: JSON.stringify({sentRoom}),
       });
       const data = await res.json();
-      setLive(data.live);
+      // setLive(data.live);
 
-      console.log(data, "check");
-      setLiveLink(data.link);
+      // console.log(data, "check");
+      // setLiveLink(data.link);
       if (data.error) {
         throw new Error(data.error);
       }
@@ -86,11 +83,10 @@ export const useLiveStream = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("checking for live");
-    if (room) checkLive(room);
-  }, [room]);
+  // useEffect(() => {
+  //   console.log("checking for live");
+  //   if (room) checkLive(room);
+  // }, [room]);
 
   return {startLive, endLive, checkLive};
 };
-//1719785504432

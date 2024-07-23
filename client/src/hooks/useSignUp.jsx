@@ -57,7 +57,6 @@ const useSignup = () => {
   };
 
   const check = async (country) => {
-    console.log(country, "red");
     try {
       const res = await fetch(`${config.API_URL}/api/country/check`, {
         method: "POST",
@@ -78,7 +77,6 @@ const useSignup = () => {
   };
 
   const addCountry = async (country, color) => {
-    console.log(country, color, "red");
     try {
       const res = await fetch(`${config.API_URL}/api/country/add`, {
         method: "POST",

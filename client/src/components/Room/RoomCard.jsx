@@ -2,7 +2,6 @@ import React from "react";
 import {Link} from "react-router-dom";
 
 function RoomCard({name}) {
-  console.log(name, "name");
   return (
     <Link to={`/${name}`} key={name}>
       <div

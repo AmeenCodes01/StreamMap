@@ -9,7 +9,6 @@ function Rankings() {
   const {liveRanking} = useLeaderBoardContext();
   const itemsPerPage = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(1);
-  console.log("ranking render");
   // Calculate start and end indices for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;

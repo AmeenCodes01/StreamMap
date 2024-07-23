@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import useStore from "../context/TimeStore";
-import ProgressTimer from "./ProgressTimer";
 import {IoIosSave} from "react-icons/io";
 import {MdOutlineDownloadDone} from "react-icons/md";
 import useAuthId from "../hooks/useAuthId";
@@ -13,7 +12,6 @@ const Timer = ({animate}) => {
     parseInt(localStorage.getItem(`${key}countdownTimeLeft`)) || 10 * 60
   );
   const [desc, setDesc] = useState("");
-  const [saved, setSaved] = useState(false);
   const {
     setInSesh,
     isCountDownActive,
@@ -21,6 +19,8 @@ const Timer = ({animate}) => {
     isRunning,
     setCountdownMinutes,
     countdownMinutes,
+    countDownSaved,
+    setCountDownSaved 
   } = useStore(
     useShallow((state) => ({
       setInSesh: state.setInSesh,
@@ -29,14 +29,22 @@ const Timer = ({animate}) => {
       isRunning: state.isRunning,
       setCountdownMinutes: state.setCountdownMinutes,
       countdownMinutes: state.countdownMinutes,
+      countDownSaved: state.countDownSaved, 
+      setCountDownSaved: state.setCountDownSaved
     }))
   );
+
+useEffect(()=>{
+setCountDownSaved(localStorage.getItem(`${key}countDownSaved`) ==="true" || false)
+},[])
 
   useEffect(() => {
     setIsCountDownActive(
       localStorage.getItem(`${key}isCountDownActive`) == "true"
     );
   }, []);
+
+
   useEffect(() => {
     let interval;
 
@@ -55,9 +63,18 @@ const Timer = ({animate}) => {
   useEffect(() => {
     localStorage.setItem(`${key}countdownTimeLeft`, timeLeft);
   }, [timeLeft]);
+
   useEffect(() => {
     localStorage.setItem(`${key}isCountDownActive`, isCountDownActive);
   }, [isCountDownActive]);
+  
+  useEffect(() => {
+    localStorage.setItem(`${key}countDownSaved`, countDownSaved);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(`${key}countDownSaved`, countDownSaved);
+  }, [countDownSaved]);
 
   const startTimer = () => {
     setIsCountDownActive(true);
@@ -69,7 +86,7 @@ const Timer = ({animate}) => {
 
   const resetTimer = () => {
     setIsCountDownActive(false);
-    setSaved(false);
+    setCountDownSaved(false);
     setTimeLeft(countdownMinutes * 60 || 10 * 60);
   };
 
@@ -77,17 +94,16 @@ const Timer = ({animate}) => {
     timeLeft != 0
       ? setInSesh({time: countdownMinutes * 60 - timeLeft, desc})
       : null;
-    setSaved(true);
+    setCountDownSaved(true);
   };
-  console.log(timeLeft, countdownMinutes * 60, "timer");
 
-  const progress =
-    ((countdownMinutes * 60 - timeLeft * 60) / (countdownMinutes * 60)) * 100;
+  
   //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
-  return animate ? (
-    <ProgressTimer time={timeLeft} progress={progress} />
-  ) : (
+  return(
+
+    
     <div>
+      
       <div>
         <div className="flex flex-row  justify-items-center items-center gap-[10px]">
           <p className="ml-auto mr-auto text-lg">
@@ -132,7 +148,7 @@ const Timer = ({animate}) => {
           {isCountDownActive === false &&
           timeLeft !== countdownMinutes * 60 &&
           isRunning ? (
-            !saved ? (
+            !countDownSaved ? (
               <button className=" items-center bg-0" onClick={saveCountdown}>
                 <IoIosSave color="red" size={20} className="animate-pulse" />
               </button>

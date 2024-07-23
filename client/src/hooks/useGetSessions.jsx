@@ -3,6 +3,10 @@ import useAuthId from "../hooks/useAuthId";
 import useStore from "../context/TimeStore";
 import {useShallow} from "zustand/react/shallow";
 import {config} from "../config";
+
+
+
+
 const useGetSessions = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
@@ -41,7 +45,6 @@ const useGetSessions = () => {
 
   const getUserSessions = async () => {
     setLoading(true);
-    console.log("getting user sessions");
     try {
       const res = await fetch(`${config.API_URL}/api/sessions/user`, {
         method: "POST",

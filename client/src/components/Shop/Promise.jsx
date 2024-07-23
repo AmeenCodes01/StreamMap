@@ -2,7 +2,6 @@ import React from "react";
 import {CiSquarePlus} from "react-icons/ci";
 
 function Promise({promise, coins, id, setMode, openModal, setCurrentProm}) {
-  console.log(id, "id of pro in prom");
   return (
     <>
       <div className="flex bg-accent flex-col h-[300px] w-[200px]  font-serif border-1">
@@ -17,7 +16,6 @@ function Promise({promise, coins, id, setMode, openModal, setCurrentProm}) {
             size={25}
             onClick={() => {
               setMode("update");
-              console.log("click");
               setCurrentProm({_id: id, promise: promise, coins: coins});
               openModal();
             }}

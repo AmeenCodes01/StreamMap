@@ -28,7 +28,6 @@ function DisplayMessage() {
       console.log(e, "received message");
       if (e.label === "time") {
         const localTime = convertAndFormatDate(e.date, e.timeZone);
-        console.log(localTime);
         setTime(localTime);
 
         // setTime({

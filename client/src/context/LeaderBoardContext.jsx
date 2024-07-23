@@ -16,7 +16,6 @@ export const LeaderBoardContextProvider = ({children}) => {
   const {socket} = useSocketContext();
   const {getRankings, loading, getLiveRankings} = useGetRoomRankings();
   const {live} = useSocketContext();
-  console.log(liveRanking, "live ranking");
 
   useEffect(() => {
     const getRanking = async () => {
@@ -44,7 +43,6 @@ export const LeaderBoardContextProvider = ({children}) => {
 
   useEffect(() => {
     const handler = (sesh) => {
-      console.log("socket io sessions received");
       setLiveRanking((prevLiveRanking) => {
         prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
         // Check if the session already exists in the state
@@ -52,7 +50,6 @@ export const LeaderBoardContextProvider = ({children}) => {
           (session) => session.userId === sesh.userId
         );
         sesh.end = false;
-        console.log("sesh ", sesh);
         // If it exists, update the existing session
         if (existingSessionIndex !== -1 && prevLiveRanking) {
           const updatedRanking = [...prevLiveRanking];
@@ -60,12 +57,10 @@ export const LeaderBoardContextProvider = ({children}) => {
             ...updatedRanking[existingSessionIndex],
             ...sesh,
           };
-          console.log(updatedRanking, "upd");
           return updatedRanking;
         } else {
           // If it doesn't exist, add the new session
           const updatedRanking = [...prevLiveRanking, sesh];
-          console.log(updatedRanking, "upd");
 
           return updatedRanking;
         }
@@ -115,7 +110,6 @@ export const LeaderBoardContextProvider = ({children}) => {
         const existingSessionIndex = prevLiveRanking?.findIndex(
           (session) => session?._id === id
         );
-        console.log(prevLiveRanking, "prevRanking");
         // If it exists, update the existing session
         if (existingSessionIndex !== -1) {
           const updatedRanking = [...prevLiveRanking];
@@ -128,7 +122,6 @@ export const LeaderBoardContextProvider = ({children}) => {
             name: session.name,
           };
 
-          console.log(updatedRanking, "updatedRanking");
           return updatedRanking;
         }
         //else {
@@ -153,7 +146,6 @@ export const LeaderBoardContextProvider = ({children}) => {
 
   useEffect(() => {
     const handler = (sesh) => {
-      console.log(sesh, "ended session");
       setLiveRanking((prevLiveRanking) => {
         prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
 

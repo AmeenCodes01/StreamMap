@@ -2,28 +2,36 @@ import React, {useState, useEffect} from "react";
 import {IoCheckmarkDone} from "react-icons/io5";
 import {useSocketContext} from "../context/SocketContext";
 import toast from "react-hot-toast";
-import {useParams} from "react-router-dom";
-import DisplayMessage from "./DisplayMessage";
 import {useLiveStream} from "../hooks/useLiveStream";
-import {AuthContext, useAuthContext} from "../context/AuthContext";
+import {useAuthContext} from "../context/AuthContext";
+import YouTube from 'react-youtube';
+import useAuthId from "../hooks/useAuthId";
+
 function StreamVid() {
+  const { room, key} = useAuthId();
   const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
-  const [link, setLink] = useState("");
+  const [link, setLink] = useState(localStorage.getItem(`${key}link`)  ||"");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
   const {socket, setLive, live, setLiveLink, liveLink} = useSocketContext();
-  const {id: room} = useParams();
-  const {startLive, endLive} = useLiveStream();
+  const {startLive, endLive, checkLive} = useLiveStream();
   const {authUser} = useAuthContext();
+console.log(localStorage.getItem(`${key}link`),link,"live Link")
+
   const onClick = () => {
-    console.log("clicked");
     //save to localstorage
-    setLiveLink(link);
+    
     setVisible(true);
+    localStorage.setItem(`${key}link`,link)
+    if(live && authUser.adminRoom===room){
+
+      socket.emit("live", {live, room, link});
+      setLiveLink(link)
+    }
   };
 
   const onChange = () => {
@@ -31,10 +39,43 @@ function StreamVid() {
   };
 
   useEffect(() => {
-    if (liveLink !== "") {
-      setVisible(live);
-    }
-  }, [liveLink]);
+  const checkForLive = async()=>{
+    console.log(room,"room")
+    if(room){
+   const data = await checkLive(room)
+console.log(data)
+   if (data){
+    console.log(data,"live")
+    setLive(data.live)
+   if (data.live) setLink(data.link)
+    setVisible(true)
+   }
+  }
+}
+
+
+checkForLive()
+
+  }, []);
+
+useEffect(()=>{
+
+if(live && authUser.adminRoom !==room){
+  console.log(liveLink,"liveLink")
+
+  setLink(liveLink)
+  localStorage.setItem(`${key}link`,liveLink)
+}
+
+},[live])
+
+useEffect(()=>{
+if(live){
+  setLink(liveLink)
+  localStorage.setItem(`${key}link`,liveLink)
+
+}
+},[liveLink])
 
   const onLive = () => {
     setLive((prevLive) => {
@@ -43,9 +84,9 @@ function StreamVid() {
       if (socket === null) return;
       //if turning on live, link needed.
       if (prevLive === false) {
-        if (liveLink) {
-          startLive(room, liveLink);
-          socket.emit("live", {live: newLive, room, link: liveLink});
+        if (link) {
+          startLive(room, link);
+          socket.emit("live", {live: newLive, room, link});
           return newLive;
         } else {
           toast.error("please provide a link to your live");
@@ -77,7 +118,7 @@ function StreamVid() {
       }
     } else {
       if (title && message) {
-        console.log("display message socket io");
+        
         socket?.emit("display-message", {
           label: "message",
           message,
@@ -85,28 +126,47 @@ function StreamVid() {
           title,
         });
       } else {
-        console.log("title & message not provided. ");
+        toast.error("title & message not provided. ");
       }
     }
     setShowMessage(false);
   };
 
+ 
+  const opts = {
+    height: '390',
+    width: '100%',
+    playerVars: {
+      // https://developers.google.com/youtube/player_parameters
+      autoplay: 0,
+    },
+  };
 
-  function convertYouTubeLinkToEmbed(linke) {
-    const link = toString(linke)
-    // Extract the video ID from the YouTube URL
-    const videoId = link.match(/(?:youtube\.com\/watch\?v=|youtu.be\/)([^&]+)/)[1];
+  function extractVideoId(url) {
+    if (!url) return null;
   
-    // Construct the embed URL
-    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    // Regular expressions for different YouTube URL formats
+    const regexps = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^/?]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([^/?]+)/,
+      /(?:https?:\/\/)?youtu\.be\/([^/?]+)/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^/?]+)/
+    ];
   
-    // Create the iframe embed code
-    const embedCode = `<iframe width="560" height="315" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+    for (let regex of regexps) {
+      const match = url.match(regex);
+      if (match) {
+        return match[1];
+      }
+    }
   
-    return embedUrl;
+    return null;
   }
-console.log(room)
-  return (
+
+
+
+  return (  
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
         <p>Live </p>
@@ -127,7 +187,6 @@ console.log(room)
 
       {!visible ? (
         <>
-          {/* {authUser.admin ? ( */}
           <>
             <div className="flex flex-row gap-[15px] ">
               <input
@@ -151,32 +210,59 @@ console.log(room)
               make sure the src link is pasted properly!
             </p>{" "}
           </>
-          {/* ) : null} */}
         </>
       ) : null}
 
-      {visible && (
+      {visible ? (
         <>
-          <iframe
+          {/* <iframe
             className="rounded-[20px] aspect-video"
             src={(liveLink)}
             title="YouTube video player"
-          ></iframe>
+          ></iframe> */}
+          <div className="  aspect-video">
+
+          <YouTube
+      videoId={ extractVideoId(link)}
+      opts={opts}
+      className="flex  "
+      // style={{
+        //   width:"500px",
+        //   height:"500px",
+        //   aspectRatio: 16/9,
+        //   backgroundColor:"red"
+        
+        // }}
+        //      onStateChange={onStateChange}
+        onReady={(event)=>{ 
+          const savedTime = localStorage.getItem(`youtube-time-link`);
+          event.target.seekTo(parseFloat(savedTime));
+          event.target.playVideo();
+        }}
+        onPause={(event)=> localStorage.setItem(`youtube-time-link`, event.target.getCurrentTime())}
+        />
+        </div>
+
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
             <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>
-            {authUser.admin === true && authUser.adminRoom === room  || room==="Test" ? (
-              <button
+            {!live || authUser.adminRoom ===room   ? (
+              <>
+                <button
                 className="btn btn-xs btn-accent w-[50px] flex self-end "
                 onClick={onChange}
-              >
+                >
                 change{" "}
               </button>
+                  </>
             ):null}{" "}
           </div>
         </>
-      )}
+      ): null}
+
+
+
       {/* Show this time to all users.  */}
       {authUser.admin === true && authUser.adminRoom === room && showMessage ? (
         <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px] ">

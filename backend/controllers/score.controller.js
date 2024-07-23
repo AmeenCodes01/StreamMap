@@ -207,64 +207,64 @@ export const getLiveRanking = async (req, res) => {
     console.log(userSessions, "userSessions");
 
     // Merge with in-memory sessions
-    if (sessions[room]) {
-      const memorySessionMap = new Map(
-        sessions[room].map((s) => [s.userId.toString(), s])
-      );
+    // if (sessions[room]) {
+    //   const memorySessionMap = new Map(
+    //     sessions[room].map((s) => [s.userId.toString(), s])
+    //   );
 
-      userSessions = userSessions.map((dbSession) => {
-        const memorySession = memorySessionMap.get(dbSession.userId.toString());
-        if (memorySession) {
-          // Check if the memory session is newer than the latest DB session
-          const isMemorySessionNewer =
-            memorySession._id.toString() !== dbSession._id.toString();
-          return {
-            ...dbSession,
-            status: memorySession.status,
-            totalScore: isMemorySessionNewer
-              ? dbSession.totalScore + (memorySession.score || 0)
-              : dbSession.totalScore,
-            totalDuration: isMemorySessionNewer
-              ? dbSession.totalDuration + (memorySession.duration || 0)
-              : dbSession.totalDuration,
-            _id: memorySession._id, // Use the latest session ID
-            ratings: [
-              ...dbSession.ratings,
-              ...(isMemorySessionNewer &&
-              memorySession.rating !== null &&
-              memorySession.rating !== undefined
-                ? [memorySession.rating]
-                : []),
-            ],
-          };
-        }
-        return dbSession;
-      });
+    //   userSessions = userSessions.map((dbSession) => {
+    //     const memorySession = memorySessionMap.get(dbSession.userId.toString());
+    //     if (memorySession) {
+    //       // Check if the memory session is newer than the latest DB session
+    //       const isMemorySessionNewer =
+    //         memorySession._id.toString() !== dbSession._id.toString();
+    //       return {
+    //         ...dbSession,
+    //         status: memorySession.status,
+    //         totalScore: isMemorySessionNewer
+    //           ? dbSession.totalScore + (memorySession.score || 0)
+    //           : dbSession.totalScore,
+    //         totalDuration: isMemorySessionNewer
+    //           ? dbSession.totalDuration + (memorySession.duration || 0)
+    //           : dbSession.totalDuration,
+    //         _id: memorySession._id, // Use the latest session ID
+    //         ratings: [
+    //           ...dbSession.ratings,
+    //           ...(isMemorySessionNewer &&
+    //           memorySession.rating !== null &&
+    //           memorySession.rating !== undefined
+    //             ? [memorySession.rating]
+    //             : []),
+    //         ],
+    //       };
+    //     }
+    //     return dbSession;
+    //   });
 
-      // Add any users that are only in memory
-      for (const memorySession of sessions[room]) {
-        if (
-          !userSessions.some(
-            (s) => s.userId.toString() === memorySession.userId.toString()
-          )
-        ) {
-          const user = await User.findById(memorySession.userId);
-          userSessions.push({
-            userId: memorySession.userId,
-            totalScore: memorySession.score || 0,
-            totalDuration: memorySession.duration || 0,
-            status: memorySession.status,
-            _id: memorySession._id,
-            name: user ? user.name : "Unknown User",
-            ratings:
-              memorySession.rating !== null &&
-              memorySession.rating !== undefined
-                ? [memorySession.rating]
-                : [],
-          });
-        }
-      }
-    }
+    //   // Add any users that are only in memory
+    //   for (const memorySession of sessions[room]) {
+    //     if (
+    //       !userSessions.some(
+    //         (s) => s.userId.toString() === memorySession.userId.toString()
+    //       )
+    //     ) {
+    //       const user = await User.findById(memorySession.userId);
+    //       userSessions.push({
+    //         userId: memorySession.userId,
+    //         totalScore: memorySession.score || 0,
+    //         totalDuration: memorySession.duration || 0,
+    //         status: memorySession.status,
+    //         _id: memorySession._id,
+    //         name: user ? user.name : "Unknown User",
+    //         ratings:
+    //           memorySession.rating !== null &&
+    //           memorySession.rating !== undefined
+    //             ? [memorySession.rating]
+    //             : [],
+    //       });
+    //     }
+    //   }
+    // }
 
     // Re-sort after merging
     userSessions.sort((a, b) => b.totalScore - a.totalScore);

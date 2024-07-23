@@ -76,7 +76,7 @@ function Map() {
           onEachFeature={onEachCountry}
         />
 
-        <SetViewOnClick coords={center} zoomed={zoomed} />
+        {/* <SetViewOnClick coords={center} zoomed={zoomed} /> */}
       </Pane>
     </MapContainer>
   );

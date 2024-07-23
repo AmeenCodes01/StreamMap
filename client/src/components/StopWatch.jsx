@@ -14,12 +14,16 @@ const Stopwatch = () => {
     setIsStopWatchActive,
     isRunning,
     setInSesh,
+    stopWatchSaved, 
+    setStopWatchSaved
   } = useStore(
     useShallow((state) => ({
       isStopWatchActive: state.isStopWatchActive,
       setIsStopWatchActive: state.setIsStopWatchActive,
       isRunning: state.isRunning,
       setInSesh: state.setInSesh,
+      stopWatchSaved: state.stopWatchSaved, 
+      setStopWatchSaved: state.setStopWatchSaved
     }))
   );
 
@@ -27,7 +31,6 @@ const Stopwatch = () => {
     parseInt(localStorage.getItem(`${key}stopwatchTimeElapsed`)) || 0
   );
 
-  const [saved, setSaved] = useState(false);
   useEffect(() => {
     let interval;
 
@@ -41,6 +44,15 @@ const Stopwatch = () => {
 
     return () => clearInterval(interval);
   }, [isStopWatchActive]);
+
+  useEffect(()=>{
+    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved)
+  }, [])
+
+  useEffect(()=>{
+    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved)
+  }, [stopWatchSaved])
+
 
   useEffect(() => {
     localStorage.setItem(`${key}stopwatchTimeElapsed`, timeElapsed);
@@ -61,7 +73,7 @@ const Stopwatch = () => {
 
   const saveStopwatch = () => {
     setInSesh({time: timeElapsed, desc: desc});
-    setSaved(true);
+    setStopWatchSaved(true);
   };
   return (
     <div className="flex flex-col">
@@ -91,7 +103,7 @@ const Stopwatch = () => {
           Reset
         </button>
         {!isStopWatchActive && timeElapsed > 0 && isRunning ? (
-          !saved ? (
+          !stopWatchSaved ? (
             <button className="items-center bg-0" onClick={saveStopwatch}>
               <IoIosSave color="red" size={20} className="animate-pulse" />
             </button>

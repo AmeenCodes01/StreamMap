@@ -16,8 +16,8 @@ function Sessions() {
   const {loading: load} = useGetSessions();
   const {
     inSesh,
-    setInSesh,
-    seshInfo,
+
+    resetInSesh,    seshInfo,
     setSeshInfo,
     seshGoal,
     setSeshGoal,
@@ -29,6 +29,8 @@ function Sessions() {
     isCountDownActive,
     seshCount,
     setSeshCount,
+    setStopWatchSaved, 
+    setCountDownSaved
   } = useStore(
     useShallow((state) => ({
       inSesh: state.inSesh,
@@ -46,9 +48,10 @@ function Sessions() {
       setRated: state.setRated,
       seshCount: state.seshCount,
       setSeshCount: state.setSeshCount,
+      resetInSesh: state.resetInSesh,
+    
     }))
   );
-  console.log(showRating,"showRating")
   // const {mood} = useHealthContext();
   const {saveScore} = useSaveScore();
   const { key} = useAuthId();
@@ -87,10 +90,10 @@ function Sessions() {
     setShowRating(false);
     setRated(true);
     localStorage.setItem(`${key}rated`, true);
-    setInSesh([]);
+    resetInSesh()
     setSeshInfo([...seshInfo, session]);
     setSeshGoal();
-
+   
     setSeshCount(seshCount + 1);
   };
 
@@ -98,7 +101,6 @@ function Sessions() {
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
-
   return (
     <div className="flex  items-end flex-col justify-items-end mt-[20px] ">
       {/* <ListenSessions seshInfo={seshInfo} setSeshInfo={setSeshInfo} /> */}

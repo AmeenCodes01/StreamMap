@@ -11,7 +11,6 @@ function SepWindow() {
 
   useEffect(() => {
     setIsOpen(localStorage.getItem(`${key}isOpen`));
-    console.log(localStorage.getItem(`${key}isOpen`));
   }, []);
 
   const openNewWindow = () => {

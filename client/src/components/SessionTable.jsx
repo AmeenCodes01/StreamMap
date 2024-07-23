@@ -16,13 +16,18 @@ const SessionTable = ({arr, table}) => {
       [index]: !prevState[index],
     }));
   };
-  function formatTime(timeString) {
+
+
+  function formatTime(timeString,mode) {
     const dateTime = new Date(timeString);
+    timeString = parseInt(timeString)
     const formattedTime = dateTime.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     }); // Format as HH:MM
-    return `${formattedTime}`;
+    const min = Math.floor(timeString/60)
+    const sec =  (timeString) - Math.floor(timeString/60)*2
+    return mode =="timer" ? `${min == 0 ? `00` : min} : ${sec}` : `${formattedTime}`
   }
 
   const {users} = useGetUsers();
@@ -52,7 +57,7 @@ const SessionTable = ({arr, table}) => {
                       <td>{users.filter((u) => u._id === e.userId)[0].name}</td>
                     ) : null}
                     <th>{e.sessionNumber}</th>
-                    <td>{formatTime(e.createdAt)}</td>
+                    <td>{formatTime(e.createdAt,"st")}</td>
                     <td className="">
                       {/* <CountDown/> */}
                       {e.goal}
@@ -82,7 +87,7 @@ const SessionTable = ({arr, table}) => {
                   </tr>
                   {openRows[index] && (
                     <tr key={`collapse-${index}`}>
-                      <td colSpan="3">
+                      <td colSpan="3" className="w-[100%] border-1">
                         {/* Collapsible content goes here */}
                         {e.timers && e.timers.length !== 0 ? (
                           <span>
@@ -92,7 +97,7 @@ const SessionTable = ({arr, table}) => {
                                 className=" p-[5px] border-2 mb-[10px]"
                               >
                                 <span className="badge">
-                                  {formatTime(s.time)} - {s.desc}
+                                  {formatTime(s.time,"timer")} - {s.desc}
                                 </span>
                               </div>
                             ))}
@@ -101,6 +106,7 @@ const SessionTable = ({arr, table}) => {
                           "No timers"
                         )}
                       </td>
+                      <td className="border-0"></td>
                     </tr>
                   )}
                 </React.Fragment>

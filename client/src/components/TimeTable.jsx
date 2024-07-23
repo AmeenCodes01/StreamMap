@@ -6,7 +6,6 @@ import useGetUsers from "../hooks/useGetUsers";
 
 const UserTimes = memo((c) => {
   const [render, setRender] = useState(0);
-  console.log("rendeirng ");
   useEffect(() => {
     const intervalId = setInterval(() => {
       setRender((prev) => prev + 0.0001);
@@ -59,7 +58,6 @@ function TimeTable({toggleVisible}) {
   const [sameUsers, setSameUsers] = useState([]);
 
   const {users, loading} = useGetUsers();
-  console.log(users, "users");
   if (loading) {
     return;
   }
@@ -122,7 +120,6 @@ function TimeTable({toggleVisible}) {
                       if (typeof user !== "object") {
                         return;
                       }
-                      console.log(user.displayName, "displayName");
                       return (
                         <li className="flex flex-col gap-[12px] ">
                           <ul className="  flex flex-row px-[10px] py-[15px]">

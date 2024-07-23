@@ -49,10 +49,17 @@ const useStore = create((set, get) => ({
   countdownMinutes: 10,
   setCountdownMinutes: (time) => set({countdownMinutes: time}),
 
+  countDownSaved: false, 
+  setCountDownSaved : (saved)=> set({countDownSaved:saved}),
+
   timeLeft: 10,
   setTimeLeft: (time) => set({timeLeft: time}),
 
   isStopWatchActive: false,
+  stopWatchSaved: false, 
+  setStopWatchSaved : (saved)=> set({stopWatchSaved:saved}),
+
+
   setIsStopWatchActive: (active) =>
     set((state) => {
       if (state.isStopWatchActive !== active) {
@@ -62,6 +69,9 @@ const useStore = create((set, get) => ({
     }),
 
   isCountDownActive: false,
+
+
+  
   setIsCountDownActive: (active) => {
     set({isCountDownActive: active});
     // localStorage.setItem(`${get().authId}${get().room}countdownIsActive`, active);

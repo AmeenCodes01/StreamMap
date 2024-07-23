@@ -107,3 +107,31 @@ Features to add
 - globalRanking
 - change timer
 - add info about timer.
+- add goals to popOut timer
+
+
+ratings, disabled, showRating 
+
+if sessionID && mode === break, showRating, disabled, rated=false.
+
+
+In break mode, reset mode should only reset break. (not remove anything) 
+In work mode, reset should do a post API. 
+An extra delete button to delete session in break mode. 
+
+
+2 modes. 
+delete session -> if mode ===work or if delete button pressed
+reset break --> if in break & reset pressed. 
+
+
+create Room. whoever creates Room, becomes admin. save to db ?
+
+
+
+create New Room
+
+backend
+-- room model
+-- room controller 
+

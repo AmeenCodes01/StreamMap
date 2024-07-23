@@ -14,7 +14,7 @@ import useStore from "../context/TimeStore";
 const MyMap = () => {
   // myCountry saves user country
 
-  const {id: room} = useParams();
+  const {id: room} = useParams();     
 
   const {authUser} = useAuthContext();
   console.log("render");

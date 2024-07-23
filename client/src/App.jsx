@@ -12,16 +12,17 @@ import Shop from "./pages/Shop.jsx";
 import {QueryClient, QueryClientProvider} from "react-query";
 import RedirectOnRefresh from "./RedirectOnRefresh.jsx";
 import useAuthId from "./hooks/useAuthId.jsx";
-import AuthForm from "./components/Auth/AuthForm.jsx";
-const queryClient = new QueryClient();
+import NetworkNotifier from "./components/NetworkNotifier.jsx";
 
 function App() {
   const {authId} = useAuthId();
   console.log(authId, "authUser");
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+    
+    <BrowserRouter>
         <RedirectOnRefresh>
+    <NetworkNotifier />
+
           <Routes>
             <Route
               path="/"
@@ -51,7 +52,6 @@ function App() {
           }}
         />
       </BrowserRouter>
-    </QueryClientProvider>
   );
 }
 

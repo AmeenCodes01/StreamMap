@@ -13,9 +13,9 @@ function UserSessions() {
   useEffect(() => {
     getUserSessions();
   }, []);
-  console.log(seshInfo);
   return (
-    <div className="h-[90%] flex w-[86%] mr-[auto] ml-[auto] justify-center self-center ">
+    <div className="h-[90%] flex w-[86%] mr-[auto] ml-[auto] justify-center  flex-col ">
+      <h2 className="text-xl mb-[5px]">Sessions for the past 24 hours</h2>
       <SessionTable arr={seshInfo} />
     </div>
   );

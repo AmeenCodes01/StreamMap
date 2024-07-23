@@ -119,7 +119,6 @@ function Shop() {
       setPromises((prevPromises) => {
         const updatedPromises = prevPromises.map((prom) => {
           if (prom._id === edit) {
-            console.log("macy"); // Optional: You can log something here
             return {...prom, promise: currentProm.promise};
           }
           return prom; // Return the original promise if not updated
@@ -153,7 +152,6 @@ function Shop() {
 
   const onUpdateCoins = async () => {
     try {
-      console.log(coins, currentProm.coins, "ee");
       if (coins > score) {
         return toast.error("Not enough coins");
       } else {
@@ -236,7 +234,6 @@ function Shop() {
             onClick={() => {
               setMode("new");
               toggleVisible();
-              console.log("clicked");
             }}
           />
         </div>
@@ -268,7 +265,6 @@ function Shop() {
                     />
                     <MdDeleteOutline
                       onClick={() => {
-                        console.log(promise, "red");
                         setMode("delete");
                         toggleVisible();
                         setcurrentProm(promise);

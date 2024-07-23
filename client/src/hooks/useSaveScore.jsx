@@ -7,7 +7,6 @@ const useSaveScore = () => {
   const [loading, setLoading] = useState(false);
   const {authId} = useAuthId();
   const saveScore = async (score, room) => {
-    console.log(authId);
     setLoading(true);
     try {
       const res = await fetch(`${config.API_URL}/api/score/saveScore`, {
@@ -36,7 +35,6 @@ const useSaveScore = () => {
       });
 
       const data = await res.json();
-      console.log(data, " DATA USESAVESCORE");
       if (data.error) {
         console.log(data.error, "error");
         throw new Error(data.error);

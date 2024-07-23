@@ -8,7 +8,6 @@ const SleepTracker = () => {
 
   const handleSubmit = () => {
     // Here you can handle submitting the sleep data
-    console.log(`Logged ${hoursSlept} hours of sleep`);
     // You can also add further logic such as sending the data to a server or storing it locally
   };
 

@@ -13,7 +13,6 @@ const RankingTimer = ({duration, status}) => {
   // const savedIsActive = JSON.parse(
   //   localStorage.getItem(`${timerKey}_isActive`)
   // );
-  console.log(status, "status");
   // // Initialize state with the remaining time
   // const [isActive, setIsActive] = useState(
   //   savedIsActive !== null ? savedIsActive : true

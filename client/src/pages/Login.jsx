@@ -15,12 +15,7 @@ function Login() {
   const [localAuth, setLocalAuth] = useState(false);
   const navigate = useNavigate();
   const {loading, login: logging, checkUser} = useLogin();
-  console.log(
-    localStorage.clear(),
-    localStorage.getItem("authUser"),
-    "authUser"
-  );
-
+  
   if (loading) {
     return (
       <div className="flex  self-center justify-self-center justify-center h-[100vh]">

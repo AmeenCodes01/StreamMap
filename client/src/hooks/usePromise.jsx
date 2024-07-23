@@ -2,15 +2,23 @@ import {useState} from "react";
 import toast from "react-hot-toast";
 import useAuthId from "./useAuthId";
 import {config} from "../config";
+import { useNetworkStatus } from './useNetworkStatus';
 
 const usePromise = () => {
+
+
   const [loading, setLoading] = useState(false);
   const {authId} = useAuthId();
+  
+  const isOnline = useNetworkStatus();
 
   const getPromises = async () => {
     setLoading(true);
-    console.log(authId, "auth Id");
     try {
+      
+      if (!isOnline){
+        return toast.error("You are offline")
+      }
       const res = await fetch(`${config.API_URL}/api/promise/get`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -30,7 +38,6 @@ const usePromise = () => {
   };
 
   const newPromise = async (promise, coins) => {
-    console.log(promise, coins, "uuu");
     try {
       const res = await fetch(`${config.API_URL}/api/promise/new`, {
         method: "POST",
@@ -44,7 +51,6 @@ const usePromise = () => {
         console.log(data.error);
         throw new Error(data.error);
       }
-      console.log(data, "newPromise");
       return data._id;
     } catch (error) {
       toast.error(error.message);
@@ -72,7 +78,6 @@ const usePromise = () => {
   };
 
   const deletePromise = async (id) => {
-    console.log("DELid", id);
     try {
       const res = await fetch(`${config.API_URL}/api/promise/delete`, {
         method: "POST",
@@ -84,7 +89,6 @@ const usePromise = () => {
         console.log(data.error);
         throw new Error(data.error);
       }
-      console.log(data, "delPromise");
       return data._id;
     } catch (error) {
       toast.error(error.message);
@@ -105,7 +109,6 @@ const usePromise = () => {
         console.log(data.error);
         throw new Error(data.error);
       }
-      console.log(data, "upadtedPromise");
       return data._id;
     } catch (error) {
       toast.error(error.message);
@@ -113,7 +116,6 @@ const usePromise = () => {
   };
   const getTotalDonations = async () => {
     setLoading(true);
-    console.log("E");
     try {
       const res = await fetch(`${config.API_URL}/api/promise/total`, {
         method: "GET",
@@ -122,12 +124,10 @@ const usePromise = () => {
       });
 
       const data = await res.json();
-      console.log(data);
       if (data.error) {
         console.log(data.error);
         throw new Error(data.error);
       }
-      console.log(data, "upadtedPromise");
       setLoading(false);
       return data;
     } catch (error) {
