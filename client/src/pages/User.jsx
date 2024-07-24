@@ -45,7 +45,7 @@ function User() {
           </div>
         </div>
 
-        <div className="flex sm:mt-[30px] mt-[50px] mb-[10px]  ">
+        <div className="flex  mb-[10px]  ">
           <Timer />
 
           <SepWindow />
