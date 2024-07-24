@@ -121,7 +121,8 @@ An extra delete button to delete session in break mode.
 
 
 2 modes. 
-delete session -> if mode ===work or if delete button pressed
+delete session -> if mode === work or if delete button pressed. 
+
 reset break --> if in break & reset pressed. 
 
 

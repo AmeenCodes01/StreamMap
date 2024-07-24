@@ -10,6 +10,7 @@ import {useAuthContext} from "./AuthContext";
 import io from "socket.io-client";
 import toast from "react-hot-toast";
 import {config} from "../config";
+import useAuthId from "../hooks/useAuthId";
 const showLongErrorToast = (message, type = "error") => {
   const icons = {
     info: "❗️",
@@ -86,13 +87,13 @@ export const useSocketContext = () => {
 
 export const SocketContextProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  // const {authUser} = useAuthContext();
+  const {key} = useAuthId()
+   
   const [live, setLive] = useState(false);
-  const [liveLink, setLiveLink] = useState("");
+  const [liveLink, setLiveLink] = useState( "");
   const [isConnected, setIsConnected] = useState(false);
   const {authUser} = useAuthContext();
-
-  
+  console.log(localStorage.getItem(`${key}link`),"linkSocket",key)
   const socket = useMemo(() => {
     if (!authUser) return null;
 
@@ -121,7 +122,10 @@ export const SocketContextProvider = ({children}) => {
     newSocket.on("live-status", (data) => {
       console.log("Live status received:", data);
       setLive(data.status);
-      if (data.status)setLiveLink(data.link)
+      if (data.status){
+        setLiveLink(data.link)
+      localStorage.setItem(`${key}link`, data.link)
+      }
     });
 
     newSocket.on("roomUsers", (users) => {

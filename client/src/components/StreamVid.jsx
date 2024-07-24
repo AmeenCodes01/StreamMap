@@ -1,81 +1,69 @@
-import React, {useState, useEffect} from "react";
-import {IoCheckmarkDone} from "react-icons/io5";
-import {useSocketContext} from "../context/SocketContext";
+import React, { useState, useEffect } from "react";
+import { IoCheckmarkDone } from "react-icons/io5";
+import { useSocketContext } from "../context/SocketContext";
 import toast from "react-hot-toast";
-import {useLiveStream} from "../hooks/useLiveStream";
-import {useAuthContext} from "../context/AuthContext";
-import YouTube from 'react-youtube';
+import { useLiveStream } from "../hooks/useLiveStream";
+import { useAuthContext } from "../context/AuthContext";
+import YouTube from "react-youtube";
 import useAuthId from "../hooks/useAuthId";
 
 function StreamVid() {
-  const { room, key} = useAuthId();
-  const [visible, setVisible] = useState(false);
+  const { room, key } = useAuthId();
+  const [visible, setVisible] = useState(localStorage.getItem(`${key}link`) !=="" ? true :false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
-  const [link, setLink] = useState(localStorage.getItem(`${key}link`)  ||"");
+  const [link, setLink] = useState(localStorage.getItem(`${key}link`) || "");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const {socket, setLive, live, setLiveLink, liveLink} = useSocketContext();
-  const {startLive, endLive, checkLive} = useLiveStream();
-  const {authUser} = useAuthContext();
-console.log(localStorage.getItem(`${key}link`),link,"live Link")
+  const { socket, setLive, live, setLiveLink, liveLink } = useSocketContext();
+  const { startLive, endLive, checkLive } = useLiveStream();
+  const { authUser } = useAuthContext();
+console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
+
 
   const onClick = () => {
     //save to localstorage
-    
+    localStorage.setItem(`${key}link`, link);
     setVisible(true);
-    localStorage.setItem(`${key}link`,link)
-    if(live && authUser.adminRoom===room){
-
-      socket.emit("live", {live, room, link});
-      setLiveLink(link)
-    }
+    // if (live && authUser.adminRoom === room) {
+    //   socket.emit("live", { live, room, newStream:{ link} });
+    //   setLiveLink(link);
+    // }
   };
-
+//undefined when goes live
   const onChange = () => {
     setVisible(false);
   };
 
   useEffect(() => {
-  const checkForLive = async()=>{
-    console.log(room,"room")
-    if(room){
-   const data = await checkLive(room)
-console.log(data)
-   if (data){
-    console.log(data,"live")
-    setLive(data.live)
-   if (data.live) setLink(data.link)
-    setVisible(true)
-   }
-  }
-}
+    const checkForLive = async () => {
+      if (room) {
+        const data = await checkLive(room);
+        if (data) {
+          setLive(data.live);
+          if (data.live) setLink(data.link);
+          setVisible(true);
+        }
+      }
+    };
 
-
-checkForLive()
-
+    checkForLive();
   }, []);
 
-useEffect(()=>{
+  useEffect(() => {
+    console.log("beep")
+    if (live && authUser.adminRoom !== room) {
+      console.log(liveLink,"liveLink")
+      setLink(liveLink);
+      localStorage.setItem(`${key}link`, liveLink);
+    }
+  }, [live]);
 
-if(live && authUser.adminRoom !==room){
-  console.log(liveLink,"liveLink")
-
-  setLink(liveLink)
-  localStorage.setItem(`${key}link`,liveLink)
-}
-
-},[live])
-
-useEffect(()=>{
-if(live){
-  setLink(liveLink)
-  localStorage.setItem(`${key}link`,liveLink)
-
-}
-},[liveLink])
+  // useEffect(() => {
+  // setLiveLink(localStorage.getItem(`${key}link`))
+  // }, []);
 
   const onLive = () => {
     setLive((prevLive) => {
@@ -86,7 +74,7 @@ if(live){
       if (prevLive === false) {
         if (link) {
           startLive(room, link);
-          socket.emit("live", {live: newLive, room, link});
+          socket.emit("live", { live: newLive, room, link });
           return newLive;
         } else {
           toast.error("please provide a link to your live");
@@ -96,7 +84,7 @@ if(live){
         endLive(room);
         setVisible(false);
 
-        socket.emit("live", {live: newLive, room});
+        socket.emit("live", { live: newLive, room });
 
         return newLive;
       }
@@ -118,7 +106,6 @@ if(live){
       }
     } else {
       if (title && message) {
-        
         socket?.emit("display-message", {
           label: "message",
           message,
@@ -132,10 +119,9 @@ if(live){
     setShowMessage(false);
   };
 
- 
   const opts = {
-    height: '390',
-    width: '100%',
+    height: "390",
+    width: "100%",
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 0,
@@ -144,29 +130,27 @@ if(live){
 
   function extractVideoId(url) {
     if (!url) return null;
-  
+
     // Regular expressions for different YouTube URL formats
     const regexps = [
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/,
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^/?]+)/,
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([^/?]+)/,
       /(?:https?:\/\/)?youtu\.be\/([^/?]+)/,
-      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^/?]+)/
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^/?]+)/,
     ];
-  
+
     for (let regex of regexps) {
       const match = url.match(regex);
       if (match) {
         return match[1];
       }
     }
-  
+
     return null;
   }
 
-
-
-  return (  
+  return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
         <p>Live </p>
@@ -191,12 +175,12 @@ if(live){
             <div className="flex flex-row gap-[15px] ">
               <input
                 type="text"
-                value={link }
-                placeholder='share>embed copy inside src="" '
+                value={link}
+                placeholder='paste link here '
                 className="input input-xs input-bordered w-[200px] max-w-xs mb-[5px]"
                 onChange={(e) => {
                   setLink(e.target.value);
-                }} 
+                }}
                 // send link to all in room.
               />
               <IoCheckmarkDone
@@ -207,7 +191,7 @@ if(live){
             </div>
             <p className="text-xs text-error mb-[20px]">
               {" "}
-              make sure the src link is pasted properly!
+              make sure the link is pasted properly!
             </p>{" "}
           </>
         </>
@@ -215,53 +199,42 @@ if(live){
 
       {visible ? (
         <>
-          {/* <iframe
-            className="rounded-[20px] aspect-video"
-            src={(liveLink)}
-            title="YouTube video player"
-          ></iframe> */}
-          <div className="  aspect-video">
-
-          <YouTube
-      videoId={ extractVideoId(link)}
-      opts={opts}
-      className="flex  "
-      // style={{
-        //   width:"500px",
-        //   height:"500px",
-        //   aspectRatio: 16/9,
-        //   backgroundColor:"red"
         
-        // }}
-        //      onStateChange={onStateChange}
-        onReady={(event)=>{ 
-          const savedTime = localStorage.getItem(`youtube-time-link`);
-          event.target.seekTo(parseFloat(savedTime));
-          event.target.playVideo();
-        }}
-        onPause={(event)=> localStorage.setItem(`youtube-time-link`, event.target.getCurrentTime())}
-        />
-        </div>
+          <div className="  aspect-video">
+            <YouTube
+              videoId={ extractVideoId(link)}
+              opts={opts}
+              className="flex  "
+             
+              onReady={(event) => {
+                const savedTime = localStorage.getItem(`youtube-time-link`);
+                event.target.seekTo(parseFloat(savedTime));
+                event.target.playVideo();
+              }}
+              onPause={(event) =>
+                localStorage.setItem(
+                  `youtube-time-link`,
+                  event.target.getCurrentTime()
+                )
+              }
+            />
+          </div>
 
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
             <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>
-            {!live || authUser.adminRoom ===room   ? (
               <>
                 <button
-                className="btn btn-xs btn-accent w-[50px] flex self-end "
-                onClick={onChange}
+                  className="btn btn-xs btn-accent w-[50px] flex self-end "
+                  onClick={onChange}
                 >
-                change{" "}
-              </button>
-                  </>
-            ):null}{" "}
+                  change{" "}
+                </button>
+              </>
           </div>
         </>
-      ): null}
-
-
+      ) : null}
 
       {/* Show this time to all users.  */}
       {authUser.admin === true && authUser.adminRoom === room && showMessage ? (
@@ -316,7 +289,7 @@ if(live){
         >
           {!showMessage ? "display message/time to all clients " : "hide"}{" "}
         </button>
-      ):null}
+      ) : null}
       {<div className="w-full h-full z-[100000000]"></div>}
     </div>
   );

@@ -47,18 +47,18 @@ function Rankings() {
       <tr className=" ">
         <td>{name}</td>
         <td>{goal}</td>
-        <td className="">
+        {/* <td className="">
           <RankingTimer
             duration={duration}
             onFinish={() => console.log("Timer finished")}
             id={session._id}
             isPaused={session.isPaused}
-            status={session.status}
+            // status={session.status}
             ratings={ratings}
             key={session._id}
             //  createdAt={createdAt}
           />
-        </td>
+        </td> */}
         <td>{totalDuration}</td>
         <td>{totalScore}</td>
         <td>
@@ -83,7 +83,7 @@ function Rankings() {
           <tr>
             <th>User ID</th>
             <th>Goal</th>
-            <th>Status</th>
+            {/* <th>Status</th> */}
             <th>Total Duration</th>
             <th>Total Score</th>
             <th>Ratings</th>

@@ -74,30 +74,30 @@ export const LeaderBoardContextProvider = ({children}) => {
     }
   }, [socket]); // Added socket to dependency array
 
-  useEffect(() => {
-    const handler = ({id, pause}) => {
-      setLiveRanking((prevLiveRanking) => {
-        prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
+  // useEffect(() => {
+  //   const handler = ({id, pause}) => {
+  //     setLiveRanking((prevLiveRanking) => {
+  //       prevLiveRanking = Array.isArray(prevLiveRanking) ? prevLiveRanking : [];
 
-        const updatedRanking = prevLiveRanking?.map((sesh) => {
-          if (sesh._id === id) {
-            return {
-              ...sesh,
-              status: pause == true ? "pause" : "start",
-            };
-          }
-          return sesh;
-        });
-        return updatedRanking;
-      });
-    };
-    if (socket) {
-      socket.on("paused-session", handler);
-      return () => {
-        socket.off("paused-session", handler);
-      };
-    }
-  }, [socket]);
+  //       const updatedRanking = prevLiveRanking?.map((sesh) => {
+  //         if (sesh._id === id) {
+  //           return {
+  //             ...sesh,
+  //             status: pause == true ? "pause" : "start",
+  //           };
+  //         }
+  //         return sesh;
+  //       });
+  //       return updatedRanking;
+  //     });
+  //   };
+  //   if (socket) {
+  //     socket.on("paused-session", handler);
+  //     return () => {
+  //       socket.off("paused-session", handler);
+  //     };
+  //   }
+  // }, [socket]);
 
   //simple logic of resetting is that remove timer, title, set time to 00:00. everything else remians same.
   useEffect(() => {
