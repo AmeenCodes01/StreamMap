@@ -405,7 +405,7 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
                           }}
                           max={120}
                           min={0}
-                          // step={5}
+                           step={5}
                           height={"10px"}
                           className="range range-success range-sm"
                         />
