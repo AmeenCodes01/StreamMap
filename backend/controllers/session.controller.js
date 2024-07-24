@@ -64,9 +64,9 @@ export const startSession = async (req, res) => {
     const newSession = new Session(session);
     await newSession.save();
 
-    const result = await Session.deleteMany({
-      $or: [{endedAt: {$exists: false}}, {endedAt: null}],
-    });
+    // const result = await Session.deleteMany({
+    //   $or: [{endedAt: {$exists: false}}, {endedAt: null}],
+    // });
 
     if (live) {
       const room = session.room;
