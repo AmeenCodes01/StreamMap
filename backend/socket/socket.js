@@ -11,6 +11,7 @@ const io = new Server(server, {
     origin: config.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
+  pingTimeout: 50000
   
 });
 

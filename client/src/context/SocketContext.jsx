@@ -100,7 +100,9 @@ export const SocketContextProvider = ({children}) => {
     const newSocket = io(`${config.API_URL}`, {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
-      timeout: 10000,
+      timeout: 20000 ,
+      transports: ['websocket', 'polling']
+
     });
 
     newSocket.on("connect", () => {
