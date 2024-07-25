@@ -44,7 +44,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         if (data) {
           setLive(data.live);
          // if (data.live) setLink(data.link);
-       //   setVisible(true);
+          setVisible(true);
         }
       }
     };
@@ -169,7 +169,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         />
       </div>
 
-      {!link ? (
+      {!visible ? (
         <>
           <>
             <div className="flex flex-row gap-[15px] ">
@@ -200,7 +200,6 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
       {visible ? (
         <>
         
-         {link &&
           <div className="  aspect-video">
             {
             <YouTube
@@ -220,19 +219,20 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
                 )
               }
             />}
-          </div>}
+          </div>
 
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
-          {link &&  <p className="text-xs self-center  text-warning">
+            <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
-            </p>}
-           {link &&   
+            </p>
+              <>
                 <button
                   className="btn btn-xs btn-accent w-[50px] flex self-end "
                   onClick={onChange}
                 >
                   change{" "}
-                </button>}
+                </button>
+              </>
           </div>
         </>
       ) : null}
