@@ -124,7 +124,7 @@ export const SocketContextProvider = ({children}) => {
       setLive(data.status);
       if (data.status){
         setLiveLink(data.link)
-      localStorage.setItem(`${key}link`, data.link)
+     // localStorage.setItem(`${key}link`, data.link)
       }
     });
 

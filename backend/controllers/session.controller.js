@@ -54,8 +54,6 @@ export const getSessionByID = async (req, res) => {
   }
 };
 
-
-
 export const startSession = async (req, res) => {
   try {
     const {session, name, live} = req.body;
@@ -76,6 +74,7 @@ export const startSession = async (req, res) => {
 
       // Create a new object with session data and name for the live sessions array
       const sessionWithName = {
+
         ...newSession.toObject(),
         name,
       };

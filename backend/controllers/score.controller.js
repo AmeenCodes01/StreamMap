@@ -145,7 +145,18 @@ export const getLiveRanking = async (req, res) => {
         $group: {
           _id: "$userId",
           totalScore: { $sum: { $ifNull: ["$score", 0] } },
-          totalDuration: { $sum: { $ifNull: ["$duration", 0] } },
+          totalDuration: {
+            $sum: {
+              $cond: {
+                if: { $and: [
+                  { $ne: ["$status", "start"] },
+                  { $ne: ["$endedAt", null] }
+                ]},
+                then: { $ifNull: ["$duration", 0] },
+                else: 0
+              }
+            }
+          },
           latestSession: { $first: "$$ROOT" },
           ratings: {
             $push: {
@@ -180,6 +191,16 @@ export const getLiveRanking = async (req, res) => {
           status: "$latestSession.status",
           _id: "$latestSession._id",
           name: "$user.name",
+          latestSessionDuration: {
+            $cond: {
+              if: { $or: [
+                { $eq: ["$latestSession.status", "start"] },
+                { $eq: ["$latestSession.endedAt", null] }
+              ]},
+              then: "$latestSession.duration",
+              else: null
+            }
+          },
           ratings: {
             $sortArray: {
               input: "$ratings",
@@ -196,6 +217,7 @@ export const getLiveRanking = async (req, res) => {
           status: 1,
           _id: 1,
           name: 1,
+          latestSessionDuration: 1,
           ratings: "$ratings.rating",
         }
       },

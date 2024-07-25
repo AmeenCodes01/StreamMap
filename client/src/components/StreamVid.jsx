@@ -17,10 +17,10 @@ function StreamVid() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const { socket, setLive, live, setLiveLink, liveLink } = useSocketContext();
+  const { socket, setLive, live} = useSocketContext();
   const { startLive, endLive, checkLive } = useLiveStream();
   const { authUser } = useAuthContext();
-console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
+console.log(link,"Link", localStorage.getItem(`${key}link`))
 
 
   const onClick = () => {
@@ -43,8 +43,8 @@ console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
         const data = await checkLive(room);
         if (data) {
           setLive(data.live);
-          if (data.live) setLink(data.link);
-          setVisible(true);
+         // if (data.live) setLink(data.link);
+       //   setVisible(true);
         }
       }
     };
@@ -52,14 +52,14 @@ console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
     checkForLive();
   }, []);
 
-  useEffect(() => {
-    console.log("beep")
-    if (live && authUser.adminRoom !== room) {
-      console.log(liveLink,"liveLink")
-      setLink(liveLink);
-      localStorage.setItem(`${key}link`, liveLink);
-    }
-  }, [live]);
+  // useEffect(() => {
+  //   console.log("beep")
+  //   if (live && authUser.adminRoom !== room) {
+  //     console.log(liveLink,"liveLink")
+  //     setLink(liveLink);
+  //     localStorage.setItem(`${key}link`, liveLink);
+  //   }
+  // }, [live]);
 
   // useEffect(() => {
   // setLiveLink(localStorage.getItem(`${key}link`))
@@ -72,14 +72,14 @@ console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
       if (socket === null) return;
       //if turning on live, link needed.
       if (prevLive === false) {
-        if (link) {
+        // if (link) {
           startLive(room, link);
           socket.emit("live", { live: newLive, room, link });
           return newLive;
-        } else {
-          toast.error("please provide a link to your live");
-          return prevLive;
-        }
+        // } else {
+        //   toast.error("please provide a link to your live");
+        //   return prevLive;
+        // }
       } else {
         endLive(room);
         setVisible(false);
@@ -200,7 +200,9 @@ console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
       {visible ? (
         <>
         
+         {link &&
           <div className="  aspect-video">
+            {
             <YouTube
               videoId={ extractVideoId(link)}
               opts={opts}
@@ -217,13 +219,13 @@ console.log(link,"Link", localStorage.getItem(`${key}link`),liveLink)
                   event.target.getCurrentTime()
                 )
               }
-            />
-          </div>
+            />}
+          </div>}
 
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
-            <p className="text-xs self-center  text-warning">
+          {link &&  <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
-            </p>
+            </p>}
               <>
                 <button
                   className="btn btn-xs btn-accent w-[50px] flex self-end "
