@@ -169,7 +169,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         />
       </div>
 
-      {!visible ? (
+      {!link ? (
         <>
           <>
             <div className="flex flex-row gap-[15px] ">
@@ -226,14 +226,13 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
           {link &&  <p className="text-xs self-center  text-warning">
               Don't forget to give it a like & comment :){" "}
             </p>}
-              <>
+           {link &&   
                 <button
                   className="btn btn-xs btn-accent w-[50px] flex self-end "
                   onClick={onChange}
                 >
                   change{" "}
-                </button>
-              </>
+                </button>}
           </div>
         </>
       ) : null}
