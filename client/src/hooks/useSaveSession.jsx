@@ -44,6 +44,29 @@ const useSaveSession = () => {
     setOfflineQueue([]);
   };
 
+  const checkPrevSession = async ()=>{
+    try {
+      const res = await fetch(`${config.API_URL}/api/sessions/check`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id:authId}),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      console.log(data, "DATA ")
+     if (data.message =="rated"){
+      return true
+     }else if(data.message =="not rated"){
+      localStorage.setItem(`${key}sessionID`,data.sessionID)
+      
+     }
+    } catch (error) {
+    console.log(error)
+  }
+  }
   const startSession = async (session) => {
     setLoading(true);
     session.live = live;
@@ -83,6 +106,7 @@ const useSaveSession = () => {
     setLoading(true);
     session.live = live;
     const sessionID = localStorage.getItem(`${key}sessionID`);
+    console.log(sessionID,"sID")
     session["sessionID"] = sessionID;
 
     if (!isOnline) {
@@ -103,7 +127,7 @@ const useSaveSession = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-
+console.log("allowed till here")
       localStorage.removeItem(`${key}sessionID`);
     } catch (error) {
       toast.error(error.message);
@@ -111,6 +135,8 @@ const useSaveSession = () => {
       setLoading(false);
     }
   };
+
+  
 
   const resetSession = async () => {
     setLoading(true);
@@ -140,9 +166,35 @@ const useSaveSession = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
-  return { startSession, saveSession, loading, sessionID, resetSession };
+  const ratePrevSession = async (rating,room)=>{
+    try {
+      const sessionID = localStorage.getItem(`${key}sessionID`);
+
+      const res = await fetch(`${config.API_URL}/api/sessions/rate`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id:sessionID, rating, room}),
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      console.log(data, "DATA ")
+     if (data.message =="rated"){
+      return true
+     }else if(data.message =="not rated"){
+      localStorage.setItem(`${key}sessionID`,data.sessionID)
+      
+     }
+    } catch (error) {
+    console.log(error)
+  }
+  }
+
+  return { startSession, saveSession, loading, sessionID, resetSession, checkPrevSession, ratePrevSession };
 };
 
 export default useSaveSession;

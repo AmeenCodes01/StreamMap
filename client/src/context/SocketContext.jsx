@@ -97,14 +97,14 @@ export const SocketContextProvider = ({children}) => {
   const socket = useMemo(() => {
     if (!authUser) return null;
 
+    
     const newSocket = io(`${config.API_URL}`, {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
-      timeout: 20000 ,
+      timeout: 60000, // Increase from 20000 to 60000
       transports: ['websocket', 'polling']
-
     });
-
+    
     newSocket.on("connect", () => {
       console.log("Socket connected");
       setIsConnected(true);

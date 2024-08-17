@@ -11,7 +11,7 @@ const io = new Server(server, {
     origin: config.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
-  pingTimeout: 30000
+  pingTimeout: 60000
   
 });
 
@@ -26,6 +26,9 @@ export const sessions = {};
 const socketRooms = {};
 const userRooms = {};
 console.log(userRooms, "userRooms");
+
+
+
 io.on("connection", async (socket) => {
   console.log("a user connected", socket.id);
 

@@ -5,7 +5,7 @@ const LivestreamSchema = new mongoose.Schema({
   endedAt: {type: Date, required: false},
   ranking: [{userId: String, ranking: Number, required: false}],
   room: {type: String, required: true},
-  link: {type: String, required: true},
+  link: {type: String, },
 });
 
 const Livestream = mongoose.model("Livestream", LivestreamSchema);

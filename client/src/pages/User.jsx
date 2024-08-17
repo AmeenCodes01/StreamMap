@@ -13,6 +13,9 @@ import SepWindow from "../components/SepWindow";
 // import {LeaderBoardContextProvider} from "../context/LeaderBoardContext";
 import useAuthId from "../hooks/useAuthId";
 import {useNavigate, useParams} from "react-router-dom";
+
+
+
 function User() {
   const navigate = useNavigate();
   const {id} = useParams();
@@ -40,23 +43,23 @@ function User() {
       <div className="flex  flex-col gap-[20px] ">
         <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
           <StreamVid />
-          <div className="flex ml-auto mr-auto">
+          {/* <div className="flex ml-auto mr-auto">
             <DisplayMessage />
-          </div>
+          </div> */}
         </div>
 
-        <div className="flex  mb-[10px]  ">
+        <div className="flex  mb-[10px] mt-[30px]  ">
           <Timer />
 
-          <SepWindow />
+          {/* <SepWindow /> */}
         </div>
         <div className="flex sm:flex-row flex-col  space-between justify-between">
           <div className="flex mt-[10px] mb-[50px] flex-start align-top justify-start ">
             <Sessions />
           </div>
-          <div className="flex self-center pr-[10px]">
+          {/* <div className="flex self-center pr-[10px]">
             <InSeshTimer />
-          </div>
+          </div> */}
         </div>
       </div>
       {/* 
@@ -82,7 +85,7 @@ function User() {
           style={{}}
         ></div>
         {/* <DiamondTimerStyled /> */}
-        <img src={myImage} alt="" className="flex h-[100%] " />
+        {/* <img src={myImage} alt="" className="flex h-[100%] " /> */}
       </div>
     </div>
   );

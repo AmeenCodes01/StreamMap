@@ -5,6 +5,8 @@ import {
   getSessionByID,
   startSession,
   resetSession,
+  checkSession,
+  rateSession
 } from "../controllers/session.controller.js";
 import protectRoute from "../middleware/protectRoute.js";
 const router = express.Router();
@@ -15,4 +17,6 @@ router.post("/start", startSession);
 router.post("/save", saveSession);
 router.post("/reset", resetSession);
 router.post("/user", getSessionByID);
+router.post("/check", checkSession)
+router.post("/rate", rateSession)
 export default router;

@@ -83,6 +83,8 @@ const useStore = create((set, get) => ({
 
   seshCount: 0,
   setSeshCount: (count) => set({seshCount: count}),
+  prevSeshRating: false, 
+  setPrevSeshRating: (state)=> set({prevSeshRating: state})
 
   // saveInSesh: (sesh) => set((state) => ({inSesh: [...state.inSesh, state]})),
 }));

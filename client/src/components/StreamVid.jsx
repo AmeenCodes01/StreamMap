@@ -43,6 +43,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         const data = await checkLive(room);
         if (data) {
           setLive(data.live);
+          console.log(data.live,"live ")
          // if (data.live) setLink(data.link);
           setVisible(true);
         }
@@ -168,8 +169,8 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
           }}
         />
       </div>
-
-      {!visible ? (
+<>
+      {/* {!visible ? (
         <>
           <>
             <div className="flex flex-row gap-[15px] ">
@@ -195,8 +196,8 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
             </p>{" "}
           </>
         </>
-      ) : null}
-
+      ) : null} */}
+{/* 
       {visible ? (
         <>
         
@@ -218,7 +219,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
                   event.target.getCurrentTime()
                 )
               }
-            />}
+              />}
           </div>
 
           <div className="flex flex-row w-[100%] space-between justify-between mt-[5px]">
@@ -229,16 +230,16 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
                 <button
                   className="btn btn-xs btn-accent w-[50px] flex self-end "
                   onClick={onChange}
-                >
+                  >
                   change{" "}
                 </button>
               </>
           </div>
         </>
-      ) : null}
+      ) : null} */}
 
       {/* Show this time to all users.  */}
-      {authUser.admin === true && authUser.adminRoom === room && showMessage ? (
+      {/* {authUser.admin === true && authUser.adminRoom === room && showMessage ? (
         <div className="flex  flex-col  gap-[5px] w-[200px] max-w-[400px] bg-base-300 rounded p-[20px] ">
           <input
             type="text"
@@ -262,7 +263,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
           </div>
           {mode ? (
             <input
-              aria-label="Date and time"
+            aria-label="Date and time"
               type="datetime-local"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -282,15 +283,16 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
             display
           </button>
         </div>
-      ) : null}
-      {authUser.admin === true && authUser.adminRoom === room ? (
+      ) : null} */}
+      {/* {authUser.admin === true && authUser.adminRoom === room ? (
         <button
-          className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
+        className="text-xs italic cursor-pointer text-secondary-content hover:mouse-click bg-secondary text-start self-start rounded-[6px]   "
           onClick={() => setShowMessage(!showMessage)}
-        >
+          >
           {!showMessage ? "display message/time to all clients " : "hide"}{" "}
         </button>
-      ) : null}
+      ) : null} */}
+      </>
       {<div className="w-full h-full z-[100000000]"></div>}
     </div>
   );

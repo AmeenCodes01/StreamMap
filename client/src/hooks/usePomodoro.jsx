@@ -11,7 +11,10 @@ const usePomodoro = () => {
     setRated,
     secondsLeft,
     workMinutes,
-    mode,
+    setShowRating,
+    mode,setSecondsLeft, resetInSesh, 
+    breakMinutes,
+    setPrevSeshRating
   } = useStore(
     useShallow((state) => ({
       isRunning: state.isRunning,
@@ -21,17 +24,30 @@ const usePomodoro = () => {
       setRated: state.setRated,
       secondsLeft: state.secondsLeft,
       mode: state.mode,
+      setShowRating: state.setShowRating,
+      setSecondsLeft:state.setSecondsLeft,
+      resetInSesh: state.resetInSesh,
+      breakMinutes: state.breakMinutes,
+      setPrevSeshRating: state.setPrevSeshRating
+      
+
+
     }))
   );
   const {key, room} = useAuthId();
   const {socket, live} = useSocketContext();
-  const {startSession} = useSaveSession();
+  const {startSession, checkPrevSession,resetSession} = useSaveSession();
 
-  const start = (session) => {
-    !isRunning ? localStorage.setItem(`${key}startTime`, Date.now()) : null;
+  const start =async (session) => {
 
-    setIsPaused(false);
-    setIsRunning(true);
+    const prevRated = await checkPrevSession()
+if (prevRated){
+
+  
+  !isRunning ? localStorage.setItem(`${key}startTime`, Date.now()) : null;
+  // checkSession, not rated, setShowRating false & sessionId to LS. 
+  setIsPaused(false);
+  setIsRunning(true);
     setRated(false);
     secondsLeft === workMinutes * 60 ? startSession(session) : null;
     secondsLeft !== workMinutes * 60 && mode === "work" && live
@@ -41,6 +57,11 @@ const usePomodoro = () => {
           pause: false,
         })
       : null;
+    }else{
+      setRated(false)
+      setShowRating(true)
+      setPrevSeshRating(true)
+    }
   };
 
   const pause = () => {
@@ -55,12 +76,34 @@ const usePomodoro = () => {
           room,
           pause: true,
         })
-      : null;
-  };
+        : null;
+      };
+
+      const reset = (md) => {
+        localStorage.removeItem(`${key}startTime`);
+        localStorage.removeItem(`${key}PausedTime`);
+        
+        
+        
+        const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+        if(mode ==="work" || md=="delete"){
+          resetInSesh();
+          setRated(false);
+         // setDisabled(false)
+          //setShowRating(false)
+          secondsLeft !== resetSeconds  ? resetSession() : null;
+        }
+        
+        setSecondsLeft(resetSeconds);
+        setIsRunning(false);
+        setIsPaused(true);
+      };
+    
 
   return {
     start,
     pause,
+    reset
   };
 };
 

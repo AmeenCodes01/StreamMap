@@ -7,12 +7,15 @@ import useStore from "../context/TimeStore";
 import useSaveScore from "../hooks/useSaveScore";
 import {useShallow} from "zustand/react/shallow";
 import useAuthId from "../hooks/useAuthId";
+import {Modal} from "react-daisyui";
+// import DeleteButton from "./SessionRating/DeleteButton";
+
 function Sessions() {
   
   // const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(``);
   const {id: room} = useParams();
-  const {saveSession, loading} = useSaveSession();
+  const {saveSession, loading,ratePrevSession} = useSaveSession();
   const {loading: load} = useGetSessions();
   const {
     inSesh,
@@ -29,8 +32,12 @@ function Sessions() {
     isCountDownActive,
     seshCount,
     setSeshCount,
+    isRunning, 
     setStopWatchSaved, 
-    setCountDownSaved
+    setCountDownSaved,
+  prevSeshRating, 
+    setPrevSeshRating,
+  
   } = useStore(
     useShallow((state) => ({
       inSesh: state.inSesh,
@@ -49,7 +56,9 @@ function Sessions() {
       seshCount: state.seshCount,
       setSeshCount: state.setSeshCount,
       resetInSesh: state.resetInSesh,
-    
+      isRunning: state.isRunning,
+      // setPrevSeshRating:state.setPrevSeshRating, 
+      // prevSeshRating: state.prevSeshRating
     }))
   );
   // const {mood} = useHealthContext();
@@ -60,19 +69,28 @@ function Sessions() {
 
   const onSession = () => {
     // calc session score based on rating & duration.
-
     const calculateSessionScore = (duration, rating) => {
       const durationWeight = 0.1; 
       const ratingWeight = 0.5; 
-
-
+      
+      
       const totalScore = duration * durationWeight + ratingWeight * rating;
-
+      
       return Math.round(totalScore);
     };
-
+    console.log(prevSeshRating,"prec")
+    if (prevSeshRating){
+      console.log("Inhere")
+      ratePrevSession(seshRating,room)
+  //    saveScore(score,room)
+      setShowRating(false);
+      setRated(true);
+      setPrevSeshRating(false)
+      localStorage.setItem(`${key}rated`, true);
+      return 
+    }
     const score = calculateSessionScore(workMinutes, seshRating);
-
+    
     const session = {
       sessionNumber: seshCount,
       rating: seshRating,
@@ -101,6 +119,15 @@ function Sessions() {
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
+
+//   useEffect(()=>{
+// setPrevSeshRating(    localStorage.getItem(`${key}prevSeshRating`) === "true "? true:false
+// )
+//   },[])
+//   useEffect(()=>{
+//     localStorage.setItem(`${key}prevSeshRating`, prevSeshRating)
+
+//   },[prevSeshRating])
   return (
     <div className="flex  items-end flex-col justify-items-end mt-[20px] ">
       {/* <ListenSessions seshInfo={seshInfo} setSeshInfo={setSeshInfo} /> */}
@@ -136,6 +163,17 @@ function Sessions() {
           /> */}
             </div>
             {showRating && !isStopWatchActive && !isCountDownActive ? (
+               <Modal.Legacy
+               className=" max-w-[90%] sm:max-w-[50%]
+   
+                border-2 overflow-hidden"
+               open={showRating}
+              //  onClickBackdrop={() => {
+              //    cleanUp();
+              //    toggleVisible();
+              //  }}
+             >
+              <Modal.Body>
               <div className="flex flex-row mt-[10px] border-[10] ml-[auto] mr-[50px] ">
                 <p className="text-center self-center mr-[5px] md:text-[18px] italic">
                   rate your session :
@@ -158,12 +196,20 @@ function Sessions() {
                   }}
                 />
                 <p className="text-center flex self-center pl-[5px] "> /10</p>
+                <form
+              method="dialog"
+              className="  flex items-end justify-items-end"
+            >
+
                 <TiTick
                   size={30}
                   className=" self-center ml-[5px] h-[30px]"
                   onClick={onSession}
                 />
+                </form>
               </div>
+              </Modal.Body>
+              </Modal.Legacy>
             ) : null}
           </div>
         </div>
