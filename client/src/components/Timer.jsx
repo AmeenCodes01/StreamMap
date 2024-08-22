@@ -92,9 +92,10 @@ export default function Timer() {
     const breakMinutes =
       parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
     
+      const min =  mode =="work"? workMinutes:breakMinutes
     
-    const secondsLeftLs =       parseInt(localStorage.getItem(`${key}secondsLeft`)) 
-
+    const secondsLeftLs =   localStorage.getItem(`${key}secondsLeft`) !== "NaN" &&localStorage.getItem(`${key}secondsLeft`) !== null?    parseInt(localStorage.getItem(`${key}secondsLeft`)) : min*60
+    console.log(secondsLeftLs,"seconds",localStorage.getItem(`${key}secondsLeft`))
     setMode(mode);
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
@@ -131,8 +132,8 @@ export default function Timer() {
 
   function tick() {
     setSecondsLeft(secondsLeft - 1 < 0 ? 0 : secondsLeft - 1);
-    secondsLeft - 1 >= 0 ?   localStorage.setItem(`${key}secondsLeft`,secondsLeft-1) : null
   }
+
   function switchMode() {
     audio.play();
     const nextMode = mode === "work" ? "break" : "work";
@@ -187,23 +188,7 @@ export default function Timer() {
   //reset timer when in break. If in work mode, reset session.
   const onResetTimer = (md) => {
     reset(md)
-    // localStorage.removeItem(`${key}startTime`);
-    // localStorage.removeItem(`${key}PausedTime`);
-    
-    
-    
-    // const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
-    // if(mode ==="work" || md=="delete"){
-    //   resetInSesh();
-    //   setRated(false);
-    //   setDisabled(false)
-    //   setShowRating(false)
-    //   secondsLeft !== resetSeconds  ? resetSession() : null;
-    // }
-    
-    // setSecondsLeft(resetSeconds);
-    // setIsRunning(false);
-    // setIsPaused(true);
+   
   };
 
   
@@ -266,9 +251,11 @@ console.log(showRating,"showRating")
     localStorage.setItem(`${key}disabled`, disabled);
   }, [seshCount]);
 
-  // useEffect(()=>{
-  //   localStorage.setItem(`${key}showRating`,showRating)
-  // })
+  useEffect(() => {
+    localStorage.setItem(`${key}secondsLeft`,secondsLeft) 
+    console.log("reset")
+  }, [secondsLeft]);
+
 
 console.log( localStorage.getItem(`${key}sessionID`))
   return (
@@ -320,7 +307,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                   {isPaused === true || isRunning === false ? (
                     <div className="flex flex-row gap-[10px]">
                       <button
-                        disabled={mode==="break" ? false :disabled}
+                      //  disabled={mode==="break" ? false :disabled}
                         className="btn btn-success items-center justify-center"
                         //so I will start(room, workMinutes, )
                         onClick={() => {
@@ -437,7 +424,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
               </div>
             </div>
             <audio id="audio_tag" src={timerEnd} />
-            {(localStorage.getItem(`${key}sessionID`) === null) || !isRunning  ? (
+            {!isRunning  ? (
               <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
                 <span className="text-xs self-center text-cente font-semibold">
                   Work
@@ -457,11 +444,11 @@ console.log( localStorage.getItem(`${key}sessionID`))
         </div>
       </div>
 
-      {disabled && (
+      {/* {disabled && (
         <span className="text-xs italic text-warning">
           please rate the session and stop the countdown/stopwatch (if played)
         </span>
-      )}
+      )} */}
     </div>
   );
 }

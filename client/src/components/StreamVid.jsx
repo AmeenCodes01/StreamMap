@@ -9,7 +9,7 @@ import useAuthId from "../hooks/useAuthId";
 
 function StreamVid() {
   const { room, key } = useAuthId();
-  const [visible, setVisible] = useState(localStorage.getItem(`${key}link`) !=="" ? true :false);
+  const [visible, setVisible] = useState(localStorage.getItem(`${key}link`) !=="" && localStorage.getItem(`${key}link`) !== null  ? true :false);
   const [mode, setMode] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,11 +20,12 @@ function StreamVid() {
   const { socket, setLive, live} = useSocketContext();
   const { startLive, endLive, checkLive } = useLiveStream();
   const { authUser } = useAuthContext();
-console.log(link,"Link", localStorage.getItem(`${key}link`))
+console.log(link,"Link", localStorage.getItem(`${key}link`)===null,visible)
 
 
   const onClick = () => {
     //save to localstorage
+    if(link ==="")return
     localStorage.setItem(`${key}link`, link);
     setVisible(true);
     // if (live && authUser.adminRoom === room) {
@@ -35,6 +36,8 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
 //undefined when goes live
   const onChange = () => {
     setVisible(false);
+    setLink("")
+    localStorage.setItem(`${key}link`,"") 
   };
 
   useEffect(() => {
@@ -45,7 +48,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
           setLive(data.live);
           console.log(data.live,"live ")
          // if (data.live) setLink(data.link);
-          setVisible(true);
+        //  setVisible(true);
         }
       }
     };
@@ -83,7 +86,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         // }
       } else {
         endLive(room);
-        setVisible(false);
+     //   setVisible(false);
 
         socket.emit("live", { live: newLive, room });
 
@@ -151,6 +154,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
     return null;
   }
 
+
   return (
     <div className="p-[10px] flex flex-col w-[100%] h-[100%]  ">
       <div className="flex flex-row gap-[10px] mb-[15px] ">
@@ -170,7 +174,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
         />
       </div>
 <>
-      {/* {!visible ? (
+      {!visible ? (
         <>
           <>
             <div className="flex flex-row gap-[15px] ">
@@ -196,12 +200,12 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
             </p>{" "}
           </>
         </>
-      ) : null} */}
-{/* 
-      {visible ? (
+      ) : null}
+
+      {visible && link!==null ? (
         <>
         
-          <div className="  aspect-video">
+          <div className="  aspect-video ">
             {
             <YouTube
               videoId={ extractVideoId(link)}
@@ -236,7 +240,7 @@ console.log(link,"Link", localStorage.getItem(`${key}link`))
               </>
           </div>
         </>
-      ) : null} */}
+      ) : null}
 
       {/* Show this time to all users.  */}
       {/* {authUser.admin === true && authUser.adminRoom === room && showMessage ? (

@@ -379,7 +379,7 @@ function Shop() {
         <p>
           <span className="badge bg-accent text-white">
             {" "}
-            ${Math.floor(PalestineCoins[0] / 2)}
+            ${Math.floor(PalestineCoins[0] / 300)}
           </span>{" "}
           promised donation to 🇵🇸 🤍 (300 points = 1$)
         </p>

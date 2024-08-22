@@ -20,7 +20,7 @@ function DonationInfo() {
     <div className=" badge   text-md ">
       <span className="text-bold italic font-mono  rounded-[8px] p-[5px] text-white ">
         <span className="bg-white badge text-primary text-bold text-md">
-          Total {Math.floor(parseInt(totalDon) / 2)}$
+          Total {Math.floor(parseInt(totalDon) / 300)}$
         </span>{" "}
         promised to be donated to Palestine 🤍
       </span>

@@ -37,7 +37,7 @@ function User() {
     return;
   }
   return (
-    <div className=" sm:mt-[30px] mt-[10px] flex flex-col gap-[20px] bg-[url('/lonelyFire.gif')] bg-cover bg-center">
+    <div className=" sm:mt-[30px] mt-[10px] flex flex-col gap-[20px] bg-[url('/nightmoon.gif')] bg-cover bg-center">
       {/* STREAM PLAYER */}
 
       <div className="flex  flex-col gap-[20px] ">
@@ -51,7 +51,7 @@ function User() {
         <div className="flex  mb-[10px] mt-[30px]  ">
           <Timer />
 
-          {/* <SepWindow /> */}
+          <SepWindow />
         </div>
         <div className="flex sm:flex-row flex-col  space-between justify-between">
           <div className="flex mt-[10px] mb-[50px] flex-start align-top justify-start ">
