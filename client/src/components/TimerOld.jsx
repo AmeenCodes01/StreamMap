@@ -11,6 +11,7 @@ import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
 import useSaveSession from "../hooks/useSaveSession";
 import InfoIcon from "./InfoIcon";
+import { MdDeleteForever } from "react-icons/md";
 
 export default function Timer() {
 
@@ -36,7 +37,6 @@ export default function Timer() {
     setRated,
     seshCount,
     setSeshCount,
-    showRating
     
   } = useStore(
     useShallow((state) => ({
@@ -61,21 +61,16 @@ export default function Timer() {
       resetInSesh: state.resetInSesh,
       rated: state.rated,
       setRated: state.setRated,
-      showRating: state.showRating,
+
       seshCount: state.seshCount,
       setSeshCount: state.setSeshCount,
     }))
   );
-
-
-//secondsLeft stored every second. 
-//isRunning should be true when timer is running. 
-
-
   const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
-  const {start, pause,reset} = usePomodoro();
+  const {start, pause} = usePomodoro();
   const audio = document.getElementById("audio_tag");
+  const {resetSession} = useSaveSession();
   // check for sessionID, if exist, set true.
   useEffect(() => {
     // Retrieve necessary localStorage values
@@ -144,13 +139,13 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
     );
   }, []);
 
-
   const toggle = mode === "break";
 
   function tick() {
     setSecondsLeft(secondsLeft - 1 < 0 ? 0 : secondsLeft - 1);
   }
 
+  //get createdAt time.
   function switchMode() {
     audio.play();
     const nextMode = mode === "work" ? "break" : "work";
@@ -204,8 +199,23 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
 
   //reset timer when in break. If in work mode, reset session.
   const onResetTimer = (md) => {
-    reset(md)
-   
+    localStorage.removeItem(`${key}startTime`);
+    localStorage.removeItem(`${key}PausedTime`);
+    
+    
+    
+    const resetSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+    if(mode ==="work" || md=="delete"){
+      resetInSesh();
+      setRated(false);
+      setDisabled(false)
+      setShowRating(false)
+      secondsLeft !== resetSeconds  ? resetSession() : null;
+    }
+    
+    setSecondsLeft(resetSeconds);
+    setIsRunning(false);
+    setIsPaused(true);
   };
 
   
@@ -226,7 +236,7 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
 
 
 
-console.log(showRating,"showRating")
+
 
   useEffect(() => {
     if (!isCountDownActive && !isStopWatchActive && rated) {
@@ -268,13 +278,7 @@ console.log(showRating,"showRating")
     localStorage.setItem(`${key}disabled`, disabled);
   }, [seshCount]);
 
-  // useEffect(() => {
-  //   localStorage.setItem(`${key}secondsLeft`,secondsLeft) 
-  //   console.log("reset")
-  // }, [secondsLeft]);
-
-
-console.log( localStorage.getItem(`${key}sessionID`))
+  console.log((localStorage.getItem(`${key}sessionID`) === null))
   return (
     <div className="w-[100%] flex flex-col px-[10px]">
       {/* This will become a timer. */}
@@ -294,7 +298,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
           className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
           />
    <div className="">
-              {/* <InfoIcon info="This timer will keep running even when tab closed :) "/> */}
+              <InfoIcon info="This timer will keep running even when tab closed :) "/>
              </div>
           </div>
         <div className=" mr-[10px] min-w-[100px] pt-[20px] ">
@@ -324,7 +328,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                   {isPaused === true || isRunning === false ? (
                     <div className="flex flex-row gap-[10px]">
                       <button
-                      //  disabled={mode==="break" ? false :disabled}
+                        disabled={mode==="break" ? false :disabled}
                         className="btn btn-success items-center justify-center"
                         //so I will start(room, workMinutes, )
                         onClick={() => {
@@ -372,7 +376,12 @@ console.log( localStorage.getItem(`${key}sessionID`))
                     </button>
                   ) : null}
 
+{ localStorage.getItem(`${key}sessionID`) !== null && mode ==="break" ?
+<button className="btn btn-error my-[10px] h-[30px]" onClick={()=> onResetTimer("delete")}>
 
+                  <MdDeleteForever size={25} />session
+</button>
+:null}
                 </div>
 
 
@@ -396,7 +405,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                           }}
                           max={120}
                           min={0}
-                           step={1}
+                           step={5}
                           height={"10px"}
                           className="range range-success range-sm"
                         />
@@ -423,8 +432,8 @@ console.log( localStorage.getItem(`${key}sessionID`))
                               );
                             }
                           }}
-                          max={60}
-                          step={1}
+                          max={120}
+                          step={5}
                           className="range range-error range-sm"
                           height={"10px"}
                         />
@@ -441,7 +450,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
               </div>
             </div>
             <audio id="audio_tag" src={timerEnd} />
-            {!isRunning  ? (
+            {(localStorage.getItem(`${key}sessionID`) === null) || !isRunning  ? (
               <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
                 <span className="text-xs self-center text-cente font-semibold">
                   Work
@@ -461,14 +470,11 @@ console.log( localStorage.getItem(`${key}sessionID`))
         </div>
       </div>
 
-      {/* {disabled && (
+      {disabled && (
         <span className="text-xs italic text-warning">
           please rate the session and stop the countdown/stopwatch (if played)
         </span>
-      )} */}
+      )}
     </div>
   );
 }
-
-//so when session ends, setShowRating is set to true and modal opens, disabling background. you rate or delete session. 
-

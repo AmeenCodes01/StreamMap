@@ -26,7 +26,7 @@ const useSaveSession = () => {
       processOfflineQueue();
     }
   }, [isOnline]);
-
+  
   const processOfflineQueue = async () => {
     for (const queuedAction of offlineQueue) {
       try {
@@ -127,7 +127,7 @@ const useSaveSession = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-console.log("allowed till here")
+
       localStorage.removeItem(`${key}sessionID`);
     } catch (error) {
       toast.error(error.message);

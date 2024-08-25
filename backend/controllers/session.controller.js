@@ -205,13 +205,20 @@ export const checkSession = async (req, res) => {
       null,
       { sort: { createdAt: -1 } }
     );
-    console.log(latestSession)
+    //why not check here if session finished AND unrated and then send message accordingly ?
+    const endTime = new Date( new Date(`${latestSession.createdAt}`)+ latestSession.duration*60000)
+    const onGoing = new Date() < endTime
+    console.log(onGoing,"onGoing",endTime, latestSession.createdAt,"edde", new Date())
     if (latestSession.rating) {
       res.status(201).json({ message: "rated" });
-    } else {
+    } else if (!latestSession.rating && !onGoing) {
       res
         .status(201)
         .json({ message: "not rated", sessionID: latestSession._id });
+    } else {
+      res
+      .status(201)
+      .json({ message: "ongoing", sessionID: latestSession._id });
     }
   } catch (error) {
     res.status(500).json({ error: "Session for checking rating not found" });
