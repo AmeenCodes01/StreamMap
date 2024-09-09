@@ -23,7 +23,7 @@ function Rooms() {
           <CiShop
             color="white"
             size={35}
-            className="border-dashed border-1 rounded-lg p-[5px]"
+            className="border-dashed border-1 rounded-lg p-[5px] animate-pulse"
           />
         </Link>
         <RiLogoutCircleLine

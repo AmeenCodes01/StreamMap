@@ -13,7 +13,7 @@ function InSeshTimer() {
     localStorage.setItem("InSeshmode", JSON.stringify(mode));
   }, [mode]);
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col shadow-inner">
       <div className="flex flex-col bg-base-300 rounded-[10px] p-[15px] border-1">
         <div className="flex flex-row gap-[10px] text-bold self-center mb-[20px]">
           <span className="text-xs self-center text-cente font-semibold">
@@ -36,8 +36,11 @@ function InSeshTimer() {
       </span>
      */}
       </div>
-      <InfoIcon info={" Mini timers so you can time your questions within session. Press red icon to save."}/>
-      
+      <InfoIcon
+        info={
+          " Mini timers so you can time your questions within session. Press red icon to save."
+        }
+      />
     </div>
   );
 }

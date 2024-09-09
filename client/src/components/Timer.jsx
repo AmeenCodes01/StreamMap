@@ -11,6 +11,7 @@ import usePomodoro from "../hooks/usePomodoro";
 import timerEnd from "/timerEnd.mp3";
 import useSaveSession from "../hooks/useSaveSession";
 import InfoIcon from "./InfoIcon";
+import DarkInput from "./DarkInput";
 
 export default function Timer() {
   const {
@@ -263,8 +264,23 @@ export default function Timer() {
     localStorage.setItem(`${key}rated`, rated);
   }, [rated]);
 
+  const onChangeWorkMinutes = (e) => {
+    if (e.target.value > -1) {
+      setWorkMinutes(e.target.value);
+      mode === "work" && setSecondsLeft(e.target.value * 60);
+      localStorage.setItem(`${key}workMinutes`, e.target.value);
+    }
+  };
+  const onChangeBreakMinutes = (e) => {
+    if (e.target.value > -1) {
+      setBreakMinutes(e.target.value);
+      mode === "break" && setSecondsLeft(e.target.value * 60);
+      localStorage.setItem(`${key}breakMinutes`, e.target.value);
+    }
+  };
+
   return (
-    <div className="w-[100%] flex flex-col px-[10px]">
+    <div className=" flex flex-col p-[20px]  rounded-[10px] items-center  bg-base-300 border-1 ">
       {/* This will become a timer. */}
       <div className="flex flex-col">
         <div className="flex flex-row gap-[5px]">
@@ -279,10 +295,10 @@ export default function Timer() {
             className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
           />
           <div className="">
-            {/* <InfoIcon info="This timer will keep running even when tab closed :) "/> */}
+            <InfoIcon info="This timer will keep running even when tab closed :) " />
           </div>
         </div>
-        <div className=" mr-[10px] min-w-[100px] pt-[20px] ">
+        {/* <div className=" mr-[10px] min-w-[100px] pt-[20px] ">
           <progress
             className={`progress w-[100%]   ${
               mode === "work" ? "progress-success" : "progress-error"
@@ -290,8 +306,8 @@ export default function Timer() {
             value={isNaN(percentage) ? 100 : 100 - percentage}
             max="100"
           ></progress>
-        </div>
-        <div className="flex flex-row-reverse space-between justify-between ">
+        </div> */}
+        <div className="flex flex-col space-between justify-between  ">
           <div className="mt-[5px] flex flex-row">
             <span className="text-bold text-[50px] font-black ">
               {`${minutes < 10 ? "0" : ""}${minutes}:${
@@ -307,9 +323,7 @@ export default function Timer() {
                   {isPaused === true || isRunning === false ? (
                     <div className="flex flex-row gap-[10px]">
                       <button
-                        //  disabled={mode==="break" ? false :disabled}
                         className="btn btn-success items-center justify-center"
-                        //so I will start(room, workMinutes, )
                         onClick={() => {
                           secondsLeft === workMinutes * 60
                             ? start({
@@ -337,18 +351,6 @@ export default function Timer() {
                       className="btn btn-warning items-center justify-center"
                       onClick={() => {
                         pause();
-                        // setIsPaused(true);
-                        // setIsRunning(true);
-                        // localStorage.setItem(`${key}PausedTime`, secondsLeft);
-                        // localStorage.setItem(`${key}isRunning`, "true");
-
-                        // secondsLeft !== workMinutes * 60 && mode === "work"
-                        //   ? socket.emit("paused-session", {
-                        //       id: localStorage.getItem(`${key}sessionID`),
-                        //       room,
-                        //       pause: true,
-                        //     })
-                        //   : null;
                       }}
                     >
                       <FaPauseCircle size={15} />
@@ -360,49 +362,30 @@ export default function Timer() {
                   {isPaused && (
                     <>
                       <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
-                        <input
-                          type="range"
-                          value={workMinutes}
-                          onChange={(e) => {
-                            if (e.target.value > 0) {
-                              setWorkMinutes(e.target.value);
-                              mode === "work" &&
-                                setSecondsLeft(e.target.value * 60);
-                              localStorage.setItem(
-                                `${key}workMinutes`,
-                                e.target.value
-                              );
-                            }
-                          }}
+                        <DarkInput
+                          value={mode === "work" ? workMinutes : breakMinutes}
+                          onChange={
+                            mode === "work"
+                              ? onChangeWorkMinutes
+                              : onChangeBreakMinutes
+                          }
+                          width={60}
                           max={120}
-                          min={0}
-                          step={1}
-                          height={"10px"}
-                          className="range range-success range-sm"
+                          min={2}
                         />
-                        <span className="prose text-xs ">
+                        {/* <span className="prose text-xs ">
                           Work :{" "}
                           <span className="text-info prose-lg ">
                             {workMinutes} min
                           </span>{" "}
-                        </span>
+                        </span> */}
                       </div>
-                      <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
+                      {/* <div className="h-[80px] px-[5px] items-center align-items-center p-[10px]">
                         <input
                           type="range"
                           min={0}
                           value={breakMinutes}
-                          onChange={(e) => {
-                            if (e.target.value > 0) {
-                              setBreakMinutes(e.target.value);
-                              mode === "break" &&
-                                setSecondsLeft(e.target.value * 60);
-                              localStorage.setItem(
-                                `${key}breakMinutes`,
-                                e.target.value
-                              );
-                            }
-                          }}
+                          onChange={onChangeBreakMinutes}
                           max={60}
                           step={1}
                           className="range range-error range-sm"
@@ -414,7 +397,7 @@ export default function Timer() {
                             {breakMinutes} min
                           </span>{" "}
                         </span>
-                      </div>
+                      </div> */}
                     </>
                   )}
                 </div>

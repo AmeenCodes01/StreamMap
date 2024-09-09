@@ -58,19 +58,22 @@ const usePomodoro = () => {
       //starting new sesh
       const prevRated = await checkPrevSession();
       if (prevRated) {
-        localStorage.setItem(`${key}startTime`, Date.now());
-        // checkSession, not rated, setShowRating false & sessionId to LS.
-        setIsPaused(false);
-        setIsRunning(true);
-        setRated(false);
-        secondsLeft === workMinutes * 60 ? startSession(session) : null;
-        // secondsLeft !== workMinutes * 60 && mode === "work" && live
-        //   ? socket.emit("paused-session", {
-        //       id: localStorage.getItem("sessionID"),
-        //       room,
-        //       pause: false,
-        //     })
-        //   : null;
+        if (workMinutes > 0) {
+          localStorage.setItem(`${key}startTime`, Date.now());
+          // checkSession, not rated, setShowRating false & sessionId to LS.
+
+          setIsPaused(false);
+          setIsRunning(true);
+          setRated(false);
+          secondsLeft === workMinutes * 60 ? startSession(session) : null;
+          // secondsLeft !== workMinutes * 60 && mode === "work" && live
+          //   ? socket.emit("paused-session", {
+          //       id: localStorage.getItem("sessionID"),
+          //       room,
+          //       pause: false,
+          //     })
+          //   : null;
+        }
       } else {
         setRated(false);
         setShowRating(true);

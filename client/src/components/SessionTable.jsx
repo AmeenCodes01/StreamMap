@@ -17,17 +17,20 @@ const SessionTable = ({arr, table}) => {
     }));
   };
 
-
-  function formatTime(timeString,mode) {
+  function formatTime(timeString, mode) {
+    console.log(timeString, "   mode", mode);
     const dateTime = new Date(timeString);
-    timeString = parseInt(timeString)
+    timeString = parseInt(timeString);
     const formattedTime = dateTime.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     }); // Format as HH:MM
-    const min = Math.floor(timeString/60)
-    const sec =  (timeString) - Math.floor(timeString/60)*2
-    return mode =="timer" ? `${min == 0 ? `00` : min} : ${sec}` : `${formattedTime}`
+    const min = Math.floor(timeString / 60);
+    const sec = timeString - min * 60;
+    mode == "timer" ? console.log(min, sec) : null;
+    return mode == "timer"
+      ? `${min < 10 ? `0${min}` : {min}} : ${sec < 10 ? `0${sec}` : {sec}} `
+      : `${formattedTime}`;
   }
 
   const {users} = useGetUsers();
@@ -57,7 +60,7 @@ const SessionTable = ({arr, table}) => {
                       <td>{users.filter((u) => u._id === e.userId)[0].name}</td>
                     ) : null}
                     <th>{e.sessionNumber}</th>
-                    <td>{formatTime(e.createdAt,"st")}</td>
+                    <td>{formatTime(e.createdAt, "st")}</td>
                     <td className="">
                       {/* <CountDown/> */}
                       {e.goal}
@@ -97,7 +100,7 @@ const SessionTable = ({arr, table}) => {
                                 className=" p-[5px] border-2 mb-[10px]"
                               >
                                 <span className="badge">
-                                  {formatTime(s.time,"timer")} - {s.desc}
+                                  {formatTime(s.time, "timer")} - {s.desc}
                                 </span>
                               </div>
                             ))}

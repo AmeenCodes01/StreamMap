@@ -5,6 +5,7 @@ import {MdOutlineDownloadDone} from "react-icons/md";
 import useAuthId from "../hooks/useAuthId";
 import {setInterval, clearInterval} from "worker-timers";
 import {useShallow} from "zustand/react/shallow";
+import DarkInput from "./DarkInput";
 
 const Timer = ({animate}) => {
   const {key} = useAuthId();
@@ -20,7 +21,7 @@ const Timer = ({animate}) => {
     setCountdownMinutes,
     countdownMinutes,
     countDownSaved,
-    setCountDownSaved 
+    setCountDownSaved,
   } = useStore(
     useShallow((state) => ({
       setInSesh: state.setInSesh,
@@ -29,21 +30,22 @@ const Timer = ({animate}) => {
       isRunning: state.isRunning,
       setCountdownMinutes: state.setCountdownMinutes,
       countdownMinutes: state.countdownMinutes,
-      countDownSaved: state.countDownSaved, 
-      setCountDownSaved: state.setCountDownSaved
+      countDownSaved: state.countDownSaved,
+      setCountDownSaved: state.setCountDownSaved,
     }))
   );
 
-useEffect(()=>{
-setCountDownSaved(localStorage.getItem(`${key}countDownSaved`) ==="true" || false)
-},[])
+  useEffect(() => {
+    setCountDownSaved(
+      localStorage.getItem(`${key}countDownSaved`) === "true" || false
+    );
+  }, []);
 
   useEffect(() => {
     setIsCountDownActive(
       localStorage.getItem(`${key}isCountDownActive`) == "true"
     );
   }, []);
-
 
   useEffect(() => {
     let interval;
@@ -67,7 +69,7 @@ setCountDownSaved(localStorage.getItem(`${key}countDownSaved`) ==="true" || fals
   useEffect(() => {
     localStorage.setItem(`${key}isCountDownActive`, isCountDownActive);
   }, [isCountDownActive]);
-  
+
   useEffect(() => {
     localStorage.setItem(`${key}countDownSaved`, countDownSaved);
   }, []);
@@ -97,13 +99,18 @@ setCountDownSaved(localStorage.getItem(`${key}countDownSaved`) ==="true" || fals
     setCountDownSaved(true);
   };
 
-  
-  //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
-  return(
+  const onChangeCountDownMinutes = (e) => {
+    const regex = /^[0-9\b]+$/;
+    if (e.target.value === "" || regex.test(e.target.value)) {
+      setTimeLeft(e.target.value * 60);
+      setCountdownMinutes(e.target.value);
+    }
+  };
+  const onChangeDesc = (e) => setDesc(e.target.value);
 
-    
+  //AD OPTION TO SET CUSTOM TIMER,save pref & keep it for next time ?
+  return (
     <div>
-      
       <div>
         <div className="flex flex-row  justify-items-center items-center gap-[10px]">
           <p className="ml-auto mr-auto text-lg">
@@ -115,24 +122,10 @@ setCountDownSaved(localStorage.getItem(`${key}countDownSaved`) ==="true" || fals
           {!isCountDownActive ? (
             <span>
               Set{"   "}
-              <input
-                onChange={(e) => {
-                  const regex = /^[0-9\b]+$/;
-                  if (e.target.value === "" || regex.test(e.target.value)) {
-                    setTimeLeft(e.target.value * 60);
-                    setCountdownMinutes(e.target.value);
-                  }
-                }}
-                className="w-[30px] px-[5px] py-[2px] ml-[5px] h-auto border-bottom border-1px text-center border-secondary focus:outline-none "
-              />
-              m
+              <DarkInput onChange={onChangeCountDownMinutes} width={30} />m
             </span>
           ) : null}
-          <input
-            className="w-[100px]   placeholder:text-xs h-auto border-bottom border-1px px-[5px] py-[2px] ml-[15px]  border-secondary focus:outline-none "
-            placeholder="desc"
-            onChange={(e) => setDesc(e.target.value)}
-          />
+          <DarkInput placeholder="desc" onChange={onChangeDesc} width={100} />
         </div>
         <div className="flex flex-row gap-[10px] self-center  justify-center items-center my-[20px]">
           <button

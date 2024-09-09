@@ -35,23 +35,25 @@ function User() {
     return;
   }
   return (
-    <div className=" sm:mt-[30px] mt-[10px] flex flex-col gap-[20px] bg-[url('/nightmoon.gif')] bg-cover bg-center">
+    <div className=" sm:mt-[30px] mt-[10px] flex flex-col gap-[20px]  bg-cover bg-center">
       {/* STREAM PLAYER */}
 
       <div className="flex  flex-col gap-[20px] ">
-        <div className="flex flex-col sm:w-[50%] sm:h-[50%]   ">
-          <StreamVid />
-          {/* <div className="flex ml-auto mr-auto">
+        <div className="sm:flex-row sm:flex md:space-between">
+          <div className="flex flex-col sm:w-[50%] sm:h-[50%] ">
+            <StreamVid />
+            {/* <div className="flex ml-auto mr-auto">
             <DisplayMessage />
-          </div> */}
-        </div>
+            </div> */}
+          </div>
 
-        <div className="flex  mb-[10px] mt-[30px]  ">
-          <Timer />
+          <div className="flex  mb-[10px] mt-[30px] ml-auto  ">
+            <Timer />
 
-          <SepWindow />
+            {/* <SepWindow /> */}
+          </div>
         </div>
-        <div className="flex sm:flex-row flex-col  space-between justify-between">
+        <div className="flex sm:flex-row-reverse flex-col  space-between justify-between">
           <div className="flex mt-[10px] mb-[50px] flex-start align-top justify-start ">
             <Sessions />
           </div>
