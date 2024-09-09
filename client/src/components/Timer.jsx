@@ -13,7 +13,6 @@ import useSaveSession from "../hooks/useSaveSession";
 import InfoIcon from "./InfoIcon";
 
 export default function Timer() {
-
   const {
     workMinutes,
     setWorkMinutes,
@@ -36,8 +35,7 @@ export default function Timer() {
     setRated,
     seshCount,
     setSeshCount,
-    showRating
-    
+    showRating,
   } = useStore(
     useShallow((state) => ({
       workMinutes: state.workMinutes,
@@ -67,14 +65,12 @@ export default function Timer() {
     }))
   );
 
-
-//secondsLeft stored every second. 
-//isRunning should be true when timer is running. 
-
+  //secondsLeft stored every second.
+  //isRunning should be true when timer is running.
 
   const {authId, key, room} = useAuthId();
   const [disabled, setDisabled] = useState(false);
-  const {start, pause,reset} = usePomodoro();
+  const {start, pause, reset} = usePomodoro();
   const audio = document.getElementById("audio_tag");
   // check for sessionID, if exist, set true.
   useEffect(() => {
@@ -91,16 +87,17 @@ export default function Timer() {
 
     const breakMinutes =
       parseInt(localStorage.getItem(`${key}breakMinutes`)) || 10;
-    
+
     const pausedTime =
-      parseInt(localStorage.getItem(`${key}PausedTime`)) || mode==="work" ?workMinutes * 60 : breakMinutes*60
-    
+      parseInt(localStorage.getItem(`${key}PausedTime`)) || mode === "work"
+        ? workMinutes * 60
+        : breakMinutes * 60;
 
     setMode(mode);
     setWorkMinutes(workMinutes);
     setBreakMinutes(breakMinutes);
-   // setRated(localStorage.getItem(`${key}rated`) === "true" || false);
-    setSeshCount(parseInt(localStorage.getItem(`${key}seshCount`) )|| 0);
+    setRated(localStorage.getItem(`${key}rated`) === "true" || false);
+    setSeshCount(parseInt(localStorage.getItem(`${key}seshCount`)) || 0);
     //setDisabled(localStorage.getItem(`${key}disabled`) === "true" || false)
 
     const elapsedTime = (Date.now() - storedStartTime) / 1000;
@@ -121,29 +118,33 @@ export default function Timer() {
     //   : null;
 
     if (storedStartTime == null) {
-      console.log("here")
-      remainingTime = mode==="work" ?workMinutes * 60 : breakMinutes*60
-      
+      remainingTime = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
     }
 
-    if(mode==="break" && localStorage.getItem(`${key}sessionID`)!==null || mode==="work" && remainingTime<0 && localStorage.getItem(`${key}sessionID`)!==null &&       localStorage.getItem(`${key}isPaused`) !== "true"
-  ){
-  setShowRating(true)
-  setDisabled(true)
-  setRated(false)
-    }
+    // if (
+    //   (mode === "break" && localStorage.getItem(`${key}sessionID`) !== null) ||
+    //   (mode === "work" &&
+    //     remainingTime < 0 &&
+    //     localStorage.getItem(`${key}sessionID`) !== null &&
+    //     localStorage.getItem(`${key}isPaused`) !== "true")
+    // ) {
+    //   setShowRating(true);
+    //   setDisabled(true);
+    //   setRated(false);
+    // }
 
     // Update state with the correct values
-console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
+
     setSecondsLeft(
       localStorage.getItem(`${key}isPaused`) === "true"
         ? pausedTime
         : remainingTime > 0
         ? remainingTime
-        : mode==="work" ?workMinutes * 60 : breakMinutes*60
+        : mode === "work"
+        ? workMinutes * 60
+        : breakMinutes * 60
     );
   }, []);
-
 
   const toggle = mode === "break";
 
@@ -160,11 +161,9 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
       setDisabled(true);
     }
 
+    const nextSeconds = (nextMode === "work" ? workMinutes : breakMinutes) * 60;
 
-    const nextSeconds =
-      (nextMode === "work" ? workMinutes : breakMinutes) * 60;
-    
-      mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
+    mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
     setMode(nextMode);
     localStorage.setItem(`${key}mode`, nextMode);
 
@@ -177,10 +176,7 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
     }
   }
 
-
   useEffect(() => {
-  
-
     if (isRunning) {
       const interval = setInterval(() => {
         if (!isPaused && secondsLeft > 0) {
@@ -201,35 +197,30 @@ console.log(mode,"mode", remainingTime, "remainingTime",pausedTime,"pause")
   const seconds = Math.floor(secondsLeft % 60);
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
-
   //reset timer when in break. If in work mode, reset session.
   const onResetTimer = (md) => {
-    reset(md)
-   
+    reset(md);
   };
 
-  
+  //dont play next session until break.
 
-//dont play next session until break. 
-  
-  
   const onToggle = () => {
-    mode ==="break" && localStorage.getItem(`${key}sessionID`) !== null  ? setDisabled(true): null
+    mode === "break" && localStorage.getItem(`${key}sessionID`) !== null
+      ? setDisabled(true)
+      : null;
     setMode(mode === "work" ? "break" : "work");
     localStorage.setItem(`${key}startTime`, Date.now());
     const resetSeconds = (mode === "work" ? breakMinutes : workMinutes) * 60;
     setSecondsLeft(resetSeconds);
-    setIsPaused(true)
-    setIsRunning(false)
-    
+    setIsPaused(true);
+    setIsRunning(false);
   };
 
-
-
-console.log(showRating,"showRating")
-
   useEffect(() => {
-    if (!isCountDownActive && !isStopWatchActive && rated) {
+    //when the session has ended but timers are playing.
+    if (!isCountDownActive && !isStopWatchActive) {
+      if (mode === "break") {
+      }
       setDisabled(false);
     }
   }, [isCountDownActive, isStopWatchActive, rated]);
@@ -268,35 +259,29 @@ console.log(showRating,"showRating")
     localStorage.setItem(`${key}disabled`, disabled);
   }, [seshCount]);
 
-  // useEffect(() => {
-  //   localStorage.setItem(`${key}secondsLeft`,secondsLeft) 
-  //   console.log("reset")
-  // }, [secondsLeft]);
+  useEffect(() => {
+    localStorage.setItem(`${key}rated`, rated);
+  }, [rated]);
 
-
-console.log( localStorage.getItem(`${key}sessionID`))
   return (
     <div className="w-[100%] flex flex-col px-[10px]">
       {/* This will become a timer. */}
       <div className="flex flex-col">
         <div className="flex flex-row gap-[5px]">
-
-        <input
-          value={seshCount}
-          onChange={(e) => {
-            const regex = /^[0-9\b]+$/;
-            if (
-              (e.target.value === "" || regex.test(e.target.value)) 
-            ) {
-              setSeshCount(e.target.value);
-            }
-          }}
-          className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
+          <input
+            value={seshCount}
+            onChange={(e) => {
+              const regex = /^[0-9\b]+$/;
+              if (e.target.value === "" || regex.test(e.target.value)) {
+                setSeshCount(e.target.value);
+              }
+            }}
+            className="w-[30px] flex text-warning h-[30px] text-lg px-[5px] py-[2px] ml-[5px] border-bottom border-1px text-center border-secondary focus:outline-none "
           />
-   <div className="">
-              {/* <InfoIcon info="This timer will keep running even when tab closed :) "/> */}
-             </div>
+          <div className="">
+            {/* <InfoIcon info="This timer will keep running even when tab closed :) "/> */}
           </div>
+        </div>
         <div className=" mr-[10px] min-w-[100px] pt-[20px] ">
           <progress
             className={`progress w-[100%]   ${
@@ -308,13 +293,11 @@ console.log( localStorage.getItem(`${key}sessionID`))
         </div>
         <div className="flex flex-row-reverse space-between justify-between ">
           <div className="mt-[5px] flex flex-row">
-             
             <span className="text-bold text-[50px] font-black ">
               {`${minutes < 10 ? "0" : ""}${minutes}:${
                 seconds < 10 ? "0" : ""
               }${seconds}`}
             </span>
-         
           </div>
           <div className=" mt-[5px]">
             <div>
@@ -324,7 +307,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                   {isPaused === true || isRunning === false ? (
                     <div className="flex flex-row gap-[10px]">
                       <button
-                      //  disabled={mode==="break" ? false :disabled}
+                        //  disabled={mode==="break" ? false :disabled}
                         className="btn btn-success items-center justify-center"
                         //so I will start(room, workMinutes, )
                         onClick={() => {
@@ -371,10 +354,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                       <FaPauseCircle size={15} />
                     </button>
                   ) : null}
-
-
                 </div>
-
 
                 <div className="flex flex-col">
                   {isPaused && (
@@ -396,7 +376,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                           }}
                           max={120}
                           min={0}
-                           step={1}
+                          step={1}
                           height={"10px"}
                           className="range range-success range-sm"
                         />
@@ -441,7 +421,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
               </div>
             </div>
             <audio id="audio_tag" src={timerEnd} />
-            {!isRunning  ? (
+            {!isRunning ? (
               <div className="flex flex-row gap-[10px] text-bold self-start pl-[5px] mb-[20px] rotate-360">
                 <span className="text-xs self-center text-cente font-semibold">
                   Work
@@ -456,7 +436,7 @@ console.log( localStorage.getItem(`${key}sessionID`))
                   Break
                 </span>
               </div>
-            ):null}
+            ) : null}
           </div>
         </div>
       </div>
@@ -470,5 +450,4 @@ console.log( localStorage.getItem(`${key}sessionID`))
   );
 }
 
-//so when session ends, setShowRating is set to true and modal opens, disabling background. you rate or delete session. 
-
+//so when session ends, setShowRating is set to true and modal opens, disabling background. you rate or delete session.

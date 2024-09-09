@@ -22,7 +22,6 @@ function AllSessions() {
 
     getSesh();
   }, []);
-
   useListenSessions();
   if (loading) {
     return <span className="loading loading-infinity loading-md"></span>;

@@ -8,19 +8,24 @@ import useSaveScore from "../hooks/useSaveScore";
 import {useShallow} from "zustand/react/shallow";
 import useAuthId from "../hooks/useAuthId";
 import {Modal} from "react-daisyui";
-// import DeleteButton from "./SessionRating/DeleteButton";
+import DeleteButton from "./SessionRating/DeleteButton";
 
 function Sessions() {
-  
   // const {mode, workMinutes} = useTimeContext();
   const [seshRating, setSeshRating] = useState(``);
   const {id: room} = useParams();
-  const {saveSession, loading,ratePrevSession} = useSaveSession();
+  const {
+    saveSession,
+    loading,
+    ratePrevSession,
+    resetSession,
+  } = useSaveSession();
   const {loading: load} = useGetSessions();
   const {
     inSesh,
 
-    resetInSesh,    seshInfo,
+    resetInSesh,
+    seshInfo,
     setSeshInfo,
     seshGoal,
     setSeshGoal,
@@ -32,12 +37,11 @@ function Sessions() {
     isCountDownActive,
     seshCount,
     setSeshCount,
-    isRunning, 
-    setStopWatchSaved, 
+    isRunning,
+    setStopWatchSaved,
     setCountDownSaved,
-  prevSeshRating, 
+    prevSeshRating,
     setPrevSeshRating,
-  
   } = useStore(
     useShallow((state) => ({
       inSesh: state.inSesh,
@@ -49,48 +53,42 @@ function Sessions() {
       showRating: state.showRating,
       setShowRating: state.setShowRating,
       mode: state.mode,
-      workMinutes: state.workMinutes,
-      isStopWatchActive: state.isStopWatchActive,
+      workMinutes: state.workMinutes, //can be replaced with "in this session"
+      isStopWatchActive: state.isStopWatchActive, // why not check
       isCountDownActive: state.isCountDownActive,
-      setRated: state.setRated,
+      setRated: state.setRated, //1
       seshCount: state.seshCount,
       setSeshCount: state.setSeshCount,
       resetInSesh: state.resetInSesh,
       isRunning: state.isRunning,
-      // setPrevSeshRating:state.setPrevSeshRating, 
-      // prevSeshRating: state.prevSeshRating
     }))
   );
-  // const {mood} = useHealthContext();
-  const {saveScore} = useSaveScore();
-  const { key} = useAuthId();
 
-  
+  const {saveScore} = useSaveScore();
+  const {key} = useAuthId();
 
   const onSession = () => {
     // calc session score based on rating & duration.
     const calculateSessionScore = (duration, rating) => {
-      const durationWeight = 0.1; 
-      const ratingWeight = 0.5; 
-      
-      
+      const durationWeight = 0.1;
+      const ratingWeight = 0.5;
+
       const totalScore = duration * durationWeight + ratingWeight * rating;
-      
+
       return Math.round(totalScore);
     };
-    console.log(prevSeshRating,"prec")
-    if (prevSeshRating){
-      console.log("Inhere")
-      ratePrevSession(seshRating,room)
-  //    saveScore(score,room)
+    if (prevSeshRating) {
+      console.log("Inhere");
+      ratePrevSession(seshRating, room);
+      //    saveScore(score,room)
       setShowRating(false);
       setRated(true);
-      setPrevSeshRating(false)
+      setPrevSeshRating(false);
       localStorage.setItem(`${key}rated`, true);
-      return 
+      return;
     }
     const score = calculateSessionScore(workMinutes, seshRating);
-    
+
     const session = {
       sessionNumber: seshCount,
       rating: seshRating,
@@ -108,32 +106,21 @@ function Sessions() {
     setShowRating(false);
     setRated(true);
     localStorage.setItem(`${key}rated`, true);
-    resetInSesh()
+    resetInSesh();
     setSeshInfo([...seshInfo, session]);
     setSeshGoal();
-   
-    setSeshCount(seshCount + 1);
+
+    setSeshCount(parseInt(seshCount) + 1);
   };
 
-  //useListenSessions();
   if (load || loading) {
     return <div className="skeleton w-32 h-32"></div>;
   }
 
-//   useEffect(()=>{
-// setPrevSeshRating(    localStorage.getItem(`${key}prevSeshRating`) === "true "? true:false
-// )
-//   },[])
-//   useEffect(()=>{
-//     localStorage.setItem(`${key}prevSeshRating`, prevSeshRating)
-
-//   },[prevSeshRating])
   return (
     <div className="flex  items-end flex-col justify-items-end mt-[20px] ">
-      {/* <ListenSessions seshInfo={seshInfo} setSeshInfo={setSeshInfo} /> */}
       <div className="w-[100%] justify-items-end">
         <div className="flex flex-col mb-[20px]  ">
-          {/* { mode === "work"  ? ( */}
           <div className=" ml-auto">
             <div className="flex md:flex-row flex-col ml-auto  ">
               <p className="flex flex-row w-[300px] text-end self-center justify-self-end  tracking-wide font-serif font-[16px]">
@@ -150,65 +137,58 @@ function Sessions() {
                 }}
                 placeholder="your goal for this session"
               />
-              {/* <input
-            value={seshGoal}
-            style={{
-              height: "30px",
-              transition: "height 0.5s",
-              padding: "5px",
-            }}
-            placeholder="your goal for this session"
-            className="text-start h-[full] text-info w-[100%] focus:outline-none mr-[3px] input input-info w-full max-w-xs pl-[5px]"
-            onChange={(e) => setSeshGoal(e.target.value)}
-          /> */}
             </div>
             {showRating && !isStopWatchActive && !isCountDownActive ? (
-               <Modal.Legacy
-               className=" max-w-[90%] sm:max-w-[50%]
-   
+              <Modal.Legacy
+                className=" max-w-[90%] sm:max-w-[50%]
                 border-2 overflow-hidden"
-               open={showRating}
-              //  onClickBackdrop={() => {
-              //    cleanUp();
-              //    toggleVisible();
-              //  }}
-             >
-              <Modal.Body>
-              <div className="flex flex-row mt-[10px] border-[10] ml-[auto] mr-[50px] ">
-                <p className="text-center self-center mr-[5px] md:text-[18px] italic">
-                  rate your session :
-                </p>
-                <input
-                  type="text"
-                  value={seshRating}
-                  maxLength={2}
-                  className="input input-bordered text-warning text-center p-[2px] input-warning max-w-xs w-[50px]  h-[30px] focus:outline-none"
-                  onChange={(e) => {
-                    const regex = /^[0-9\b]+$/;
-                    if (
-                      (e.target.value === "" || regex.test(e.target.value)) &&
-                      e.target.value < 11
-                    ) {
-                      e.target.value < 11
-                        ? setSeshRating(e.target.value)
-                        : null;
-                    }
-                  }}
-                />
-                <p className="text-center flex self-center pl-[5px] "> /10</p>
-                <form
-              method="dialog"
-              className="  flex items-end justify-items-end"
-            >
-
-                <TiTick
-                  size={30}
-                  className=" self-center ml-[5px] h-[30px]"
-                  onClick={onSession}
-                />
-                </form>
-              </div>
-              </Modal.Body>
+                open={showRating}
+              >
+                <Modal.Body>
+                  <div className="flex flex-col  items-center mt-[10px] border-[10]  ">
+                    <div className="flex flex-row">
+                      <p className="text-center self-center mr-[5px] md:text-[18px] italic">
+                        rate your {prevSeshRating ? "previous" : null} session :
+                      </p>
+                      <input
+                        type="text"
+                        value={seshRating}
+                        maxLength={2}
+                        className="input input-bordered text-warning self-center text-center p-[2px] input-warning max-w-xs w-[50px]  h-[30px] focus:outline-none"
+                        onChange={(e) => {
+                          const regex = /^[0-9\b]+$/;
+                          if (
+                            (e.target.value === "" ||
+                              regex.test(e.target.value)) &&
+                            e.target.value < 11
+                          ) {
+                            e.target.value < 11
+                              ? setSeshRating(e.target.value)
+                              : null;
+                          }
+                        }}
+                      />
+                      <p className="text-center flex self-center pl-[5px] ">
+                        {" "}
+                        /10
+                      </p>
+                      <form
+                        method="dialog"
+                        className="  flex items-end justify-items-end"
+                      >
+                        <TiTick
+                          size={30}
+                          className=" self-center ml-[5px] h-[30px]"
+                          onClick={onSession}
+                        />
+                        {/* Delete Session. onClick, delete currentSession.  
+                      
+                      */}
+                      </form>
+                    </div>
+                    <DeleteButton setShowRating={setShowRating} />
+                  </div>
+                </Modal.Body>
               </Modal.Legacy>
             ) : null}
           </div>

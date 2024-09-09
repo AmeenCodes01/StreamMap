@@ -14,8 +14,6 @@ import SepWindow from "../components/SepWindow";
 import useAuthId from "../hooks/useAuthId";
 import {useNavigate, useParams} from "react-router-dom";
 
-
-
 function User() {
   const navigate = useNavigate();
   const {id} = useParams();
@@ -57,9 +55,9 @@ function User() {
           <div className="flex mt-[10px] mb-[50px] flex-start align-top justify-start ">
             <Sessions />
           </div>
-          {/* <div className="flex self-center pr-[10px]">
+          <div className="flex self-center pr-[10px]">
             <InSeshTimer />
-          </div> */}
+          </div>
         </div>
       </div>
       {/* 

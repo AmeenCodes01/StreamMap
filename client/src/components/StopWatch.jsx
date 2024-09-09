@@ -14,16 +14,20 @@ const Stopwatch = () => {
     setIsStopWatchActive,
     isRunning,
     setInSesh,
-    stopWatchSaved, 
-    setStopWatchSaved
+    stopWatchSaved,
+    setStopWatchSaved,
+    mode,
+    setSaved,
   } = useStore(
     useShallow((state) => ({
       isStopWatchActive: state.isStopWatchActive,
       setIsStopWatchActive: state.setIsStopWatchActive,
       isRunning: state.isRunning,
       setInSesh: state.setInSesh,
-      stopWatchSaved: state.stopWatchSaved, 
-      setStopWatchSaved: state.setStopWatchSaved
+      stopWatchSaved: state.stopWatchSaved,
+      setStopWatchSaved: state.setStopWatchSaved,
+      mode: state.mode,
+      setSaved: state.setSaved,
     }))
   );
 
@@ -45,14 +49,13 @@ const Stopwatch = () => {
     return () => clearInterval(interval);
   }, [isStopWatchActive]);
 
-  useEffect(()=>{
-    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved)
-  }, [])
+  useEffect(() => {
+    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved);
+  }, []);
 
-  useEffect(()=>{
-    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved)
-  }, [stopWatchSaved])
-
+  useEffect(() => {
+    localStorage.setItem(`${key}stopWatchSaved`, stopWatchSaved);
+  }, [stopWatchSaved]);
 
   useEffect(() => {
     localStorage.setItem(`${key}stopwatchTimeElapsed`, timeElapsed);
@@ -62,19 +65,27 @@ const Stopwatch = () => {
     setIsStopWatchActive(true);
     localStorage.setItem(`${key}stopwatchIsActive`, isStopWatchActive);
   };
-
-  const pauseStopwatch = () => setIsStopWatchActive(false);
+  console.log(isRunning, mode);
+  const pauseStopwatch = () => {
+    mode == "break" && isRunning ? saveStopwatch() : null;
+    setIsStopWatchActive(false);
+  };
 
   const resetStopwatch = () => {
     setIsStopWatchActive(false);
     setTimeElapsed(0);
-    setSaved(false);
+    setStopWatchSaved(false);
   };
 
+  //mode === "break" ? autoSave()
+
   const saveStopwatch = () => {
+    //we cud check her if like timer has stopped and setShowRating == true ? or should I put a useEffect in the timer ?
+    console.log("savingStopWatch", mode, isRunning);
     setInSesh({time: timeElapsed, desc: desc});
     setStopWatchSaved(true);
   };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-items-center items-center">
