@@ -53,7 +53,7 @@ export const getSessionByID = async (req, res) => {
   try {
     const {id} = req.body;
     console.log("im in", id);
-    const userSessions = await Session.find({
+    const userSessions = await Session.find({   
       userId: id,
       createdAt: {$gt: new Date(Date.now() - 24 * 60 * 60 * 1000)},
     });
@@ -67,20 +67,17 @@ export const getSessionByID = async (req, res) => {
 
 export const startSession = async (req, res) => {
   try {
-    const {session, name, live} = req.body;
+    const {session, name, live, userId} = req.body;
     session.status = "start";
 
     // get latest session & check if ended. only then, start new session. to fix spamming of start button starting multiple sessions.
-    const lastSession = await getLatestSession();
+    const lastSession = await getLatestSession(userId);
+    console.log(lastSession, "lastSession");
 
     if (lastSession.endedAt) {
       // Create and save the session without the name
       const newSession = new Session(session);
       await newSession.save();
-
-      const result = await Session.deleteMany({
-        $or: [{endedAt: {$exists: false}}, {endedAt: null}],
-      });
 
       if (live) {
         const room = session.room;

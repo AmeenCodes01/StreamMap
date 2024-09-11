@@ -86,7 +86,7 @@ const useSaveSession = () => {
       const res = await fetch(`${config.API_URL}/api/sessions/start`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({session, name, live}),
+        body: JSON.stringify({session, name, live, userId: authId}),
       });
 
       const data = await res.json();
