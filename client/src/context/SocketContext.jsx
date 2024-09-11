@@ -87,24 +87,22 @@ export const useSocketContext = () => {
 
 export const SocketContextProvider = ({children}) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const {key} = useAuthId()
-   
+  const {key} = useAuthId();
+
   const [live, setLive] = useState(false);
-  const [liveLink, setLiveLink] = useState( "");
+  const [liveLink, setLiveLink] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const {authUser} = useAuthContext();
-  console.log(localStorage.getItem(`${key}link`),"linkSocket",key)
   const socket = useMemo(() => {
     if (!authUser) return null;
 
-    
     const newSocket = io(`${config.API_URL}`, {
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       timeout: 60000, // Increase from 20000 to 60000
-      transports: ['websocket', 'polling']
+      transports: ["websocket", "polling"],
     });
-    
+
     newSocket.on("connect", () => {
       console.log("Socket connected");
       setIsConnected(true);
@@ -124,9 +122,9 @@ export const SocketContextProvider = ({children}) => {
     newSocket.on("live-status", (data) => {
       console.log("Live status received:", data);
       setLive(data.status);
-      if (data.status){
-        setLiveLink(data.link)
-     // localStorage.setItem(`${key}link`, data.link)
+      if (data.status) {
+        setLiveLink(data.link);
+        // localStorage.setItem(`${key}link`, data.link)
       }
     });
 

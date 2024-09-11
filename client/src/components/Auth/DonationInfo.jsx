@@ -17,7 +17,7 @@ function DonationInfo() {
   }, []);
 
   return (
-    <div className=" badge   text-md ">
+    <div className=" badge  text-md flex w-[100%] text-wrap ">
       <span className="text-bold italic font-mono  rounded-[8px] p-[5px] text-white ">
         <span className="bg-white badge text-primary text-bold text-md">
           Total {Math.floor(parseInt(totalDon) / 300)}$

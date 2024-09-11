@@ -53,11 +53,11 @@ export const getSessionByID = async (req, res) => {
   try {
     const {id} = req.body;
     console.log("im in", id);
-    const userSessions = await Session.find({   
+    const userSessions = await Session.find({
       userId: id,
       createdAt: {$gt: new Date(Date.now() - 24 * 60 * 60 * 1000)},
     });
-    console.log(userSessions, "user");
+
     res.status(200).json(userSessions);
   } catch (error) {
     console.error("Error in getUserSessions: ", error.message);

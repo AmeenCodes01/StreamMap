@@ -164,7 +164,7 @@ export default function Timer() {
 
     const nextSeconds = (nextMode === "work" ? workMinutes : breakMinutes) * 60;
 
-    mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
+    //mode === "work" ? setSeshCount(parseInt(seshCount) + 1) : null;
     setMode(nextMode);
     localStorage.setItem(`${key}mode`, nextMode);
 
