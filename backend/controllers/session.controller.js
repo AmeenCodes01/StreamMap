@@ -52,7 +52,7 @@ export const getSessions = async (req, res) => {
 export const getSessionByID = async (req, res) => {
   try {
     const {id} = req.body;
-    console.log("im in", id);
+
     const userSessions = await Session.find({
       userId: id,
       createdAt: {$gt: new Date(Date.now() - 24 * 60 * 60 * 1000)},
@@ -72,9 +72,13 @@ export const startSession = async (req, res) => {
 
     // get latest session & check if ended. only then, start new session. to fix spamming of start button starting multiple sessions.
     const lastSession = await getLatestSession(userId);
-    console.log(lastSession, "lastSession");
 
-    if (lastSession.endedAt) {
+    // if (lastSession === null) {
+    //   console.log("RETURN NO SESSION");
+    //   return res.status(201).json({message: "No prev session"});
+    // }
+
+    if (lastSession === null || lastSession.rating) {
       // Create and save the session without the name
       const newSession = new Session(session);
       await newSession.save();
@@ -92,7 +96,6 @@ export const startSession = async (req, res) => {
         };
 
         sessions[room].push(sessionWithName);
-        console.log(sessionWithName, "name");
         // Emit the session with name for live updates
         io.to(room).emit("start-sessions", sessionWithName);
       }
@@ -100,14 +103,13 @@ export const startSession = async (req, res) => {
       // Send the response without the name
       res.status(201).json(newSession);
     } else {
-      res.status(500).json({error: "previous session ongoing"});
+      res.status(400).json({error: "Previous session ongoing"});
     }
   } catch (error) {
     console.log("Error in saveSession controller: ", error.message);
     res.status(500).json({error: "Internal server error"});
   }
 };
-
 export const saveSession = async (req, res) => {
   try {
     const {
@@ -123,12 +125,9 @@ export const saveSession = async (req, res) => {
       live,
     } = req.body;
 
-    console.log(live, "session lives IN SAVECONTORLLER  ");
     // Find the session by ID
-    console.log(sessionID, "SESSIONID  ");
     const session = await Session.findById(sessionID);
     if (!session) {
-      console.log("No Session found for this ID");
       return res.status(404).json({error: "Session not found"});
     }
 
@@ -145,7 +144,6 @@ export const saveSession = async (req, res) => {
 
     // Save the updated session
     await session.save();
-    console.log("Saved Session", session);
     //Find the existing session in the sessions object
     if (live) {
       const userSeshIndex = sessions[room]?.findIndex(
@@ -161,7 +159,6 @@ export const saveSession = async (req, res) => {
       io.to(room).emit("end-sessions", session);
     }
 
-    //console.log(sessions, "sessions obj");
     return res.status(201).json(session);
   } catch (error) {
     console.error("Error in saveSession controller: ", error.message);
@@ -172,7 +169,6 @@ export const saveSession = async (req, res) => {
 export const resetSession = async (req, res) => {
   try {
     const {id, room, live} = req.body;
-    console.log(id, room, live, "resetSession");
     await Session.deleteOne({_id: id});
     // Create and save the session without the name
 
@@ -201,23 +197,19 @@ export const resetSession = async (req, res) => {
 export const checkSession = async (req, res) => {
   const {id} = req.body;
   console.log(id, "authID");
+  5;
   try {
-    const latestSession = await Session.findOne({userId: id}, null, {
-      sort: {createdAt: -1},
-    });
+    const latestSession = await getLatestSession(id);
+    if (latestSession === null) {
+      return res.status(201).json({message: "no prev session"});
+    }
     //why not check here if session finished AND unrated and then send message accordingly ?
     const endTime = new Date(
       new Date(`${latestSession.createdAt}`) + latestSession.duration * 60000
     );
+
     const onGoing = new Date() < endTime;
-    console.log(
-      onGoing,
-      "onGoing",
-      endTime,
-      latestSession.createdAt,
-      "edde",
-      new Date()
-    );
+
     if (latestSession.rating) {
       res.status(201).json({message: "rated"});
     } else if (!latestSession.rating && !onGoing) {

@@ -59,7 +59,7 @@ const useSaveSession = () => {
         throw new Error(data.error);
       }
       console.log(data, "DATA ");
-      if (data.message == "rated") {
+      if (data.message == "rated" || data.message == "no prev session") {
         return true;
       } else if (data.message == "not rated") {
         localStorage.setItem(`${key}sessionID`, data.sessionID);
@@ -90,6 +90,7 @@ const useSaveSession = () => {
       });
 
       const data = await res.json();
+      console.log(data, "startSessionData");
       if (data.error) {
         if (data.error === "previous session ongoing") {
           toast.error(data.error);
